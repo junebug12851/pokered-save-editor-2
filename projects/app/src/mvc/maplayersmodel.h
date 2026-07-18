@@ -254,7 +254,18 @@ private:
   // it has never been in this mask (Twilight turned it off in 3a22f84, "draw area off by default").
   // Saying "both boxes are now off" would be true about the STATE and a lie about the CHANGE; that
   // wording shipped in the first cut of this comment and had to be corrected. State != action.
+  // UPDATED (Twilight, 2026-07-17): **Flag boxes are ON by default** -- *"anything related to the
+  // save file is on by default, persistent storage like flags and stuff are related to persistent
+  // storage meaning the save file meaning on by default"*.
+  //
+  // ⭐ That is a RULE, not a one-off toggle, and it explains the whole mask above: Player, People &
+  // objects, Warps, Signs are all things the SAVE holds -- so they are on. The Screen box and Draw
+  // area are the console's drawing furniture, and the grids are our own graph paper -- so those are
+  // the ones that start off. This is a save editor; what the save remembers is the point, and it
+  // should be visible without asking.
+  //
+  // ⚠️ ONE bit changed here: ViewFlagBoxes. Nothing else was touched.
   int bits = ViewBlockGrid | ViewMapBounds | ViewConnections
-           | ViewPlayer | ViewNpcs | ViewWarps | ViewSigns;
+           | ViewPlayer | ViewNpcs | ViewWarps | ViewSigns | ViewFlagBoxes;
   qreal opacity = 1.0;
 };

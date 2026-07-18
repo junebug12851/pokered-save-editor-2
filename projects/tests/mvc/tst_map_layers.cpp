@@ -193,15 +193,44 @@ void TestMapLayers::gameViewLayers_existAndToggle()
   //
   // The DRAW AREA is a separate, older decision (Twilight, 3a22f84) and is unrelated to the above --
   // it has been off since it existed. Two boxes are off; only one of them was ever turned off.
+  //
+  // ⭐ And the RULE behind the whole mask (Twilight, 2026-07-17): *"anything related to the save
+  // file is on by default, persistent storage like flags and stuff are related to persistent
+  // storage meaning the save file meaning on by default"*. Player, people, warps, signs and the
+  // FLAG BOXES are all things the save holds -> on. The screen box and draw area are the console's
+  // drawing furniture, and the grids are our graph paper -> off. This is a save editor; what the
+  // save remembers should be visible without asking for it.
   QVERIFY2(r->layers->showPlayer(), "the player should be on by default");
   QVERIFY2(r->layers->showNpcs(), "the people should be on by default");
   QVERIFY2(r->layers->showWarps(), "the warps (Game View object layer) should be on by default");
   QVERIFY2(r->layers->showSigns(), "the signs should be on by default");
+  QVERIFY2(r->layers->showFlagBoxes(),
+           "the flag boxes are persistent storage -- save data is on by default");
   QVERIFY2(!r->layers->showScreenBox(), "the screen box should be OFF by default");
   QVERIFY2(!r->layers->showDrawArea(), "the draw area should be OFF by default");
 
-  // And the whole Tiles group is OFF by default -- no tile-meaning overlay stands unasked.
-  QCOMPARE(r->map->layers(), 0);
+  // The Tiles group, by the SAME save-data rule (Twilight, 2026-07-17): *"even the rom-only tiles
+  // like grass and water need to be turned on by default because you can change the pokemon in them
+  // and also change whats grass in the map state"*.
+  //
+  // The test is not "is it drawn from the ROM?" -- nearly every tile is. It is "is there something
+  // here the save lets you change?". Grass (wGrassTile + the grass encounter table), Water (the
+  // water encounter table), Counters (wTilesetTalkingOverTiles) and Border (wMapBackgroundTile) all
+  // pass it. Walls, warp tiles, doors, ledges, elevation and cut trees do not: they are tileset
+  // facts with no byte in the save, so they stay off.
+  //
+  // ⚠️ This SUPERSEDES the 2026-07-15 "the whole Tiles group is OFF by default", which this line
+  // used to assert as `QCOMPARE(r->map->layers(), 0)`. If you are reading this because it flipped,
+  // it flipped ON PURPOSE.
+  const int tiles = r->map->layers();
+  QVERIFY2(tiles & MapEngine::LayerGrass, "grass is save-backed (wGrassTile + encounters) -> on");
+  QVERIFY2(tiles & MapEngine::LayerWater, "water is save-backed (water encounters) -> on");
+  QVERIFY2(tiles & MapEngine::LayerCounters, "counters are save-backed (wTilesetTalkingOverTiles)");
+  QVERIFY2(tiles & MapEngine::LayerBorder, "the border block is save-backed (wMapBackgroundTile)");
+  QVERIFY2(!(tiles & MapEngine::LayerWalls), "collision is a ROM list -- nothing to edit -> off");
+  QVERIFY2(!(tiles & MapEngine::LayerLedges), "ledges are a tileset fact -> off");
+  QVERIFY2(!(tiles & MapEngine::LayerDoors), "the door TRAIT is a tileset fact -> off");
+  QVERIFY2(!(tiles & MapEngine::LayerWarps), "the warp-tile TRAIT is a tileset fact -> off");
 }
 
 /// The neighbours' strips in the ring are a layer -- and on a map with no neighbours it says so.

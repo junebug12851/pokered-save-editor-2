@@ -90,6 +90,12 @@ Item {
     panel.revision;
     return brg.file.data.dataExpanded.world.missables;
   }
+  /// The "already collected" bits for hidden items + coins (0x299C / 0x29AA). Two separate arrays
+  /// behind one node: hItemsAt/Set and hCoinsAt/Set. @see WorldHidden
+  readonly property var wHidden: {
+    panel.revision;
+    return brg.file.data.dataExpanded.world.hidden;
+  }
   readonly property var wEvents: {
     panel.revision;
     return brg.file.data.dataExpanded.world.events;
@@ -124,14 +130,24 @@ Item {
   // miss the point of the gesture entirely. So: switch to the map, then scroll to the row and light
   // it up.
 
-  /// The missable bit to highlight, or -1. @see revealMissable
+  /// The missable bit to highlight, or -1. @see reveal
   property int highlightMissable: -1
+  /// Which section the highlight is in ("missable" / "event" / "script" / "hidden"), or "".
+  property string highlightSection: ""
+  /// The row index to highlight within @ref highlightSection, or -1.
+  property int highlightInd: -1
 
-  /// Open this panel ON missable @p ind. Called by Map.qml when a flag box is clicked.
-  function revealMissable(ind) {
+  /// Open this panel ON row @p ind of @p section. Called by Map.qml when a spot or a tab is reached.
+  ///
+  /// One entry point for every storage kind, keyed by the section the spot says it lives in --
+  /// so the next kind of storage needs a spot type in the model, not another reveal function.
+  function reveal(section, ind) {
     // The box is on the map you are looking at, and the combo may have been moved elsewhere.
     syncToCurrentMap();
-    panel.highlightMissable = ind;
+    panel.highlightSection = section;
+    panel.highlightInd = ind;
+    // Kept for the missable rows, which already bind to it.
+    panel.highlightMissable = (section === "missable") ? ind : -1;
     highlightFade.restart();
     // ⚠️ NOT Qt.callLater: on the FIRST open the panel is being loaded and built in this same tick,
     // and a callLater still runs before the ColumnLayout has given its children their heights --
@@ -141,15 +157,31 @@ Item {
     revealScroll.restart();
   }
 
-  /// The layout has to exist before we can scroll to a piece of it. @see revealMissable
+  /// @deprecated Use reveal("missable", ind). Kept so an older caller cannot silently do nothing.
+  function revealMissable(ind) { panel.reveal("missable", ind); }
+
+  /// The layout has to exist before we can scroll to a piece of it. @see reveal
   Timer {
     id: revealScroll
     interval: 60
     onTriggered: panel.scrollToHighlight()
   }
 
+  /// The section item a reveal should scroll to. Unknown section -> null, and the scroll is skipped
+  /// rather than guessing at one.
+  function sectionItem(section) {
+    switch (section) {
+      case "missable": return missableSection;
+      case "event":    return eventSection;
+      case "script":   return scriptSection;
+      case "hidden":   return hiddenSection;
+    }
+    return null;
+  }
+
   function scrollToHighlight() {
-    if (panel.highlightMissable < 0 || !missableSection.visible)
+    const target = panel.sectionItem(panel.highlightSection);
+    if (target === null || !target.visible)
       return;
 
     // ⚠️ THE FLICKABLE TRAP. `scroller.contentItem` is the Flickable, and mapToItem() to a Flickable
@@ -825,6 +857,128 @@ Item {
                       font.pixelSize: 8
                       font.family: "monospace"
                       opacity: 0.35
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        // ── HIDDEN ITEMS & COINS — what's buried here ──────────────────────────────────────────
+        //
+        // The 54 hidden items and 12 coin piles: the ones you only find with the Itemfinder, or by
+        // pressing A at exactly the right patch of nothing. Each one's save bit IS its row in the
+        // cartridge's own coord table, so every switch here is an exact (map, x, y) -- the cleanest
+        // positional data in the game.
+        //
+        // ⚠️ The word is COLLECTED, not hidden. The bit means "you already picked this up", which is
+        // the opposite direction from a Filter Flag's bit -- and borrowing the missable's wording
+        // here would invert the meaning of every switch on the page.
+        ColumnLayout {
+          id: hiddenSection
+          Layout.fillWidth: true
+          spacing: 6
+
+          readonly property var list: {
+            panel.revision;
+            return panel.curPage !== undefined ? brg.map.storageHidden(panel.curPage.ids) : [];
+          }
+          visible: list.length > 0
+
+          Rectangle {
+            Layout.fillWidth: true
+            implicitHeight: 1
+            color: brg.settings.dividerColor
+          }
+
+          Label {
+            text: qsTr("Hidden Items & Coins — what's buried here")
+            font.pixelSize: 12
+            font.bold: true
+            color: brg.settings.textColorDark
+          }
+          Label {
+            Layout.fillWidth: true
+            wrapMode: Text.Wrap
+            font.pixelSize: 10
+            opacity: 0.55
+            text: qsTr("Nothing marks these on the map — you find them with the Itemfinder, or by "
+                       + "chance. ON = you've already picked it up, so the spot is now empty.")
+          }
+
+          Repeater {
+            model: hiddenSection.list
+
+            delegate: RowLayout {
+              id: hrow
+              required property var modelData
+              Layout.fillWidth: true
+              spacing: 6
+
+              readonly property bool collected: {
+                panel.revision; panel.editTick;
+                return panel.wHidden
+                    ? (modelData.isCoin ? panel.wHidden.hCoinsAt(modelData.ind)
+                                        : panel.wHidden.hItemsAt(modelData.ind))
+                    : false;
+              }
+
+              /// Arrived here by clicking this pickup's box on the map.
+              readonly property bool highlighted: panel.highlightSection === "hidden"
+                                                  && panel.highlightInd === hrow.modelData.ind
+
+              Rectangle {
+                Layout.fillWidth: true
+                Layout.preferredHeight: inner.implicitHeight + 6
+                // The "here it is" wash, in the same ink the pickup's own box is drawn in, so the
+                // box you clicked and the row you land on are visibly the same thing.
+                color: hrow.highlighted
+                         ? (hrow.modelData.isCoin ? "#f0e44222" : "#cc79a722")
+                         : "transparent"
+                radius: 3
+                Behavior on color { ColorAnimation { duration: 180 } }
+
+                RowLayout {
+                  id: inner
+                  anchors.fill: parent
+                  anchors.margins: 3
+                  spacing: 6
+
+                  FlatToggle {
+                    checked: hrow.collected
+                    onToggled: {
+                      if (!panel.wHidden)
+                        return;
+                      if (hrow.modelData.isCoin)
+                        panel.wHidden.hCoinsSet(hrow.modelData.ind, checked);
+                      else
+                        panel.wHidden.hItemsSet(hrow.modelData.ind, checked);
+                      panel.editTick++;
+                    }
+                  }
+
+                  ColumnLayout {
+                    Layout.fillWidth: true
+                    spacing: 0
+
+                    Label {
+                      Layout.fillWidth: true
+                      text: hrow.modelData.name
+                      font.pixelSize: 11
+                      color: brg.settings.textColorDark
+                      elide: Text.ElideRight
+                    }
+                    Label {
+                      Layout.fillWidth: true
+                      // The coordinates are the point of this list: it is the only storage kind
+                      // whose bit IS a place, exactly.
+                      text: qsTr("(%1, %2) · %3")
+                              .arg(hrow.modelData.x).arg(hrow.modelData.y)
+                              .arg(hrow.collected ? qsTr("collected") : qsTr("still there"))
+                      font.pixelSize: 9
+                      opacity: 0.5
+                      elide: Text.ElideRight
                     }
                   }
                 }

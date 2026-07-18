@@ -54,6 +54,92 @@ struct MapScriptStep {
 };
 
 /**
+ * @brief One place on this map where a SCRIPT happens -- and the event flags it writes there.
+ *
+ * Imported from pret/pokered by scripts/import_map_storage_spots.py into maps.json's
+ * `storageSpots`. A plain struct (no QObject): MapModel::blockHotspots() reads it and hands QML a
+ * QVariantList, so QML never touches this directly.
+ *
+ * ⭐ **This is the only honest route from an event flag to a map.** An event flag has NO location
+ * of its own -- it belongs to the code. It has as many locations as there are located scripts that
+ * write it (leadership, 2026-07-17: *"Event flags dont have a location because they can be in
+ * multiple places there tied to scripts so show them where they happen on the map."*). A flag that
+ * nothing located writes gets no spot at all; inventing one would be inventing a fact.
+ *
+ * @ref events is **chain-unioned**: the importer follows `ld [w<Map>CurScript], a` through the
+ * map's own `_ScriptPointers` table, so a trigger carries the flags of the whole cutscene it
+ * starts, not just its own first line. @ref chain names the routines it hands off to -- non-empty
+ * means these flags fire LATER in the sequence, not on the tile itself, which is worth saying out
+ * loud rather than overclaiming.
+ *
+ * ⚠️ `scriptRow` / `scriptCol` are a whole row/column (a raw `cp` on `wYCoord`/`wXCoord`), and they
+ * are **not boxes**: they are highlight geometry, drawn at their true extent while hover and click
+ * happen on the 32x32 block they cross. There is deliberately no w/h here -- the extent is derived
+ * from the map's size, not stored.
+ *
+ * @ref x / @ref y are on the **walk grid** (half-blocks, 16x16), the same unit as `wYCoord`.
+ *
+ * @see notes/reference/map-storage-locations.md, notes/plans/map-screen.md -> Phase 16f
+ */
+/**
+ * @brief ONE write to a flag: who did it, in which phase, and WHICH WAY.
+ *
+ * The action is never flattened away. Leadership, 2026-07-17: *"they need to keep track of which
+ * script phases a map goes through like (First phase flags) (second phase flags) like which
+ * scripts and locations did what to them turning them on off etc"* and, for filter flags,
+ * *"i need them to be aware of which are on and off and where and by whom"*.
+ *
+ * A **set** and a **reset** of the same flag are opposite facts; a list that only said "this
+ * routine touches flag X" would answer neither question. So each write keeps its @ref action, the
+ * @ref step (the `wCurMapScript` phase that runs it -- the same number the map's "Current script"
+ * dropdown holds), the @ref routine, and whether it was reached @ref viaChain.
+ */
+struct MapDBEntryFlagWrite {
+  int ind = -1;        ///< The flag's index (event flag, or missable for a filter flag).
+  /// Events: `"set"` / `"reset"`. Filters: `"show"` / `"hide"`.
+  /// ⚠️ Filters are recorded as the game's VERB, not as the bit -- a missable's bit is
+  /// **set = HIDDEN**, so ShowObject *clears* it. The verb is what a person means; the inversion
+  /// is exactly what gets muddled.
+  QString action;
+  int step = -1;       ///< The script phase that does it (== the wCurMapScript value). -1 if none.
+  QString stepName;    ///< The `SCRIPT_<MAP>_<NAME>` constant for that phase.
+  QString routine;     ///< The pret routine that performs the write.
+  bool viaChain = false; ///< Reached through the chain -> fires LATER, not on the trigger's tile.
+};
+
+struct MapDBEntryStorageSpot {
+  QString kind;          ///< "scriptTile" | "scriptRow" | "scriptCol" | "cardKeyDoor".
+  int x = -1;            ///< Walk-grid X (scriptTile / scriptCol / cardKeyDoor).
+  int y = -1;            ///< Walk-grid Y (scriptTile / scriptRow / cardKeyDoor).
+  QString routine;       ///< The pret routine that owns this trigger (the unit of attribution).
+  int step = -1;         ///< The trigger routine's own phase, if it is one.
+  QVector<MapDBEntryFlagWrite> events;  ///< Event-flag writes, chain-unioned, in phase order.
+  QVector<MapDBEntryFlagWrite> filters; ///< Filter-flag writes, chain-unioned, in phase order.
+  QStringList chain;     ///< Routines it hands off to. Non-empty = some flags fire later.
+};
+
+/**
+ * @brief One PHASE of a map's story, and what it does to the world.
+ *
+ * The per-map answer to *"which script phases a map goes through — (First phase flags) (second
+ * phase flags)"*. Deliberately **not** limited to phases that have a location: a phase that writes
+ * its flags from a text box has no tile and is still a phase of the map. The located
+ * @ref MapDBEntryStorageSpot list adds the *where*; this is the *when* and the *by whom*.
+ *
+ * @ref step is the `wCurMapScript` value that runs it -- the same number `scriptEntries` and
+ * `WorldScripts` use, so a flag's phase and the "Current script" dropdown speak the same language.
+ */
+struct MapScriptPhase {
+  int step = -1;        ///< The wCurMapScript value that runs this phase.
+  QString name;         ///< The `SCRIPT_<MAP>_<NAME>` constant.
+  QString routine;      ///< The pret routine.
+  QVector<int> sets;    ///< Event flags it turns ON.
+  QVector<int> resets;  ///< Event flags it turns OFF.
+  QVector<int> shows;   ///< Objects it SHOWS (clears the missable bit).
+  QVector<int> hides;   ///< Objects it HIDES (sets the missable bit).
+};
+
+/**
  * @brief One map's complete static definition -- the root of the MapDBEntry family.
  *
  * The DB counterpart to the save's Area: everything canonical about a map. It owns
@@ -144,6 +230,15 @@ public:
   /// The map's named script steps (the "Current script" picker source). Empty for unscripted maps.
   const QVector<MapScriptStep>& getScriptSteps() const;
 
+  /// Every place on this map where a script happens, with the event flags it writes there.
+  /// Empty for the ~200 maps whose scripts never test the player's coords -- which is an answer,
+  /// not a gap. @see MapDBEntryStorageSpot
+  const QVector<MapDBEntryStorageSpot>& getStorageSpots() const;
+
+  /// This map's story, phase by phase: what each script step turns on, off, shows and hides.
+  /// @see MapScriptPhase
+  const QVector<MapScriptPhase>& getScriptPhases() const;
+
   const QVector<MapDBEntrySprite*> getSprites() const;  ///< Sprites on the map.
   int getSpritesSize() const;                           ///< @see getSpritesSize property.
   Q_INVOKABLE const MapDBEntrySprite* getSpritesAt(const int ind) const; ///< Sprite @p ind (for QML).
@@ -233,6 +328,11 @@ protected:
 
   // The map's named script steps (Current-script picker), imported by scripts/import_map_scripts.py.
   QVector<MapScriptStep> scriptSteps; ///< Named script-step list; empty for unscripted maps.
+
+  // Where this map's scripts happen + the flags they write, imported by
+  // scripts/import_map_storage_spots.py. @see MapDBEntryStorageSpot
+  QVector<MapDBEntryStorageSpot> storageSpots;
+  QVector<MapScriptPhase> scriptPhases; ///< The map's phase-by-phase story. @see MapScriptPhase
 
   // Sprites on map
   QVector<MapDBEntrySprite*> sprites;  ///< Sprites.

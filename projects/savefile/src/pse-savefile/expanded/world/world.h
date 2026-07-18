@@ -28,6 +28,12 @@
 #include "./worldscripts.h"
 #include "./worldmissables.h"
 #include "./worldevents.h"
+// ...and the hidden-pickup flags (world.hidden.hItemsAt/Set, hCoinsAt/Set), traversed by the Map
+// Storage panel's "Hidden Items & Coins" section since 2026-07-17. A forward declaration is NOT
+// enough here: an opaque QObject pointer makes QML read the WHOLE chain as `undefined` -- silently,
+// with no warning, which is the single most expensive bug this project has had.
+// @see notes/reference/qt-patterns.md
+#include "./worldhidden.h"
 
 class SaveFile;
 

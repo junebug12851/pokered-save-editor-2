@@ -80,8 +80,12 @@ Item {
   /// The ✎ button on a selected sprite -- the Map screen opens the Details panel on it.
   signal editRequested(int slot)
 
-  /// A flag box was clicked: open Map Storage ON missable @p missable. @see MapFlagBox.qml
-  signal flagRequested(int missable)
+  /// A storage spot was reached: open Map Storage at @p section, on row @p ind.
+  ///
+  /// `section` is the panel section the spot lives in ("missable" / "event" / "script" / "hidden"),
+  /// so one signal serves every storage kind -- adding the next kind means adding a spot type, not
+  /// another signal. @see MapBlockHotspot.qml, MapModel::blockHotspots
+  signal storageRequested(string section, int ind)
 
   // ── The MAKER TOOLS ───────────────────────────────────────────────────────────────────────
   //
@@ -279,7 +283,34 @@ Item {
   /// derived from the cartridge, so nothing the user edits can change it. What DOES change is each
   /// box's `hidden` — a live WorldMissables bit, read per-delegate below so flipping a switch redraws
   /// one box instead of rebuilding the list. @see notes/plans/map-screen.md -> Phase 16
-  readonly property var flagBoxes: brg.mapLayers.showFlagBoxes ? brg.map.flagHotspots() : []
+  /// The blocks that have persistent storage on them, each owning the list of spots that land there.
+  ///
+  /// The tile-trait family is passed the Tiles overlays that are actually SHOWN: they are the 8x8
+  /// tabs, and walls are on nearly every block, so an ungated strip would drown the storage tabs it
+  /// exists for. @see MapModel::blockHotspots
+  readonly property var flagBoxes: brg.mapLayers.showFlagBoxes
+                                     ? brg.map.blockHotspots(brg.map.layers)
+                                     : []
+
+  /// Which storage kinds the Layers panel is currently showing -- what the tab strip is allowed to
+  /// tab. *"the tab strip only needs to have tabs based on the active layers"* (Fairy Fox).
+  ///
+  /// ⚠️ OPEN, for Fairy Fox: the four storage kinds below all ride the ONE **Flag boxes** layer,
+  /// because that is the only row the tree has for them today. They are different things
+  /// (an object's filter flag · a hidden pickup · a script trigger · an event flag) and each
+  /// probably wants its own row, so they can be turned on and off apart -- but the layer tree is a
+  /// design of record, so this does not invent four rows on its own. When the rows exist, only this
+  /// list changes. `tileTrait` is already properly gated: its own Tiles overlays decide it, via
+  /// `blockHotspots(brg.map.layers)`.
+  readonly property var activeStorageKinds: {
+    const k = [];
+    if (brg.mapLayers.showFlagBoxes)
+      k.push("filterFlag", "hiddenItem", "hiddenCoin", "script", "cardKeyDoor", "eventFlag");
+    // The tile family is filtered in the model by the Tiles overlays, so anything that survived to
+    // here is on by definition.
+    k.push("tileTrait");
+    return k;
+  }
 
   /// The save's missable bits, for the boxes' dashes. Null until a file is open.
   readonly property var wMissables: {
@@ -881,34 +912,21 @@ Item {
         }
       }
 
-      // The FLAG BOXES -- one per object on this map the save keeps a flag for. Each carries `z: 0`,
-      // so they sit UNDER the real objects: a box annotates a thing, it must never cover it. A box
-      // with nothing on top of it is not a gap -- it is the save hiding that object, which is what
-      // the dashes say. @see notes/plans/map-screen.md -> Phase 16
+      // The STORAGE BLOCKS -- one per block of this map that has anything the save remembers on it.
+      // Each carries `z: 0`, so they sit UNDER the real objects: a box annotates a thing, it must
+      // never cover it. A box with nothing on top of it is not a gap -- it is the save hiding that
+      // object, which is what the dashes say. @see notes/plans/map-screen.md -> Phase 16f
       Repeater {
         model: canvasRoot.flagBoxes   // ROM-derived: no `revision` dependency, and it must not have one
 
-        delegate: MapFlagBox {
+        delegate: MapBlockHotspot {
           required property var modelData
 
           canvas: canvasRoot
-          missable: modelData.missable
-          tileX: modelData.x
-          tileY: modelData.y
-          name: modelData.name
-          desc: modelData.desc
-          oddity: modelData.oddity
-          scriptToggled: modelData.scriptToggled
+          block: modelData
+          activeKinds: canvasRoot.activeStorageKinds
 
-          // Read live, PER BOX: flipping one switch in Map Storage re-dashes this one box without
-          // rebuilding the whole list. WorldMissables: **bit set = HIDDEN**.
-          hidden: {
-            canvasRoot.revision;
-            return canvasRoot.wMissables ? canvasRoot.wMissables.missablesAt(modelData.missable)
-                                         : false;
-          }
-
-          onFlagClicked: (m) => canvasRoot.flagRequested(m)
+          onSpotClicked: (section, ind) => canvasRoot.storageRequested(section, ind)
         }
       }
 

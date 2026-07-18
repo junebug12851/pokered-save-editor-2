@@ -34,6 +34,7 @@
 #include <pse-db/entries/mapdbentrytext.h>
 #include <pse-db/entries/mapdbentrysprite.h>
 #include <pse-db/entries/missabledbentry.h>
+#include <pse-db/entries/hiddenitemdbentry.h>
 #include <pse-db/itemsdb.h>
 #include <pse-db/spriteSet.h>
 #include <pse-db/sprites.h>
@@ -4192,7 +4193,7 @@ QVariantList MapModel::storageMissables(const QVariantList& mapIds) const
 /// the UI can label the shared group and let you jump between them. We never build a page
 /// out of pret's `region`: that is a ROM ALLOCATION BLOCK, and we care about the save file,
 /// not the ROM's storage layout (leadership, 2026-07-16).
-QVariantList MapModel::flagHotspots() const
+QVariantList MapModel::flagHotspotsLegacy() const
 {
   QVariantList out;
   if (!valid())
@@ -4245,6 +4246,468 @@ QVariantList MapModel::flagHotspots() const
     out.append(v);
   }
 
+  return out;
+}
+
+// ══ THE LOCATION MODEL (16f-c) ═══════════════════════════════════════════════════════════════
+//
+// A box stops being "a missable with a rectangle" and becomes a PLACE that owns a list of the
+// storage spots landing on it. That restructure is the whole of 16f-c's model work, and it had to
+// come before the tabs rather than after: tabs on top of a one-spot box would have to be unpicked.
+//
+// ── The design of record (leadership, 2026-07-17, her settled call) ─────────────────────────
+//
+//   "literally 2x2, 4x4, 8x8, 16x16, 32x32 are all fine for measurements for the box you mouseover
+//    or click on. So, why dont we highlight truthfully the ranges and have clicks and mouse overs
+//    be on the blocks to keep things simple so tabs can be there for ranges affected over block
+//    including tiles like 8x8 ranges or 4x4 or 2x2"
+//
+// The insight is to SPLIT ONE THING INTO TWO, which the design had been conflating:
+//
+//   HIGHLIGHT   -- the data's OWN granularity. Tells the truth about what is affected.
+//                  A tile trait lights its 8x8. An object/warp/sign lights its 16x16 half-block.
+//                  A coord range lights exactly the cells it really covers.
+//   HIT TARGET  -- the block, 32x32, uniform. One block = one cursor cell = one tab strip.
+//
+// This dissolves the "a block box would be a lie" objection (raised, correctly, by the unit
+// research): a block box is only a lie if it CLAIMS TO BE the thing. Here it claims nothing -- it
+// is the cursor cell. The highlight carries the truth; the tabs carry the disambiguation. Two
+// warps in one block -> two tabs. That is what tabs are for.
+//
+// THE AGGREGATION RULE, and it is the whole model:
+//
+//   A block's tab strip = every storage spot whose TRUE EXTENT INTERSECTS that block --
+//   whatever unit that spot is measured in, finer or coarser.
+//
+// ⚠️ THREE UNITS, not two, and the middle one is where nearly everything lives (verified against
+// pret; `ld a,[wYCoord] / and $1 / ld [wYBlockCoord],a` proves wYCoord counts HALF-blocks):
+//   tile      8x8   -- tile attributes (collision, ledges, water, counters, warp tiles, doors)
+//   halfBlock 16x16 -- the walk grid: objects/filter flags, warps, signs, hidden items+coins,
+//                      script coord triggers. THIS is what the shipped 16x16 boxes always were;
+//                      only the word was wrong. Rename, don't resize.
+//   block     32x32 -- .blk data, map w/h, the border block, connections
+//
+// @see notes/reference/map-storage-locations.md, notes/plans/map-screen.md -> Phase 16f
+QVariantList MapModel::blockHotspots(quint32 tileLayers) const
+{
+  QVariantList out;
+  if (!valid())
+    return out;
+
+  MapDBEntry* map = MapsDB::inst()->getIndAt(QString::number(mapInd()));
+  if (map == nullptr)
+    return out;
+
+  const int border = MapEngine::mapBorder * MapEngine::blockPx;
+
+  // blockKey -> the spots landing on it. A spot lands on EVERY block its extent touches, so a
+  // coord range legitimately appears in a whole row of strips: that is the aggregation rule
+  // working, not duplication.
+  QMap<QPair<int, int>, QVariantList> byBlock;
+
+  /// File one spot onto every block its true extent intersects.
+  /// @param ext the spot's HIGHLIGHT geometry, in map pixels, at its own real size.
+  const auto file = [&](QVariantMap spot, const QRect& ext) {
+    spot["extX"] = ext.x();
+    spot["extY"] = ext.y();
+    spot["extW"] = ext.width();
+    spot["extH"] = ext.height();
+
+    const int bx0 = ext.left() / MapEngine::blockPx;
+    const int bx1 = (ext.right()) / MapEngine::blockPx;
+    const int by0 = ext.top() / MapEngine::blockPx;
+    const int by1 = (ext.bottom()) / MapEngine::blockPx;
+    for (int by = by0; by <= by1; by++)
+      for (int bx = bx0; bx <= bx1; bx++)
+        byBlock[{bx, by}].append(spot);
+  };
+
+  /// A walk-grid (16x16) thing at half-block (x, y) -- the unit almost everything positional uses.
+  const auto halfBlockRect = [&](int x, int y) {
+    return QRect(border + x * 16, border + y * 16, 16, 16);
+  };
+
+  // ── 1. FILTER FLAGS -- the ROM's cast, not the save's sprite slots ────────────────────────
+  //
+  // That distinction IS the feature: an object whose flag currently hides it has no sprite to
+  // draw, and still gets its spot, on the tile it would stand on.
+  for (MapDBEntrySprite* s : map->getSprites()) {
+    if (s == nullptr)
+      continue;
+    const int missable = s->getMissable();
+    if (missable < 0)
+      continue; // no flag, no spot. The Girl and the Aides are just people; clutter is a bug.
+
+    const MissableDBEntry* m = s->getToMissable();
+    QVariantMap v;
+    v["kind"]     = "filterFlag";
+    v["ind"]      = missable;
+    v["unit"]     = "halfBlock";
+    v["section"]  = "missable";
+    v["name"]     = (m != nullptr) ? m->getName() : s->getSprite();
+    v["desc"]     = (m != nullptr) ? m->getDesc() : QString();
+    v["sprite"]   = s->getSprite();
+    v["defShow"]  = (m != nullptr) ? m->getDefShow() : true;
+    v["oddity"]   = (m != nullptr) ? m->getOddity() : QString();
+    v["scriptToggled"] = (m != nullptr) ? m->getScriptToggled() : false;
+    v["x"] = s->getX();
+    v["y"] = s->getY();
+    // The live "is it hidden?" bit is deliberately NOT read here -- the canvas reads WorldMissables
+    // straight from the bridge, so flipping a switch redraws one box instead of rebuilding the list.
+    file(v, halfBlockRect(s->getX(), s->getY()));
+  }
+
+  // ── 2. HIDDEN ITEMS + COINS -- the cleanest positional data in the game ───────────────────
+  //
+  // bit `i` == row `i` of the ROM's coord table == a real (map, x, y). Index identity, not
+  // inference. ⚠️ These are NOT event flags: a hidden pickup is its own kind of storage, with its
+  // own save array (0x299C / 0x29AA). And the semantics are "COLLECTED", not "hidden/shown" --
+  // do not copy the missable's set=HIDDEN wording onto them.
+  const auto fileHidden = [&](const QVector<HiddenItemDBEntry*>& list, bool coins) {
+    for (const HiddenItemDBEntry* h : list) {
+      if (h == nullptr)
+        continue;
+      // The item's readable spelling comes from items.json's own `readable` field ("Great Ball"),
+      // never from re-casing the game's caps here -- items.json owns how an item is written, and
+      // a second opinion about it is a second source of truth.
+      const ItemDBEntry* item = coins ? nullptr : ItemsDB::inst()->getIndAt(h->getItem());
+      const QString readable = (item != nullptr) ? item->getReadable() : h->getItem();
+
+      QVariantMap v;
+      v["kind"]    = coins ? "hiddenCoin" : "hiddenItem";
+      v["ind"]     = h->getInd(); // == its bit in WorldHidden's own array
+      v["unit"]    = "halfBlock";
+      v["section"] = "hidden";
+      v["name"]    = coins ? tr("%1 coins").arg(h->getCoins()) : readable;
+      v["desc"]    = coins
+          ? tr("A hidden pile of %1 coins. Collected = you've already picked it up.").arg(h->getCoins())
+          : tr("A hidden %1. Collected = you've already picked it up.").arg(readable);
+      v["item"]    = h->getItem();
+      v["coins"]   = h->getCoins();
+      v["x"] = h->getX();
+      v["y"] = h->getY();
+      file(v, halfBlockRect(h->getX(), h->getY()));
+    }
+  };
+  fileHidden(map->getToHiddenItems(), false);
+  fileHidden(map->getToHiddenCoins(), true);
+
+  // ── 3. SCRIPT COORD TRIGGERS, and the EVENT FLAGS THEY WRITE ──────────────────────────────
+  //
+  // ⭐ This is how an event flag reaches the map at all (leadership, 2026-07-17):
+  //
+  //   "any script at any point on the map that sets or changes event flags, well that looks like a
+  //    good location to me x/y. Event flags dont have a location because they can be in multiple
+  //    places there tied to scripts so show them where they happen on the map."
+  //
+  // A flag has NO location of its own -- it has one per located script that writes it. So each
+  // event a trigger writes becomes its OWN spot at that trigger's place, which is exactly what she
+  // asked for: "those flags should be tabs on the script box". A flag nothing located writes gets
+  // NO spot; inventing one would be inventing a fact.
+  //
+  // The events are chain-unioned by the importer (`ld [w<Map>CurScript], a` through the map's own
+  // pointer table), so a trigger carries the flags of the whole cutscene it starts -- a proven,
+  // mechanical link, never proximity. @see scripts/import_map_storage_spots.py
+  const int mapW = map->getWidth() * MapEngine::blockPx;   // width/height are in BLOCKS
+  const int mapH = map->getHeight() * MapEngine::blockPx;
+
+  // Which script-progress byte a click should land on in Map Storage. -1 for the maps that have
+  // triggers but no script byte of their own -- shown, but not linked to a step it hasn't got.
+  const ScriptDBEntry* mapScript = map->getToScript();
+  const int mapScriptInd = (mapScript != nullptr) ? int(mapScript->ind) : -1;
+
+  for (const MapDBEntryStorageSpot& sp : map->getStorageSpots()) {
+    // The spot's true extent. A range is a REAL extent -- and it is NOT a box: it is highlight
+    // geometry that happens to be wide. It gets no hit target of its own; the blocks it crosses
+    // are the hit targets, and it appears as a tab on each.
+    QRect ext;
+    const QString kind = sp.kind;
+    if (kind == "scriptRow")
+      ext = QRect(border, border + sp.y * 16, mapW, 16);
+    else if (kind == "scriptCol")
+      ext = QRect(border + sp.x * 16, border, 16, mapH);
+    else
+      ext = halfBlockRect(sp.x, sp.y);
+
+    const bool chained = !sp.chain.isEmpty();
+
+    QVariantMap v;
+    v["kind"]    = (kind == "cardKeyDoor") ? QStringLiteral("cardKeyDoor") : QStringLiteral("script");
+    v["ind"]     = mapScriptInd;
+    v["unit"]    = "halfBlock";
+    v["section"] = "script";
+    v["name"]    = (kind == "cardKeyDoor") ? tr("Card Key door") : tr("Script trigger");
+    v["shape"]   = kind;
+    v["routine"] = sp.routine;
+    v["desc"]    = (kind == "scriptRow")
+        ? tr("Standing anywhere on this row runs a script.")
+        : (kind == "scriptCol")
+            ? tr("Standing anywhere in this column runs a script.")
+            : (kind == "cardKeyDoor")
+                ? tr("A door the Card Key opens.")
+                : tr("Standing here runs a script.");
+    file(v, ext);
+
+    // Each flag the trigger writes is its own tab, at the trigger's place -- carrying WHICH WAY it
+    // is written and in WHICH PHASE. "Turned on here, turned off there" is the question; a tab
+    // that only named the flag would answer none of it.
+    for (const MapDBEntryFlagWrite& w : sp.events) {
+      EventDBEntry* ev = EventsDB::inst()->getStoreAt(w.ind);
+      QVariantMap t;
+      t["kind"]     = "eventFlag";
+      t["ind"]      = w.ind;
+      t["unit"]     = "halfBlock";
+      t["section"]  = "event";
+      t["name"]     = (ev != nullptr) ? ev->getName() : tr("Event flag #%1").arg(w.ind);
+      t["desc"]     = (ev != nullptr) ? ev->getDesc() : QString();
+      t["caution"]  = (ev != nullptr) ? ev->getCaution() : QString();
+      t["action"]   = w.action;      // "set" / "reset"
+      t["step"]     = w.step;        // WHICH PHASE of this map does it
+      t["stepName"] = w.stepName;
+      t["routine"]  = w.routine;
+      // Honesty: a chain-reached flag is written by a LATER phase of the sequence this tile
+      // starts, not on the tile itself. The UI can say so rather than overclaiming.
+      t["viaChain"] = w.viaChain;
+      file(t, ext);
+    }
+
+    // ⚠️ The objects this trigger shows/hides are deliberately NOT tabs. The awareness of which
+    // filter flags are on/off, where and by whom lives in the PANEL LIST (mapPhases / flagHistory)
+    // -- leadership, 2026-07-17: "the extra awareness i described was for the list in the panel not
+    // the tabs we dont need too much ui clutter just have the tabs as i describe them".
+    //
+    // Giving them tabs here would put a second, duplicate tab for an object that already has its
+    // own filter-flag tab on its own tile, at a place the object isn't. The data is still carried
+    // (`sp.filters`), so the panel can tell the whole story without the canvas getting noisy.
+    Q_UNUSED(chained)
+  }
+
+  // ── 4. TILE TRAITS -- the 8x8 family, and the reason the strip has a gap ──────────────────
+  //
+  // Leadership: "door and warp tile traits would be an example of tile tabs seperated from
+  // non-tile tabs like filter flags or script locations or coord ranges".
+  //
+  // ⚠️ DESIGN CALL, flagged for her live pass. Tile traits are gated on the layer being SHOWN
+  // (`tileLayers`), for two reasons that both follow from rules she has already set:
+  //   1. "Clutter is a bug." Walls are on nearly every block in the game; an ungated strip would
+  //      put a Walls tab on virtually every block on the map and drown the storage tabs the strip
+  //      exists for.
+  //   2. Click priority IS the Layers panel's order, and a layer that is OFF draws nothing and
+  //      catches nothing -- so a tab reaching into a hidden layer would be reaching at something
+  //      that is not on screen.
+  // Every Tiles overlay defaults to OFF, so the tile family is empty until asked for -- and then
+  // it is exactly the traits you turned on. Nothing is hidden; it is one click away, as ever.
+  if (tileLayers != 0) {
+    const MapEngine::Buffer buf = mapBuffer();
+    const MapEngine::SaveTiles save = saveTilesOf(tileset);
+
+    for (int bit = 0; bit < 32; bit++) {
+      const auto layer = static_cast<MapEngine::Layer>(1u << bit);
+      if ((tileLayers & layer) == 0)
+        continue;
+
+      // ⚠️ ONE TAB PER TRAIT PER BLOCK -- not one per 8x8 tile.
+      //
+      // A block is 4x4 tiles, so a grassy block holds SIXTEEN grass tiles. Filing each one as its
+      // own spot stacked sixteen identical "Grass" tabs down one block and overflowed into the next
+      // -- the screenshot review showed it as an unbroken grey bar down the whole map, and no
+      // glance at the code would have predicted it. Sixteen tabs that all say "Grass" and all go to
+      // the same place disambiguate nothing, which is the one job a tab has. Clutter is a bug.
+      //
+      // The TRUTHFUL 8x8 highlight is not lost by doing this: `MapEngine::overlay()` already paints
+      // every one of those tiles at its own real size, in the layer's own colour, and has since
+      // long before this phase. The tab is the *handle*; the overlay is the *highlight*. Drawing our
+      // own boxes over the top would have been a second, redundant answer to a question already
+      // answered -- and would have to agree with it forever.
+      QSet<QPair<int, int>> seen;
+      for (const QPoint& p : MapEngine::tilesInLayer(buf, tilesetInd(), layer, save)) {
+        const QPair<int, int> blk{ p.x() / MapEngine::blockPx, p.y() / MapEngine::blockPx };
+        if (seen.contains(blk))
+          continue;
+        seen.insert(blk);
+
+        QVariantMap v;
+        v["kind"]    = "tileTrait";
+        v["ind"]     = int(layer);
+        v["unit"]    = "tile";              // 8x8 -- the one genuinely tile-sized family
+        v["section"] = "";                  // not Map Storage: a tile trait is a tileset fact
+        v["name"]    = MapEngine::layerName(layer);
+        v["desc"]    = MapEngine::layerDescription(layer);
+        // The extent is the BLOCK it is in: this spot means "this trait is somewhere in here", and
+        // saying 8x8 would point at one arbitrary tile of the sixteen. The overlay draws the truth.
+        file(v, QRect(blk.first * MapEngine::blockPx, blk.second * MapEngine::blockPx,
+                      MapEngine::blockPx, MapEngine::blockPx));
+      }
+    }
+  }
+
+  // ── Assemble: one entry per block that has anything on it ────────────────────────────────
+  for (auto it = byBlock.constBegin(); it != byBlock.constEnd(); ++it) {
+    QVariantMap b;
+    b["blockX"] = it.key().first;
+    b["blockY"] = it.key().second;
+    // The HIT TARGET: uniform 32x32, the cursor cell. It claims to be nothing but a cell.
+    b["rectX"]  = it.key().first * MapEngine::blockPx;
+    b["rectY"]  = it.key().second * MapEngine::blockPx;
+    b["rectW"]  = MapEngine::blockPx;
+    b["rectH"]  = MapEngine::blockPx;
+    b["spots"]  = it.value();
+    out.append(b);
+  }
+
+  return out;
+}
+
+QVariantList MapModel::storageHidden(const QVariantList& mapIds) const
+{
+  QVariantList out;
+
+  // Both hidden DBs, filed under the map each pickup is actually on -- leadership: "all the spots
+  // there in means there listed under that map".
+  //
+  // ⚠️ Items and coins are read from SEPARATE per-map lists on purpose: they are different save
+  // arrays (0x299C / 0x29AA) with independent numbering from 0, so `ind` is only meaningful next to
+  // `isCoin`. A merged list would make bit 3 ambiguous between a Moon Stone and a coin pile.
+  for (const QVariant& id : mapIds) {
+    MapDBEntry* map = MapsDB::inst()->getIndAt(QString::number(id.toInt()));
+    if (map == nullptr)
+      continue;
+
+    const auto add = [&](const QVector<HiddenItemDBEntry*>& list, bool coins) {
+      for (const HiddenItemDBEntry* h : list) {
+        if (h == nullptr)
+          continue;
+        const ItemDBEntry* item = coins ? nullptr : ItemsDB::inst()->getIndAt(h->getItem());
+        const QString readable = (item != nullptr) ? item->getReadable() : h->getItem();
+
+        QVariantMap v;
+        v["ind"]     = h->getInd();   // its bit in WorldHidden's own array
+        v["isCoin"]  = coins;
+        v["mapId"]   = id.toInt();
+        v["mapName"] = map->getName();
+        v["x"]       = h->getX();
+        v["y"]       = h->getY();
+        v["item"]    = h->getItem();
+        v["coins"]   = h->getCoins();
+        v["name"]    = coins ? tr("%1 coins").arg(h->getCoins()) : readable;
+        // "Collected", never "hidden/shown": a hidden pickup's bit means YOU ALREADY TOOK IT. It is
+        // not a missable and must not borrow the missable's wording.
+        v["desc"]    = coins
+            ? tr("A hidden pile of %1 coins, at (%2, %3).").arg(h->getCoins()).arg(h->getX()).arg(h->getY())
+            : tr("A hidden %1, at (%2, %3).").arg(readable).arg(h->getX()).arg(h->getY());
+        out.append(v);
+      }
+    };
+    add(map->getToHiddenItems(), false);
+    add(map->getToHiddenCoins(), true);
+  }
+  return out;
+}
+
+QVariantList MapModel::mapPhases(const QVariantList& mapIds) const
+{
+  QVariantList out;
+  for (const QVariant& id : mapIds) {
+    MapDBEntry* map = MapsDB::inst()->getIndAt(QString::number(id.toInt()));
+    if (map == nullptr)
+      continue;
+
+    for (const MapScriptPhase& p : map->getScriptPhases()) {
+      QVariantMap v;
+      v["mapId"]   = id.toInt();
+      v["mapName"] = map->getName();
+      v["step"]    = p.step;
+      v["name"]    = p.name;
+      v["routine"] = p.routine;
+
+      // Named, not numbered: "(First phase flags) (second phase flags)" is only readable if the
+      // flags say what they are. The phase's own label comes from the map's script-step list, the
+      // same one the "Current script" dropdown uses -- so the story and the dropdown agree.
+      QString label = tr("Phase %1").arg(p.step);
+      for (const MapScriptStep& s : map->getScriptSteps()) {
+        if (s.id == p.step && !s.label.isEmpty()) {
+          label = s.label;
+          break;
+        }
+      }
+      v["label"] = label;
+
+      const auto names = [&](const QVector<int>& inds, bool events) {
+        QVariantList l;
+        for (const int i : inds) {
+          QVariantMap e;
+          e["ind"] = i;
+          if (events) {
+            EventDBEntry* ev = EventsDB::inst()->getStoreAt(i);
+            e["name"] = (ev != nullptr) ? ev->getName() : tr("Event flag #%1").arg(i);
+          } else {
+            const MissableDBEntry* m = MissablesDB::inst()->getStoreAt(i);
+            e["name"] = (m != nullptr) ? m->getName() : tr("Filter flag #%1").arg(i);
+          }
+          l.append(e);
+        }
+        return l;
+      };
+      v["sets"]   = names(p.sets, true);
+      v["resets"] = names(p.resets, true);
+      v["shows"]  = names(p.shows, false);
+      v["hides"]  = names(p.hides, false);
+      out.append(v);
+    }
+  }
+  return out;
+}
+
+QVariantList MapModel::flagHistory(int ind, bool isEvent) const
+{
+  QVariantList out;
+
+  // A flag's story is told by every phase of every map that writes it. Walking all 249 maps is
+  // deliberate: a flag is NOT owned by one map (Silph Co's bits span 12 floors), and the whole
+  // question -- "which scripts and locations did what to them" -- is a cross-map one. The walk is
+  // over shipped in-memory data and runs once per panel open, not per frame.
+  for (MapDBEntry* map : MapsDB::inst()->getStore()) {
+    if (map == nullptr)
+      continue;
+
+    for (const MapScriptPhase& p : map->getScriptPhases()) {
+      const QVector<int>& on  = isEvent ? p.sets  : p.shows;
+      const QVector<int>& off = isEvent ? p.resets : p.hides;
+      if (!on.contains(ind) && !off.contains(ind))
+        continue;
+
+      QVariantMap v;
+      v["mapId"]   = int(map->getInd());
+      v["mapName"] = map->getName();
+      v["step"]    = p.step;
+      v["stepName"] = p.name;
+      v["routine"] = p.routine;
+      // Events read "turns on/off"; filters read "shows/hides" -- the game's own verb, never the
+      // inverted bit (a missable's bit SET means HIDDEN, which is the thing everyone gets wrong).
+      v["action"]  = on.contains(ind) ? (isEvent ? QStringLiteral("set") : QStringLiteral("show"))
+                                      : (isEvent ? QStringLiteral("reset") : QStringLiteral("hide"));
+
+      // ...and WHERE, when that phase happens to have a place. Most do not: a phase that fires
+      // from a text box has no tile, and saying so is better than implying it has one.
+      QVariantList at;
+      for (const MapDBEntryStorageSpot& sp : map->getStorageSpots()) {
+        const QVector<MapDBEntryFlagWrite>& ws = isEvent ? sp.events : sp.filters;
+        for (const MapDBEntryFlagWrite& w : ws) {
+          if (w.ind != ind || w.step != p.step)
+            continue;
+          QVariantMap l;
+          l["kind"] = sp.kind;
+          l["x"] = sp.x;
+          l["y"] = sp.y;
+          l["viaChain"] = w.viaChain;
+          at.append(l);
+          break;
+        }
+      }
+      v["locations"] = at;
+      out.append(v);
+    }
+  }
   return out;
 }
 

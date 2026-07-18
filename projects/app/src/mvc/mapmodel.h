@@ -965,6 +965,17 @@ public:
   /// The missables on the given maps: [{ind,name,desc,defShow,scriptToggled,oddity,
   /// linked:[{flag,eventIndex}]}] — `ind` is the WorldMissables bit (true = HIDDEN).
   Q_INVOKABLE QVariantList storageMissables(const QVariantList& mapIds) const;
+  /// The HIDDEN ITEMS + COINS buried on the given maps: `[{ind, isCoin, mapId, mapName, x, y,
+  /// item, coins, name, desc}]`.
+  ///
+  /// `ind` is the pickup's bit in WorldHidden -- and it is only meaningful **next to `isCoin`**:
+  /// items (`0x299C`) and coins (`0x29AA`) are separate arrays, each numbered from 0.
+  ///
+  /// ⚠️ The semantics are **collected** (you already picked it up), NOT hidden/shown. A hidden
+  /// pickup is its own kind of storage: not an event flag, not a missable.
+  /// @see notes/reference/map-storage-locations.md
+  Q_INVOKABLE QVariantList storageHidden(const QVariantList& mapIds) const;
+
   /// The EVENT FLAGS belonging to the page's map(s) -- name/desc/group/caution/
   /// classification, plus `shared` + `sharedWith` for a flag that lives on several
   /// maps. @see notes/reference/event-flags.md
@@ -977,8 +988,78 @@ public:
   /// object its flag currently hides still has a box, at the coordinates it would stand on. That is
   /// the whole feature. `hidden` is the live `WorldMissables` bit (**set = HIDDEN**), and it is what
   /// makes a box dashed. `missable` is the bit index -- what a click hands to Map Storage.
+  ///
+  /// @deprecated Superseded by @ref blockHotspots, which models a PLACE that owns a list of spots
+  /// rather than one flag with a rectangle. Kept only until the canvas is fully migrated.
   /// @see notes/plans/map-screen.md -> Phase 16
-  Q_INVOKABLE QVariantList flagHotspots() const;
+  Q_INVOKABLE QVariantList flagHotspotsLegacy() const;
+
+  /**
+   * @brief Every BLOCK on this map that has persistent storage on it, and everything that lands
+   *        there. The location model behind the tabbed squares (Phase 16f).
+   *
+   * A box is no longer "a missable with a rectangle" -- it is a **place that owns a list of
+   * spots**, each carrying its kind, its label, where in Map Storage it lives, its true extent and
+   * its unit. Kinds are open-ended **by design**: adding the next kind of storage should mean
+   * adding a spot type, not rewriting the box.
+   *
+   * Returns `[{ blockX, blockY, rectX, rectY, rectW, rectH, spots: [...] }]`, where each spot is
+   * `{ kind, ind, unit, section, name, desc, extX, extY, extW, extH, ... }`.
+   *
+   * **The two granularities, and keeping them apart is the whole design** (leadership's settled
+   * call, 2026-07-17):
+   * - **`ext*` = the HIGHLIGHT** -- the data's own real size. A tile trait is 8x8; an object or a
+   *   script tile is a 16x16 half-block; a coord range is exactly the row/column it covers. This
+   *   tells the truth about what is affected.
+   * - **`rect*` = the HIT TARGET** -- the block, 32x32, uniform. One block = one cursor cell = one
+   *   tab strip. It claims to be nothing except a cell, which is why it isn't a lie.
+   *
+   * **The aggregation rule:** a block's `spots` = every spot whose true extent *intersects* it,
+   * whatever unit it is measured in. So one coord range appears in a whole row of strips, and two
+   * warps in one block are two tabs -- which is what tabs are for.
+   *
+   * @param tileLayers the Tiles overlays currently SHOWN (a `MapEngine::Layer` bit set). Tile
+   *        traits are the 8x8 family and are gated on their layer being visible: walls are on
+   *        nearly every block, so an ungated strip would drown the storage tabs it exists for.
+   *        Pass 0 for storage only.
+   *
+   * @see notes/reference/map-storage-locations.md, notes/plans/map-screen.md -> Phase 16f
+   */
+  Q_INVOKABLE QVariantList blockHotspots(quint32 tileLayers = 0) const;
+
+  /**
+   * @brief The map's story, PHASE BY PHASE: what each script step turns on, off, shows and hides.
+   *
+   * Leadership, 2026-07-17: *"they need to keep track of which script phases a map goes through
+   * like (First phase flags) (second phase flags) like which scripts and locations did what to
+   * them turning them on off etc"* -- and the same for filter flags: *"i need them to be aware of
+   * which are on and off and where and by whom"*.
+   *
+   * Returns `[{ mapId, mapName, step, name, label, routine, sets[], resets[], shows[], hides[] }]`,
+   * each list `[{ind, name}]`. `step` is the `wCurMapScript` value that runs the phase -- the same
+   * number the "Current script" dropdown holds, so the story and the dropdown agree.
+   *
+   * Deliberately **not** limited to phases that have a location: a phase writing its flags from a
+   * text box has no tile and is still a phase of the map.
+   */
+  Q_INVOKABLE QVariantList mapPhases(const QVariantList& mapIds) const;
+
+  /**
+   * @brief ONE flag's whole story: every phase of every map that writes it, which way, and where.
+   *
+   * The "have the flags be aware of their states across scripts" surface. A flag is not owned by
+   * one map -- Silph Co's bits span 12 floors -- so this walks them all.
+   *
+   * Returns `[{ mapId, mapName, step, stepName, routine, action, locations[] }]`, where `action`
+   * is `set`/`reset` for an event flag and `show`/`hide` for a filter flag (the game's own verb,
+   * **never** the inverted bit -- a missable's bit *set* means HIDDEN), and `locations` is the
+   * places that phase can be triggered from (`[{kind, x, y, viaChain}]`), which is often empty and
+   * honestly so.
+   *
+   * @param ind     the flag index.
+   * @param isEvent true for an event flag (`wEventFlags`), false for a filter flag (missable).
+   */
+  Q_INVOKABLE QVariantList flagHistory(int ind, bool isEvent) const;
 
   int viewPtr() const;                      ///< The stored camera pointer (`0x260B`).
   int viewPtrComputed() const;              ///< The pointer for the player's current position.
@@ -1185,7 +1266,31 @@ private:
   AreaGeneral* general = nullptr; ///< The save's live "contrast" (wMapPalOffset).
   AreaPokemon* pokemon = nullptr; ///< The save's live encounter block -- for the cooldown flag (may be null).
 
-  int shownLayers = 0;            ///< A VIEW setting. Off by default: the map is the point.
+  /// The Tiles overlays shown, as a `MapEngine::Layer` bit set. A VIEW setting -- it touches
+  /// nothing in the save.
+  ///
+  /// ⭐ **The save-data rule** (Twilight, 2026-07-17): *"anything related to the save file is on by
+  /// default"* — and, explicitly, *"even the rom-only tiles like grass and water need to be turned
+  /// on by default because you can change the pokemon in them and also change whats grass in the
+  /// map state"*.
+  ///
+  /// The test is **not** "is this tile drawn from the ROM?" — nearly every tile is. It is **"is
+  /// there something here the save lets you change?"** By that test:
+  ///
+  /// | Layer | Save-backed? | |
+  /// |---|---|---|
+  /// | **Grass** | `wGrassTile` (`AreaTileset::grassTile`) **and** the map's grass encounter table | ON |
+  /// | **Water** | the map's water encounter table (`wWaterRate` + its ten slots) | ON |
+  /// | **Counters** | `wTilesetTalkingOverTiles` — the shop desks, editable per save | ON |
+  /// | **Border** | `wMapBackgroundTile` — the block the out-of-bounds ring is filled with | ON |
+  /// | Walls · Warp tiles · Doors · Ledges · Elevation · Cut trees | ROM tileset facts. The save has
+  ///   no byte for them: collision is a shared ROM list, and the tile ids are the tileset's own.
+  ///   Nothing to edit, so nothing to open unasked | off |
+  ///
+  /// ⚠️ This SUPERSEDES "every Tiles-group overlay OFF by default" (2026-07-15). Pinned by
+  /// `tst_map_layers`.
+  int shownLayers = MapEngine::LayerGrass | MapEngine::LayerWater
+                  | MapEngine::LayerCounters | MapEngine::LayerBorder;
   int animFrame = 0;              ///< The animation step. A VIEW setting; 0 is the still map.
   int selX = -1;                  ///< Selected block, in buffer coords. -1 = nothing selected.
   int selY = -1;

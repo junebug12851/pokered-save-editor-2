@@ -144,6 +144,69 @@ MapDBEntry::MapDBEntry(const QJsonValue& data)
     }
   }
 
+  // Where this map's scripts happen, and the flags they write there (plain structs; see
+  // MapDBEntryStorageSpot). Absent on the ~200 maps whose scripts never test the player's coords.
+  if(data["storageSpots"].isArray())
+  {
+    // Each write keeps WHO did it, in WHICH PHASE, and WHICH WAY. @see MapDBEntryFlagWrite
+    const auto readWrites = [](const QJsonValue& arr) {
+      QVector<MapDBEntryFlagWrite> out;
+      for(QJsonValue w : arr.toArray()) {
+        auto o = w.toObject();
+        MapDBEntryFlagWrite fw;
+        fw.ind = o["ind"].toInt(-1);
+        fw.action = o["action"].toString();
+        fw.step = o["step"].toInt(-1);
+        fw.stepName = o["stepName"].toString();
+        fw.routine = o["routine"].toString();
+        fw.viaChain = o["viaChain"].toBool();
+        out.append(fw);
+      }
+      return out;
+    };
+
+    for(QJsonValue s : data["storageSpots"].toArray()) {
+      auto o = s.toObject();
+      MapDBEntryStorageSpot spot;
+      spot.kind = o["kind"].toString();
+      // -1 (the default) means "this axis is not part of this spot" -- a scriptRow has a y and no
+      // x, and that is the honest reading of a whole-row trigger, not a missing value.
+      spot.x = o.contains("x") ? o["x"].toInt() : -1;
+      spot.y = o.contains("y") ? o["y"].toInt() : -1;
+      spot.routine = o["routine"].toString();
+      spot.step = o["step"].toInt(-1);
+      spot.events = readWrites(o["events"]);
+      spot.filters = readWrites(o["filters"]);
+      for(QJsonValue c : o["chain"].toArray())
+        spot.chain.append(c.toString());
+      storageSpots.append(spot);
+    }
+  }
+
+  // The map's phase-by-phase story. @see MapScriptPhase
+  if(data["scriptPhases"].isArray())
+  {
+    const auto readInds = [](const QJsonValue& arr) {
+      QVector<int> out;
+      for(QJsonValue v : arr.toArray())
+        out.append(v.toInt());
+      return out;
+    };
+
+    for(QJsonValue s : data["scriptPhases"].toArray()) {
+      auto o = s.toObject();
+      MapScriptPhase p;
+      p.step = o["step"].toInt(-1);
+      p.name = o["name"].toString();
+      p.routine = o["routine"].toString();
+      p.sets = readInds(o["sets"]);
+      p.resets = readInds(o["resets"]);
+      p.shows = readInds(o["shows"]);
+      p.hides = readInds(o["hides"]);
+      scriptPhases.append(p);
+    }
+  }
+
   if(data["redMons"].isArray())
   {
     for(QJsonValue monEntry : data["redMons"].toArray()) {
@@ -597,6 +660,16 @@ const MapDBEntryText* MapDBEntry::getTextEntriesAt(const int ind) const
 const QVector<MapScriptStep>& MapDBEntry::getScriptSteps() const
 {
   return scriptSteps;
+}
+
+const QVector<MapDBEntryStorageSpot>& MapDBEntry::getStorageSpots() const
+{
+  return storageSpots;
+}
+
+const QVector<MapScriptPhase>& MapDBEntry::getScriptPhases() const
+{
+  return scriptPhases;
 }
 
 const QVector<MapDBEntryWarpIn*> MapDBEntry::getWarpIn() const

@@ -188,6 +188,114 @@
         "label": "Noop",
         "desc": "The script has finished — nothing more runs here. (step 6 of 0–6)"
       }
+    ],
+    "storageSpots": [
+      {
+        "kind": "scriptRow",
+        "y": 1,
+        "span": "row",
+        "routine": "PalletTownDefaultScript",
+        "step": 0,
+        "events": [
+          {
+            "ind": 39,
+            "action": "set",
+            "step": 0,
+            "stepName": "SCRIPT_PALLETTOWN_DEFAULT",
+            "routine": "PalletTownDefaultScript",
+            "viaChain": false
+          },
+          {
+            "ind": 26,
+            "action": "set",
+            "step": 5,
+            "stepName": "SCRIPT_PALLETTOWN_DAISY",
+            "routine": "PalletTownDaisyScript",
+            "viaChain": true
+          },
+          {
+            "ind": 38,
+            "action": "set",
+            "step": 5,
+            "stepName": "SCRIPT_PALLETTOWN_DAISY",
+            "routine": "PalletTownDaisyScript",
+            "viaChain": true
+          }
+        ],
+        "filters": [
+          {
+            "ind": 0,
+            "action": "show",
+            "step": 1,
+            "stepName": "SCRIPT_PALLETTOWN_OAK_HEY_WAIT",
+            "routine": "PalletTownOakHeyWaitScript",
+            "viaChain": true
+          },
+          {
+            "ind": 39,
+            "action": "hide",
+            "step": 5,
+            "stepName": "SCRIPT_PALLETTOWN_DAISY",
+            "routine": "PalletTownDaisyScript",
+            "viaChain": true
+          },
+          {
+            "ind": 40,
+            "action": "show",
+            "step": 5,
+            "stepName": "SCRIPT_PALLETTOWN_DAISY",
+            "routine": "PalletTownDaisyScript",
+            "viaChain": true
+          }
+        ],
+        "chain": [
+          "PalletTownOakHeyWaitScript",
+          "PalletTownOakWalksToPlayerScript",
+          "PalletTownOakNotSafeComeWithMeScript",
+          "PalletTownPlayerFollowsOakScript",
+          "PalletTownDaisyScript"
+        ]
+      }
+    ],
+    "scriptPhases": [
+      {
+        "step": 0,
+        "name": "SCRIPT_PALLETTOWN_DEFAULT",
+        "routine": "PalletTownDefaultScript",
+        "sets": [
+          39
+        ],
+        "resets": [],
+        "shows": [],
+        "hides": []
+      },
+      {
+        "step": 1,
+        "name": "SCRIPT_PALLETTOWN_OAK_HEY_WAIT",
+        "routine": "PalletTownOakHeyWaitScript",
+        "sets": [],
+        "resets": [],
+        "shows": [
+          0
+        ],
+        "hides": []
+      },
+      {
+        "step": 5,
+        "name": "SCRIPT_PALLETTOWN_DAISY",
+        "routine": "PalletTownDaisyScript",
+        "sets": [
+          26,
+          38
+        ],
+        "resets": [],
+        "shows": [
+          40
+        ],
+        "hides": [
+          39
+        ]
+      }
     ]
   },
   {
@@ -468,6 +576,78 @@
         "name": "PLAYER_MOVING_DOWN",
         "label": "Player Moving Down",
         "desc": "A cutscene is stepping the player around this map. (step 3 of 0–3)"
+      }
+    ],
+    "storageSpots": [
+      {
+        "kind": "scriptRow",
+        "y": 8,
+        "span": "row",
+        "routine": "ViridianCityCheckGymOpenScript",
+        "step": -1,
+        "events": [
+          {
+            "ind": 40,
+            "action": "set",
+            "step": -1,
+            "stepName": "",
+            "routine": "ViridianCityCheckGymOpenScript",
+            "viaChain": false
+          }
+        ],
+        "filters": [],
+        "chain": [
+          "ViridianCityPlayerMovingDownScript",
+          "ViridianCityDefaultScript"
+        ]
+      },
+      {
+        "kind": "scriptCol",
+        "x": 32,
+        "span": "col",
+        "routine": "ViridianCityCheckGymOpenScript",
+        "step": -1,
+        "events": [
+          {
+            "ind": 40,
+            "action": "set",
+            "step": -1,
+            "stepName": "",
+            "routine": "ViridianCityCheckGymOpenScript",
+            "viaChain": false
+          }
+        ],
+        "filters": [],
+        "chain": [
+          "ViridianCityPlayerMovingDownScript",
+          "ViridianCityDefaultScript"
+        ]
+      },
+      {
+        "kind": "scriptRow",
+        "y": 9,
+        "span": "row",
+        "routine": "ViridianCityCheckGotPokedexScript",
+        "step": -1,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "ViridianCityPlayerMovingDownScript",
+          "ViridianCityDefaultScript"
+        ]
+      },
+      {
+        "kind": "scriptCol",
+        "x": 19,
+        "span": "col",
+        "routine": "ViridianCityCheckGotPokedexScript",
+        "step": -1,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "ViridianCityPlayerMovingDownScript",
+          "ViridianCityDefaultScript"
+        ]
       }
     ]
   },
@@ -765,6 +945,105 @@
         "name": "RESET_YOUNGSTER",
         "label": "Reset Youngster",
         "desc": "Stage 6 of this map's scripted events (0–6). The game walks these steps in order as the map's story plays out."
+      }
+    ],
+    "storageSpots": [
+      {
+        "kind": "scriptTile",
+        "x": 17,
+        "y": 35,
+        "routine": "PewterCityCheckPlayerLeavingEastScript",
+        "step": -1,
+        "events": [],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "scriptTile",
+        "x": 17,
+        "y": 36,
+        "routine": "PewterCityCheckPlayerLeavingEastScript",
+        "step": -1,
+        "events": [],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "scriptTile",
+        "x": 18,
+        "y": 37,
+        "routine": "PewterCityCheckPlayerLeavingEastScript",
+        "step": -1,
+        "events": [],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "scriptTile",
+        "x": 19,
+        "y": 37,
+        "routine": "PewterCityCheckPlayerLeavingEastScript",
+        "step": -1,
+        "events": [],
+        "filters": [],
+        "chain": []
+      }
+    ],
+    "scriptPhases": [
+      {
+        "step": 0,
+        "name": "SCRIPT_PEWTERCITY_DEFAULT",
+        "routine": "PewterCityDefaultScript",
+        "sets": [],
+        "resets": [
+          104
+        ],
+        "shows": [],
+        "hides": []
+      },
+      {
+        "step": 2,
+        "name": "SCRIPT_PEWTERCITY_HIDE_SUPER_NERD1",
+        "routine": "PewterCityHideSuperNerd1Script",
+        "sets": [],
+        "resets": [],
+        "shows": [],
+        "hides": [
+          3
+        ]
+      },
+      {
+        "step": 3,
+        "name": "SCRIPT_PEWTERCITY_RESET_SUPER_NERD1",
+        "routine": "PewterCityResetSuperNerd1Script",
+        "sets": [],
+        "resets": [],
+        "shows": [
+          3
+        ],
+        "hides": []
+      },
+      {
+        "step": 5,
+        "name": "SCRIPT_PEWTERCITY_HIDE_YOUNGSTER",
+        "routine": "PewterCityHideYoungsterScript",
+        "sets": [],
+        "resets": [],
+        "shows": [],
+        "hides": [
+          4
+        ]
+      },
+      {
+        "step": 6,
+        "name": "SCRIPT_PEWTERCITY_RESET_YOUNGSTER",
+        "routine": "PewterCityResetYoungsterScript",
+        "sets": [],
+        "resets": [],
+        "shows": [
+          4
+        ],
+        "hides": []
       }
     ]
   },
@@ -1154,6 +1433,294 @@
         "name": "ROCKET_DEFEATED",
         "label": "Rocket Defeated",
         "desc": "The dig-house Rocket has been dealt with."
+      }
+    ],
+    "storageSpots": [
+      {
+        "kind": "scriptTile",
+        "x": 7,
+        "y": 30,
+        "routine": "CeruleanCityDefaultScript",
+        "step": 0,
+        "events": [
+          {
+            "ind": 152,
+            "action": "set",
+            "step": 2,
+            "stepName": "SCRIPT_CERULEANCITY_RIVAL_DEFEATED",
+            "routine": "CeruleanCityRivalDefeatedScript",
+            "viaChain": true
+          }
+        ],
+        "filters": [
+          {
+            "ind": 5,
+            "action": "show",
+            "step": 0,
+            "stepName": "SCRIPT_CERULEANCITY_DEFAULT",
+            "routine": "CeruleanCityDefaultScript",
+            "viaChain": false
+          },
+          {
+            "ind": 5,
+            "action": "hide",
+            "step": 3,
+            "stepName": "SCRIPT_CERULEANCITY_RIVAL_CLEANUP",
+            "routine": "CeruleanCityRivalCleanupScript",
+            "viaChain": true
+          }
+        ],
+        "chain": [
+          "CeruleanCityRivalBattleScript",
+          "CeruleanCityRivalDefeatedScript",
+          "CeruleanCityRivalCleanupScript"
+        ]
+      },
+      {
+        "kind": "scriptTile",
+        "x": 9,
+        "y": 30,
+        "routine": "CeruleanCityDefaultScript",
+        "step": 0,
+        "events": [
+          {
+            "ind": 152,
+            "action": "set",
+            "step": 2,
+            "stepName": "SCRIPT_CERULEANCITY_RIVAL_DEFEATED",
+            "routine": "CeruleanCityRivalDefeatedScript",
+            "viaChain": true
+          }
+        ],
+        "filters": [
+          {
+            "ind": 5,
+            "action": "show",
+            "step": 0,
+            "stepName": "SCRIPT_CERULEANCITY_DEFAULT",
+            "routine": "CeruleanCityDefaultScript",
+            "viaChain": false
+          },
+          {
+            "ind": 5,
+            "action": "hide",
+            "step": 3,
+            "stepName": "SCRIPT_CERULEANCITY_RIVAL_CLEANUP",
+            "routine": "CeruleanCityRivalCleanupScript",
+            "viaChain": true
+          }
+        ],
+        "chain": [
+          "CeruleanCityRivalBattleScript",
+          "CeruleanCityRivalDefeatedScript",
+          "CeruleanCityRivalCleanupScript"
+        ]
+      },
+      {
+        "kind": "scriptTile",
+        "x": 6,
+        "y": 20,
+        "routine": "CeruleanCityDefaultScript",
+        "step": 0,
+        "events": [
+          {
+            "ind": 152,
+            "action": "set",
+            "step": 2,
+            "stepName": "SCRIPT_CERULEANCITY_RIVAL_DEFEATED",
+            "routine": "CeruleanCityRivalDefeatedScript",
+            "viaChain": true
+          }
+        ],
+        "filters": [
+          {
+            "ind": 5,
+            "action": "show",
+            "step": 0,
+            "stepName": "SCRIPT_CERULEANCITY_DEFAULT",
+            "routine": "CeruleanCityDefaultScript",
+            "viaChain": false
+          },
+          {
+            "ind": 5,
+            "action": "hide",
+            "step": 3,
+            "stepName": "SCRIPT_CERULEANCITY_RIVAL_CLEANUP",
+            "routine": "CeruleanCityRivalCleanupScript",
+            "viaChain": true
+          }
+        ],
+        "chain": [
+          "CeruleanCityRivalBattleScript",
+          "CeruleanCityRivalDefeatedScript",
+          "CeruleanCityRivalCleanupScript"
+        ]
+      },
+      {
+        "kind": "scriptTile",
+        "x": 6,
+        "y": 21,
+        "routine": "CeruleanCityDefaultScript",
+        "step": 0,
+        "events": [
+          {
+            "ind": 152,
+            "action": "set",
+            "step": 2,
+            "stepName": "SCRIPT_CERULEANCITY_RIVAL_DEFEATED",
+            "routine": "CeruleanCityRivalDefeatedScript",
+            "viaChain": true
+          }
+        ],
+        "filters": [
+          {
+            "ind": 5,
+            "action": "show",
+            "step": 0,
+            "stepName": "SCRIPT_CERULEANCITY_DEFAULT",
+            "routine": "CeruleanCityDefaultScript",
+            "viaChain": false
+          },
+          {
+            "ind": 5,
+            "action": "hide",
+            "step": 3,
+            "stepName": "SCRIPT_CERULEANCITY_RIVAL_CLEANUP",
+            "routine": "CeruleanCityRivalCleanupScript",
+            "viaChain": true
+          }
+        ],
+        "chain": [
+          "CeruleanCityRivalBattleScript",
+          "CeruleanCityRivalDefeatedScript",
+          "CeruleanCityRivalCleanupScript"
+        ]
+      },
+      {
+        "kind": "scriptCol",
+        "x": 20,
+        "span": "col",
+        "routine": "CeruleanCityDefaultScript",
+        "step": 0,
+        "events": [
+          {
+            "ind": 152,
+            "action": "set",
+            "step": 2,
+            "stepName": "SCRIPT_CERULEANCITY_RIVAL_DEFEATED",
+            "routine": "CeruleanCityRivalDefeatedScript",
+            "viaChain": true
+          }
+        ],
+        "filters": [
+          {
+            "ind": 5,
+            "action": "show",
+            "step": 0,
+            "stepName": "SCRIPT_CERULEANCITY_DEFAULT",
+            "routine": "CeruleanCityDefaultScript",
+            "viaChain": false
+          },
+          {
+            "ind": 5,
+            "action": "hide",
+            "step": 3,
+            "stepName": "SCRIPT_CERULEANCITY_RIVAL_CLEANUP",
+            "routine": "CeruleanCityRivalCleanupScript",
+            "viaChain": true
+          }
+        ],
+        "chain": [
+          "CeruleanCityRivalBattleScript",
+          "CeruleanCityRivalDefeatedScript",
+          "CeruleanCityRivalCleanupScript"
+        ]
+      },
+      {
+        "kind": "scriptCol",
+        "x": 20,
+        "span": "col",
+        "routine": "CeruleanCityRivalDefeatedScript",
+        "step": 2,
+        "events": [
+          {
+            "ind": 152,
+            "action": "set",
+            "step": 2,
+            "stepName": "SCRIPT_CERULEANCITY_RIVAL_DEFEATED",
+            "routine": "CeruleanCityRivalDefeatedScript",
+            "viaChain": false
+          }
+        ],
+        "filters": [
+          {
+            "ind": 5,
+            "action": "show",
+            "step": 0,
+            "stepName": "SCRIPT_CERULEANCITY_DEFAULT",
+            "routine": "CeruleanCityDefaultScript",
+            "viaChain": true
+          },
+          {
+            "ind": 5,
+            "action": "hide",
+            "step": 3,
+            "stepName": "SCRIPT_CERULEANCITY_RIVAL_CLEANUP",
+            "routine": "CeruleanCityRivalCleanupScript",
+            "viaChain": true
+          }
+        ],
+        "chain": [
+          "CeruleanCityRivalCleanupScript",
+          "CeruleanCityDefaultScript",
+          "CeruleanCityRivalBattleScript"
+        ]
+      }
+    ],
+    "scriptPhases": [
+      {
+        "step": 0,
+        "name": "SCRIPT_CERULEANCITY_DEFAULT",
+        "routine": "CeruleanCityDefaultScript",
+        "sets": [],
+        "resets": [],
+        "shows": [
+          5
+        ],
+        "hides": []
+      },
+      {
+        "step": 2,
+        "name": "SCRIPT_CERULEANCITY_RIVAL_DEFEATED",
+        "routine": "CeruleanCityRivalDefeatedScript",
+        "sets": [
+          152
+        ],
+        "resets": [],
+        "shows": [],
+        "hides": []
+      },
+      {
+        "step": 3,
+        "name": "SCRIPT_CERULEANCITY_RIVAL_CLEANUP",
+        "routine": "CeruleanCityRivalCleanupScript",
+        "sets": [],
+        "resets": [],
+        "shows": [],
+        "hides": [
+          5
+        ]
+      },
+      {
+        "step": 4,
+        "name": "SCRIPT_CERULEANCITY_ROCKET_DEFEATED",
+        "routine": "CeruleanCityRocketDefeatedScript",
+        "sets": [
+          167
+        ],
+        "resets": [],
+        "shows": [],
+        "hides": []
       }
     ]
   },
@@ -1661,6 +2228,61 @@
         "name": "PLAYER_ALLOWED_TO_PASS",
         "label": "Player Allowed To Pass",
         "desc": "The guard has taken your ticket — the dock is open."
+      }
+    ],
+    "storageSpots": [
+      {
+        "kind": "scriptTile",
+        "x": 30,
+        "y": 18,
+        "routine": "VermilionCityDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "VermilionCityPlayerMovingUp1Script"
+        ]
+      },
+      {
+        "kind": "scriptTile",
+        "x": 30,
+        "y": 18,
+        "routine": "VermilionCityPlayerAllowedToPassScript",
+        "step": 4,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "VermilionCityDefaultScript",
+          "VermilionCityPlayerMovingUp1Script"
+        ]
+      },
+      {
+        "kind": "scriptTile",
+        "x": 29,
+        "y": 19,
+        "routine": "VermilionCitySailor1Text",
+        "step": -1,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "VermilionCityPlayerAllowedToPassScript",
+          "VermilionCityDefaultScript",
+          "VermilionCityPlayerMovingUp1Script"
+        ]
+      },
+      {
+        "kind": "scriptTile",
+        "x": 31,
+        "y": 19,
+        "routine": "VermilionCitySailor1Text",
+        "step": -1,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "VermilionCityPlayerAllowedToPassScript",
+          "VermilionCityDefaultScript",
+          "VermilionCityPlayerMovingUp1Script"
+        ]
       }
     ]
   },
@@ -2618,6 +3240,32 @@
         "name": "PLAYER_MOVING",
         "label": "Player Moving",
         "desc": "A cutscene is stepping the player around this map. (step 1 of 0–1)"
+      }
+    ],
+    "storageSpots": [
+      {
+        "kind": "scriptRow",
+        "y": 4,
+        "span": "row",
+        "routine": "CinnabarIslandDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "CinnabarIslandPlayerMovingScript"
+        ]
+      },
+      {
+        "kind": "scriptCol",
+        "x": 18,
+        "span": "col",
+        "routine": "CinnabarIslandDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "CinnabarIslandPlayerMovingScript"
+        ]
       }
     ]
   },
@@ -6479,6 +7127,32 @@
         "label": "Snorlax Post Battle",
         "desc": "The after-victory scene (TM handout / parting words) plays. (step 3 of 0–3)"
       }
+    ],
+    "scriptPhases": [
+      {
+        "step": 0,
+        "name": "SCRIPT_ROUTE12_DEFAULT",
+        "routine": "Route12DefaultScript",
+        "sets": [],
+        "resets": [
+          1166
+        ],
+        "shows": [],
+        "hides": [
+          29
+        ]
+      },
+      {
+        "step": 3,
+        "name": "SCRIPT_ROUTE12_SNORLAX_POST_BATTLE",
+        "routine": "Route12SnorlaxPostBattleScript",
+        "sets": [
+          1167
+        ],
+        "resets": [],
+        "shows": [],
+        "hides": []
+      }
     ]
   },
   {
@@ -7820,6 +8494,32 @@
         "name": "SNORLAX_POST_BATTLE",
         "label": "Snorlax Post Battle",
         "desc": "The after-victory scene (TM handout / parting words) plays. (step 3 of 0–3)"
+      }
+    ],
+    "scriptPhases": [
+      {
+        "step": 0,
+        "name": "SCRIPT_ROUTE16_DEFAULT",
+        "routine": "Route16DefaultScript",
+        "sets": [],
+        "resets": [
+          1224
+        ],
+        "shows": [],
+        "hides": [
+          33
+        ]
+      },
+      {
+        "step": 3,
+        "name": "SCRIPT_ROUTE16_SNORLAX_POST_BATTLE",
+        "routine": "Route16SnorlaxPostBattleScript",
+        "sets": [
+          1225
+        ],
+        "resets": [],
+        "shows": [],
+        "hides": []
       }
     ]
   },
@@ -9578,6 +10278,80 @@
         "label": "Noop",
         "desc": "The script has finished — nothing more runs here. (step 7 of 0–7)"
       }
+    ],
+    "storageSpots": [
+      {
+        "kind": "scriptTile",
+        "x": 4,
+        "y": 29,
+        "routine": "Route22DefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "scriptTile",
+        "x": 5,
+        "y": 29,
+        "routine": "Route22DefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": []
+      }
+    ],
+    "scriptPhases": [
+      {
+        "step": 2,
+        "name": "SCRIPT_ROUTE22_RIVAL1_AFTER_BATTLE",
+        "routine": "Route22Rival1AfterBattleScript",
+        "sets": [
+          1317
+        ],
+        "resets": [],
+        "shows": [],
+        "hides": []
+      },
+      {
+        "step": 3,
+        "name": "SCRIPT_ROUTE22_RIVAL1_EXIT",
+        "routine": "Route22Rival1ExitScript",
+        "sets": [],
+        "resets": [
+          1312,
+          1319
+        ],
+        "shows": [],
+        "hides": [
+          34
+        ]
+      },
+      {
+        "step": 5,
+        "name": "SCRIPT_ROUTE22_RIVAL2_AFTER_BATTLE",
+        "routine": "Route22Rival2AfterBattleScript",
+        "sets": [
+          1318
+        ],
+        "resets": [],
+        "shows": [],
+        "hides": []
+      },
+      {
+        "step": 6,
+        "name": "SCRIPT_ROUTE22_RIVAL2_EXIT",
+        "routine": "Route22Rival2ExitScript",
+        "sets": [],
+        "resets": [
+          1313,
+          1319
+        ],
+        "shows": [],
+        "hides": [
+          35
+        ]
+      }
     ]
   },
   {
@@ -9861,6 +10635,18 @@
         "label": "Reset To Default",
         "desc": "Checkpoint scene finished — resetting to rest."
       }
+    ],
+    "storageSpots": [
+      {
+        "kind": "scriptCol",
+        "x": 14,
+        "span": "col",
+        "routine": "Route23DefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": []
+      }
     ]
   },
   {
@@ -10129,6 +10915,33 @@
         "name": "PLAYER_MOVING",
         "label": "Player Moving",
         "desc": "A cutscene is stepping the player around this map. (step 4 of 0–4)"
+      }
+    ],
+    "storageSpots": [
+      {
+        "kind": "scriptTile",
+        "x": 15,
+        "y": 10,
+        "routine": "Route24DefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "Route24PlayerMovingScript"
+        ]
+      }
+    ],
+    "scriptPhases": [
+      {
+        "step": 3,
+        "name": "SCRIPT_ROUTE24_AFTER_ROCKET_BATTLE",
+        "routine": "Route24AfterRocketBattleScript",
+        "sets": [
+          1345
+        ],
+        "resets": [],
+        "shows": [],
+        "hides": []
       }
     ]
   },
@@ -10652,6 +11465,19 @@
         "label": "Noop",
         "desc": "The script has finished — nothing more runs here. (step 1 of 0–1)"
       }
+    ],
+    "scriptPhases": [
+      {
+        "step": 0,
+        "name": "SCRIPT_BLUESHOUSE_DEFAULT",
+        "routine": "BluesHouseDefaultScript",
+        "sets": [
+          25
+        ],
+        "resets": [],
+        "shows": [],
+        "hides": []
+      }
     ]
   },
   {
@@ -11042,6 +11868,404 @@
         "label": "Noop",
         "desc": "The script has finished — nothing more runs here. (step 18 of 0–18)"
       }
+    ],
+    "storageSpots": [
+      {
+        "kind": "scriptRow",
+        "y": 6,
+        "span": "row",
+        "routine": "OaksLabPlayerDontGoAwayScript",
+        "step": 6,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "OaksLabPlayerForcedToWalkBackScript"
+        ]
+      },
+      {
+        "kind": "scriptRow",
+        "y": 4,
+        "span": "row",
+        "routine": "OaksLabChoseStarterScript",
+        "step": 8,
+        "events": [
+          {
+            "ind": 34,
+            "action": "set",
+            "step": 9,
+            "stepName": "SCRIPT_OAKSLAB_RIVAL_CHOOSES_STARTER",
+            "routine": "OaksLabRivalChoosesStarterScript",
+            "viaChain": true
+          },
+          {
+            "ind": 35,
+            "action": "set",
+            "step": 12,
+            "stepName": "SCRIPT_OAKSLAB_RIVAL_END_BATTLE",
+            "routine": "OaksLabRivalEndBattleScript",
+            "viaChain": true
+          }
+        ],
+        "filters": [
+          {
+            "ind": 45,
+            "action": "hide",
+            "step": 9,
+            "stepName": "SCRIPT_OAKSLAB_RIVAL_CHOOSES_STARTER",
+            "routine": "OaksLabRivalChoosesStarterScript",
+            "viaChain": true
+          },
+          {
+            "ind": 42,
+            "action": "hide",
+            "step": 14,
+            "stepName": "SCRIPT_OAKSLAB_PLAYER_WATCH_RIVAL_EXIT",
+            "routine": "OaksLabPlayerWatchRivalExitScript",
+            "viaChain": true
+          }
+        ],
+        "chain": [
+          "OaksLabRivalChoosesStarterScript",
+          "OaksLabRivalChallengesPlayerScript",
+          "OaksLabRivalStartBattleScript",
+          "OaksLabRivalEndBattleScript",
+          "OaksLabRivalStartsExitScript",
+          "OaksLabPlayerWatchRivalExitScript",
+          "OaksLabNoopScript"
+        ]
+      },
+      {
+        "kind": "scriptRow",
+        "y": 4,
+        "span": "row",
+        "routine": "OaksLabChoseStarterScript",
+        "step": 8,
+        "events": [
+          {
+            "ind": 34,
+            "action": "set",
+            "step": 9,
+            "stepName": "SCRIPT_OAKSLAB_RIVAL_CHOOSES_STARTER",
+            "routine": "OaksLabRivalChoosesStarterScript",
+            "viaChain": true
+          },
+          {
+            "ind": 35,
+            "action": "set",
+            "step": 12,
+            "stepName": "SCRIPT_OAKSLAB_RIVAL_END_BATTLE",
+            "routine": "OaksLabRivalEndBattleScript",
+            "viaChain": true
+          }
+        ],
+        "filters": [
+          {
+            "ind": 45,
+            "action": "hide",
+            "step": 9,
+            "stepName": "SCRIPT_OAKSLAB_RIVAL_CHOOSES_STARTER",
+            "routine": "OaksLabRivalChoosesStarterScript",
+            "viaChain": true
+          },
+          {
+            "ind": 42,
+            "action": "hide",
+            "step": 14,
+            "stepName": "SCRIPT_OAKSLAB_PLAYER_WATCH_RIVAL_EXIT",
+            "routine": "OaksLabPlayerWatchRivalExitScript",
+            "viaChain": true
+          }
+        ],
+        "chain": [
+          "OaksLabRivalChoosesStarterScript",
+          "OaksLabRivalChallengesPlayerScript",
+          "OaksLabRivalStartBattleScript",
+          "OaksLabRivalEndBattleScript",
+          "OaksLabRivalStartsExitScript",
+          "OaksLabPlayerWatchRivalExitScript",
+          "OaksLabNoopScript"
+        ]
+      },
+      {
+        "kind": "scriptCol",
+        "x": 9,
+        "span": "col",
+        "routine": "OaksLabChoseStarterScript",
+        "step": 8,
+        "events": [
+          {
+            "ind": 34,
+            "action": "set",
+            "step": 9,
+            "stepName": "SCRIPT_OAKSLAB_RIVAL_CHOOSES_STARTER",
+            "routine": "OaksLabRivalChoosesStarterScript",
+            "viaChain": true
+          },
+          {
+            "ind": 35,
+            "action": "set",
+            "step": 12,
+            "stepName": "SCRIPT_OAKSLAB_RIVAL_END_BATTLE",
+            "routine": "OaksLabRivalEndBattleScript",
+            "viaChain": true
+          }
+        ],
+        "filters": [
+          {
+            "ind": 45,
+            "action": "hide",
+            "step": 9,
+            "stepName": "SCRIPT_OAKSLAB_RIVAL_CHOOSES_STARTER",
+            "routine": "OaksLabRivalChoosesStarterScript",
+            "viaChain": true
+          },
+          {
+            "ind": 42,
+            "action": "hide",
+            "step": 14,
+            "stepName": "SCRIPT_OAKSLAB_PLAYER_WATCH_RIVAL_EXIT",
+            "routine": "OaksLabPlayerWatchRivalExitScript",
+            "viaChain": true
+          }
+        ],
+        "chain": [
+          "OaksLabRivalChoosesStarterScript",
+          "OaksLabRivalChallengesPlayerScript",
+          "OaksLabRivalStartBattleScript",
+          "OaksLabRivalEndBattleScript",
+          "OaksLabRivalStartsExitScript",
+          "OaksLabPlayerWatchRivalExitScript",
+          "OaksLabNoopScript"
+        ]
+      },
+      {
+        "kind": "scriptRow",
+        "y": 6,
+        "span": "row",
+        "routine": "OaksLabRivalChallengesPlayerScript",
+        "step": 10,
+        "events": [
+          {
+            "ind": 35,
+            "action": "set",
+            "step": 12,
+            "stepName": "SCRIPT_OAKSLAB_RIVAL_END_BATTLE",
+            "routine": "OaksLabRivalEndBattleScript",
+            "viaChain": true
+          }
+        ],
+        "filters": [
+          {
+            "ind": 42,
+            "action": "hide",
+            "step": 14,
+            "stepName": "SCRIPT_OAKSLAB_PLAYER_WATCH_RIVAL_EXIT",
+            "routine": "OaksLabPlayerWatchRivalExitScript",
+            "viaChain": true
+          }
+        ],
+        "chain": [
+          "OaksLabRivalStartBattleScript",
+          "OaksLabRivalEndBattleScript",
+          "OaksLabRivalStartsExitScript",
+          "OaksLabPlayerWatchRivalExitScript",
+          "OaksLabNoopScript"
+        ]
+      },
+      {
+        "kind": "scriptCol",
+        "x": 4,
+        "span": "col",
+        "routine": "OaksLabRivalStartsExitScript",
+        "step": 13,
+        "events": [],
+        "filters": [
+          {
+            "ind": 42,
+            "action": "hide",
+            "step": 14,
+            "stepName": "SCRIPT_OAKSLAB_PLAYER_WATCH_RIVAL_EXIT",
+            "routine": "OaksLabPlayerWatchRivalExitScript",
+            "viaChain": true
+          }
+        ],
+        "chain": [
+          "OaksLabPlayerWatchRivalExitScript",
+          "OaksLabNoopScript"
+        ]
+      },
+      {
+        "kind": "scriptCol",
+        "x": 4,
+        "span": "col",
+        "routine": "OaksLabPlayerWatchRivalExitScript",
+        "step": 14,
+        "events": [],
+        "filters": [
+          {
+            "ind": 42,
+            "action": "hide",
+            "step": 14,
+            "stepName": "SCRIPT_OAKSLAB_PLAYER_WATCH_RIVAL_EXIT",
+            "routine": "OaksLabPlayerWatchRivalExitScript",
+            "viaChain": false
+          }
+        ],
+        "chain": [
+          "OaksLabNoopScript"
+        ]
+      },
+      {
+        "kind": "scriptRow",
+        "y": 3,
+        "span": "row",
+        "routine": "OaksLabCalcRivalMovementScript",
+        "step": -1,
+        "events": [],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "scriptCol",
+        "x": 4,
+        "span": "col",
+        "routine": "OaksLabCalcRivalMovementScript",
+        "step": -1,
+        "events": [],
+        "filters": [],
+        "chain": []
+      }
+    ],
+    "scriptPhases": [
+      {
+        "step": 0,
+        "name": "SCRIPT_OAKSLAB_DEFAULT",
+        "routine": "OaksLabDefaultScript",
+        "sets": [],
+        "resets": [],
+        "shows": [
+          49
+        ],
+        "hides": []
+      },
+      {
+        "step": 2,
+        "name": "SCRIPT_OAKSLAB_TOGGLE_OAKS",
+        "routine": "OaksLabToggleOaksScript",
+        "sets": [],
+        "resets": [],
+        "shows": [
+          46
+        ],
+        "hides": [
+          49
+        ]
+      },
+      {
+        "step": 4,
+        "name": "SCRIPT_OAKSLAB_FOLLOWED_OAK",
+        "routine": "OaksLabFollowedOakScript",
+        "sets": [
+          0,
+          32
+        ],
+        "resets": [],
+        "shows": [],
+        "hides": []
+      },
+      {
+        "step": 5,
+        "name": "SCRIPT_OAKSLAB_OAK_CHOOSE_MON_SPEECH",
+        "routine": "OaksLabOakChooseMonSpeechScript",
+        "sets": [
+          33
+        ],
+        "resets": [],
+        "shows": [],
+        "hides": []
+      },
+      {
+        "step": 9,
+        "name": "SCRIPT_OAKSLAB_RIVAL_CHOOSES_STARTER",
+        "routine": "OaksLabRivalChoosesStarterScript",
+        "sets": [
+          34
+        ],
+        "resets": [],
+        "shows": [],
+        "hides": [
+          45
+        ]
+      },
+      {
+        "step": 12,
+        "name": "SCRIPT_OAKSLAB_RIVAL_END_BATTLE",
+        "routine": "OaksLabRivalEndBattleScript",
+        "sets": [
+          35
+        ],
+        "resets": [],
+        "shows": [],
+        "hides": []
+      },
+      {
+        "step": 14,
+        "name": "SCRIPT_OAKSLAB_PLAYER_WATCH_RIVAL_EXIT",
+        "routine": "OaksLabPlayerWatchRivalExitScript",
+        "sets": [],
+        "resets": [],
+        "shows": [],
+        "hides": [
+          42
+        ]
+      },
+      {
+        "step": 15,
+        "name": "SCRIPT_OAKSLAB_RIVAL_ARRIVES_AT_OAKS_REQUEST",
+        "routine": "OaksLabRivalArrivesAtOaksRequestScript",
+        "sets": [],
+        "resets": [],
+        "shows": [
+          42
+        ],
+        "hides": []
+      },
+      {
+        "step": 16,
+        "name": "SCRIPT_OAKSLAB_OAK_GIVES_POKEDEX",
+        "routine": "OaksLabOakGivesPokedexScript",
+        "sets": [
+          37,
+          56
+        ],
+        "resets": [],
+        "shows": [
+          2
+        ],
+        "hides": [
+          1,
+          47,
+          48
+        ]
+      },
+      {
+        "step": 17,
+        "name": "SCRIPT_OAKSLAB_RIVAL_LEAVES_WITH_POKEDEX",
+        "routine": "OaksLabRivalLeavesWithPokedexScript",
+        "sets": [
+          1312,
+          1319
+        ],
+        "resets": [
+          1313
+        ],
+        "shows": [
+          34
+        ],
+        "hides": [
+          42
+        ]
+      }
     ]
   },
   {
@@ -11234,6 +12458,19 @@
         "name": "NOOP",
         "label": "Noop",
         "desc": "The script has finished — nothing more runs here. (step 2 of 0–2)"
+      }
+    ],
+    "scriptPhases": [
+      {
+        "step": 1,
+        "name": "SCRIPT_VIRIDIANMART_OAKS_PARCEL",
+        "routine": "ViridianMartOaksParcelScript",
+        "sets": [
+          57
+        ],
+        "resets": [],
+        "shows": [],
+        "hides": []
       }
     ]
   },
@@ -12559,6 +13796,101 @@
         "name": "NOOP",
         "label": "Noop",
         "desc": "The script has finished — nothing more runs here. (step 1 of 0–1)"
+      }
+    ],
+    "storageSpots": [
+      {
+        "kind": "scriptRow",
+        "y": 4,
+        "span": "row",
+        "routine": "Museum1FDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "scriptCol",
+        "x": 9,
+        "span": "col",
+        "routine": "Museum1FDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "scriptCol",
+        "x": 10,
+        "span": "col",
+        "routine": "Museum1FDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "scriptRow",
+        "y": 4,
+        "span": "row",
+        "routine": "Museum1FScientist1Text",
+        "step": -1,
+        "events": [
+          {
+            "ind": 104,
+            "action": "set",
+            "step": -1,
+            "stepName": "",
+            "routine": "Museum1FScientist1Text",
+            "viaChain": false
+          }
+        ],
+        "filters": [],
+        "chain": [
+          "Museum1FNoopScript"
+        ]
+      },
+      {
+        "kind": "scriptCol",
+        "x": 13,
+        "span": "col",
+        "routine": "Museum1FScientist1Text",
+        "step": -1,
+        "events": [
+          {
+            "ind": 104,
+            "action": "set",
+            "step": -1,
+            "stepName": "",
+            "routine": "Museum1FScientist1Text",
+            "viaChain": false
+          }
+        ],
+        "filters": [],
+        "chain": [
+          "Museum1FNoopScript"
+        ]
+      },
+      {
+        "kind": "scriptCol",
+        "x": 12,
+        "span": "col",
+        "routine": "Museum1FScientist1Text",
+        "step": -1,
+        "events": [
+          {
+            "ind": 104,
+            "action": "set",
+            "step": -1,
+            "stepName": "",
+            "routine": "Museum1FScientist1Text",
+            "viaChain": false
+          }
+        ],
+        "filters": [],
+        "chain": [
+          "Museum1FNoopScript"
+        ]
       }
     ]
   },
@@ -14022,6 +15354,344 @@
         "label": "Super Nerd Takes Other Fossil",
         "desc": "Stage 5 of this map's scripted events (0–5). The game walks these steps in order as the map's story plays out."
       }
+    ],
+    "storageSpots": [
+      {
+        "kind": "scriptTile",
+        "x": 5,
+        "y": 11,
+        "routine": "MtMoonB2F_Script",
+        "step": -1,
+        "events": [],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "scriptTile",
+        "x": 5,
+        "y": 12,
+        "routine": "MtMoonB2F_Script",
+        "step": -1,
+        "events": [],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "scriptTile",
+        "x": 5,
+        "y": 13,
+        "routine": "MtMoonB2F_Script",
+        "step": -1,
+        "events": [],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "scriptTile",
+        "x": 5,
+        "y": 14,
+        "routine": "MtMoonB2F_Script",
+        "step": -1,
+        "events": [],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "scriptTile",
+        "x": 6,
+        "y": 11,
+        "routine": "MtMoonB2F_Script",
+        "step": -1,
+        "events": [],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "scriptTile",
+        "x": 6,
+        "y": 12,
+        "routine": "MtMoonB2F_Script",
+        "step": -1,
+        "events": [],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "scriptTile",
+        "x": 6,
+        "y": 13,
+        "routine": "MtMoonB2F_Script",
+        "step": -1,
+        "events": [],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "scriptTile",
+        "x": 6,
+        "y": 14,
+        "routine": "MtMoonB2F_Script",
+        "step": -1,
+        "events": [],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "scriptTile",
+        "x": 7,
+        "y": 11,
+        "routine": "MtMoonB2F_Script",
+        "step": -1,
+        "events": [],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "scriptTile",
+        "x": 7,
+        "y": 12,
+        "routine": "MtMoonB2F_Script",
+        "step": -1,
+        "events": [],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "scriptTile",
+        "x": 7,
+        "y": 13,
+        "routine": "MtMoonB2F_Script",
+        "step": -1,
+        "events": [],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "scriptTile",
+        "x": 7,
+        "y": 14,
+        "routine": "MtMoonB2F_Script",
+        "step": -1,
+        "events": [],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "scriptTile",
+        "x": 8,
+        "y": 11,
+        "routine": "MtMoonB2F_Script",
+        "step": -1,
+        "events": [],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "scriptTile",
+        "x": 8,
+        "y": 12,
+        "routine": "MtMoonB2F_Script",
+        "step": -1,
+        "events": [],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "scriptTile",
+        "x": 8,
+        "y": 13,
+        "routine": "MtMoonB2F_Script",
+        "step": -1,
+        "events": [],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "scriptTile",
+        "x": 8,
+        "y": 14,
+        "routine": "MtMoonB2F_Script",
+        "step": -1,
+        "events": [],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "scriptRow",
+        "y": 8,
+        "span": "row",
+        "routine": "MtMoonB2FDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "scriptCol",
+        "x": 13,
+        "span": "col",
+        "routine": "MtMoonB2FDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "scriptTile",
+        "x": 7,
+        "y": 12,
+        "routine": "MtMoonB2FMoveSuperNerdScript",
+        "step": 4,
+        "events": [],
+        "filters": [
+          {
+            "ind": 109,
+            "action": "hide",
+            "step": 5,
+            "stepName": "SCRIPT_MTMOONB2F_SUPER_NERD_TAKES_OTHER_FOSSIL",
+            "routine": "MtMoonB2FSuperNerdTakesOtherFossilScript",
+            "viaChain": true
+          }
+        ],
+        "chain": [
+          "MtMoonB2FSuperNerdTakesOtherFossilScript",
+          "MtMoonB2FDefaultScript"
+        ]
+      },
+      {
+        "kind": "scriptTile",
+        "x": 6,
+        "y": 11,
+        "routine": "MtMoonB2FMoveSuperNerdScript",
+        "step": 4,
+        "events": [],
+        "filters": [
+          {
+            "ind": 109,
+            "action": "hide",
+            "step": 5,
+            "stepName": "SCRIPT_MTMOONB2F_SUPER_NERD_TAKES_OTHER_FOSSIL",
+            "routine": "MtMoonB2FSuperNerdTakesOtherFossilScript",
+            "viaChain": true
+          }
+        ],
+        "chain": [
+          "MtMoonB2FSuperNerdTakesOtherFossilScript",
+          "MtMoonB2FDefaultScript"
+        ]
+      },
+      {
+        "kind": "scriptTile",
+        "x": 5,
+        "y": 12,
+        "routine": "MtMoonB2FMoveSuperNerdScript",
+        "step": 4,
+        "events": [],
+        "filters": [
+          {
+            "ind": 109,
+            "action": "hide",
+            "step": 5,
+            "stepName": "SCRIPT_MTMOONB2F_SUPER_NERD_TAKES_OTHER_FOSSIL",
+            "routine": "MtMoonB2FSuperNerdTakesOtherFossilScript",
+            "viaChain": true
+          }
+        ],
+        "chain": [
+          "MtMoonB2FSuperNerdTakesOtherFossilScript",
+          "MtMoonB2FDefaultScript"
+        ]
+      },
+      {
+        "kind": "scriptTile",
+        "x": 7,
+        "y": 13,
+        "routine": "MtMoonB2FMoveSuperNerdScript",
+        "step": 4,
+        "events": [],
+        "filters": [
+          {
+            "ind": 109,
+            "action": "hide",
+            "step": 5,
+            "stepName": "SCRIPT_MTMOONB2F_SUPER_NERD_TAKES_OTHER_FOSSIL",
+            "routine": "MtMoonB2FSuperNerdTakesOtherFossilScript",
+            "viaChain": true
+          }
+        ],
+        "chain": [
+          "MtMoonB2FSuperNerdTakesOtherFossilScript",
+          "MtMoonB2FDefaultScript"
+        ]
+      },
+      {
+        "kind": "scriptTile",
+        "x": 6,
+        "y": 14,
+        "routine": "MtMoonB2FMoveSuperNerdScript",
+        "step": 4,
+        "events": [],
+        "filters": [
+          {
+            "ind": 109,
+            "action": "hide",
+            "step": 5,
+            "stepName": "SCRIPT_MTMOONB2F_SUPER_NERD_TAKES_OTHER_FOSSIL",
+            "routine": "MtMoonB2FSuperNerdTakesOtherFossilScript",
+            "viaChain": true
+          }
+        ],
+        "chain": [
+          "MtMoonB2FSuperNerdTakesOtherFossilScript",
+          "MtMoonB2FDefaultScript"
+        ]
+      },
+      {
+        "kind": "scriptTile",
+        "x": 5,
+        "y": 14,
+        "routine": "MtMoonB2FMoveSuperNerdScript",
+        "step": 4,
+        "events": [],
+        "filters": [
+          {
+            "ind": 109,
+            "action": "hide",
+            "step": 5,
+            "stepName": "SCRIPT_MTMOONB2F_SUPER_NERD_TAKES_OTHER_FOSSIL",
+            "routine": "MtMoonB2FSuperNerdTakesOtherFossilScript",
+            "viaChain": true
+          }
+        ],
+        "chain": [
+          "MtMoonB2FSuperNerdTakesOtherFossilScript",
+          "MtMoonB2FDefaultScript"
+        ]
+      }
+    ],
+    "scriptPhases": [
+      {
+        "step": 3,
+        "name": "SCRIPT_MTMOONB2F_DEFEATED_SUPER_NERD",
+        "routine": "MtMoonB2FDefeatedSuperNerdScript",
+        "sets": [
+          1401
+        ],
+        "resets": [],
+        "shows": [],
+        "hides": []
+      },
+      {
+        "step": 5,
+        "name": "SCRIPT_MTMOONB2F_SUPER_NERD_TAKES_OTHER_FOSSIL",
+        "routine": "MtMoonB2FSuperNerdTakesOtherFossilScript",
+        "sets": [],
+        "resets": [],
+        "shows": [],
+        "hides": [
+          109
+        ]
+      }
     ]
   },
   {
@@ -14821,6 +16491,32 @@
         "label": "Player Moving",
         "desc": "A cutscene is stepping the player around this map. (step 1 of 0–1)"
       }
+    ],
+    "storageSpots": [
+      {
+        "kind": "scriptTile",
+        "x": 3,
+        "y": 3,
+        "routine": "Route5GateDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "Route5GatePlayerMovingScript"
+        ]
+      },
+      {
+        "kind": "scriptTile",
+        "x": 3,
+        "y": 4,
+        "routine": "Route5GateDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "Route5GatePlayerMovingScript"
+        ]
+      }
     ]
   },
   {
@@ -15038,6 +16734,32 @@
         "label": "Player Moving",
         "desc": "A cutscene is stepping the player around this map. (step 1 of 0–1)"
       }
+    ],
+    "storageSpots": [
+      {
+        "kind": "scriptTile",
+        "x": 2,
+        "y": 3,
+        "routine": "Route6GateDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "Route6GatePlayerMovingScript"
+        ]
+      },
+      {
+        "kind": "scriptTile",
+        "x": 2,
+        "y": 4,
+        "routine": "Route6GateDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "Route6GatePlayerMovingScript"
+        ]
+      }
     ]
   },
   {
@@ -15221,6 +16943,32 @@
         "name": "PLAYER_MOVING",
         "label": "Player Moving",
         "desc": "A cutscene is stepping the player around this map. (step 1 of 0–1)"
+      }
+    ],
+    "storageSpots": [
+      {
+        "kind": "scriptTile",
+        "x": 3,
+        "y": 3,
+        "routine": "Route7DefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "Route7PlayerMovingScript"
+        ]
+      },
+      {
+        "kind": "scriptTile",
+        "x": 4,
+        "y": 3,
+        "routine": "Route7DefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "Route7PlayerMovingScript"
+        ]
       }
     ]
   },
@@ -15464,6 +17212,32 @@
         "name": "PLAYER_MOVING",
         "label": "Player Moving",
         "desc": "A cutscene is stepping the player around this map. (step 1 of 0–1)"
+      }
+    ],
+    "storageSpots": [
+      {
+        "kind": "scriptTile",
+        "x": 3,
+        "y": 2,
+        "routine": "Route8GateDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "Route8GatePlayerMovingScript"
+        ]
+      },
+      {
+        "kind": "scriptTile",
+        "x": 4,
+        "y": 2,
+        "routine": "Route8GateDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "Route8GatePlayerMovingScript"
+        ]
       }
     ]
   },
@@ -16761,6 +18535,44 @@
         "label": "Pc",
         "desc": "Stage 5 of this map's scripted events (0–5). The game walks these steps in order as the map's story plays out."
       }
+    ],
+    "scriptPhases": [
+      {
+        "step": 2,
+        "name": "SCRIPT_BILLSHOUSE_POKEMON_ENTERS_MACHINE",
+        "routine": "BillsHousePokemonEntersMachineScript",
+        "sets": [
+          1374
+        ],
+        "resets": [],
+        "shows": [],
+        "hides": [
+          97
+        ]
+      },
+      {
+        "step": 3,
+        "name": "SCRIPT_BILLSHOUSE_BILL_EXITS_MACHINE",
+        "routine": "BillsHouseBillExitsMachineScript",
+        "sets": [],
+        "resets": [],
+        "shows": [
+          98
+        ],
+        "hides": []
+      },
+      {
+        "step": 4,
+        "name": "SCRIPT_BILLSHOUSE_CLEANUP",
+        "routine": "BillsHouseCleanupScript",
+        "sets": [
+          1360,
+          1373
+        ],
+        "resets": [],
+        "shows": [],
+        "hides": []
+      }
     ]
   },
   {
@@ -17690,6 +19502,128 @@
         "name": "NOOP",
         "label": "Noop",
         "desc": "The script has finished — nothing more runs here. (step 4 of 0–4)"
+      }
+    ],
+    "storageSpots": [
+      {
+        "kind": "scriptTile",
+        "x": 8,
+        "y": 36,
+        "routine": "SSAnne2FDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [
+          {
+            "ind": 113,
+            "action": "show",
+            "step": 0,
+            "stepName": "SCRIPT_SSANNE2F_DEFAULT",
+            "routine": "SSAnne2FDefaultScript",
+            "viaChain": false
+          },
+          {
+            "ind": 113,
+            "action": "hide",
+            "step": 3,
+            "stepName": "SCRIPT_SSANNE2F_RIVAL_EXIT",
+            "routine": "SSAnne2FRivalExitScript",
+            "viaChain": true
+          }
+        ],
+        "chain": [
+          "SSAnne2FRivalStartBattleScript",
+          "SSAnne2FRivalAfterBattleScript",
+          "SSAnne2FRivalExitScript",
+          "SSAnne2FNoopScript"
+        ]
+      },
+      {
+        "kind": "scriptTile",
+        "x": 8,
+        "y": 37,
+        "routine": "SSAnne2FDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [
+          {
+            "ind": 113,
+            "action": "show",
+            "step": 0,
+            "stepName": "SCRIPT_SSANNE2F_DEFAULT",
+            "routine": "SSAnne2FDefaultScript",
+            "viaChain": false
+          },
+          {
+            "ind": 113,
+            "action": "hide",
+            "step": 3,
+            "stepName": "SCRIPT_SSANNE2F_RIVAL_EXIT",
+            "routine": "SSAnne2FRivalExitScript",
+            "viaChain": true
+          }
+        ],
+        "chain": [
+          "SSAnne2FRivalStartBattleScript",
+          "SSAnne2FRivalAfterBattleScript",
+          "SSAnne2FRivalExitScript",
+          "SSAnne2FNoopScript"
+        ]
+      },
+      {
+        "kind": "scriptCol",
+        "x": 37,
+        "span": "col",
+        "routine": "SSAnne2FSetFacingDirectionScript",
+        "step": -1,
+        "events": [],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "scriptCol",
+        "x": 37,
+        "span": "col",
+        "routine": "SSAnne2FRivalAfterBattleScript",
+        "step": 2,
+        "events": [],
+        "filters": [
+          {
+            "ind": 113,
+            "action": "hide",
+            "step": 3,
+            "stepName": "SCRIPT_SSANNE2F_RIVAL_EXIT",
+            "routine": "SSAnne2FRivalExitScript",
+            "viaChain": true
+          }
+        ],
+        "chain": [
+          "SSAnne2FRivalExitScript",
+          "SSAnne2FNoopScript"
+        ]
+      }
+    ],
+    "scriptPhases": [
+      {
+        "step": 0,
+        "name": "SCRIPT_SSANNE2F_DEFAULT",
+        "routine": "SSAnne2FDefaultScript",
+        "sets": [],
+        "resets": [],
+        "shows": [
+          113
+        ],
+        "hides": []
+      },
+      {
+        "step": 3,
+        "name": "SCRIPT_SSANNE2F_RIVAL_EXIT",
+        "routine": "SSAnne2FRivalExitScript",
+        "sets": [],
+        "resets": [],
+        "shows": [],
+        "hides": [
+          113
+        ]
       }
     ]
   },
@@ -19440,6 +21374,19 @@
         "label": "End Battle",
         "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
+    ],
+    "scriptPhases": [
+      {
+        "step": 0,
+        "name": "SCRIPT_VICTORYROAD1F_DEFAULT",
+        "routine": "VictoryRoad1FDefaultScript",
+        "sets": [
+          2327
+        ],
+        "resets": [],
+        "shows": [],
+        "hides": []
+      }
     ]
   },
   {
@@ -19722,6 +21669,58 @@
         "label": "Noop",
         "desc": "The script has finished — nothing more runs here. (step 4 of 0–4)"
       }
+    ],
+    "storageSpots": [
+      {
+        "kind": "scriptTile",
+        "x": 1,
+        "y": 5,
+        "routine": "LancesRoomDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "scriptTile",
+        "x": 2,
+        "y": 6,
+        "routine": "LancesRoomDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "scriptTile",
+        "x": 11,
+        "y": 5,
+        "routine": "LancesRoomDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "scriptTile",
+        "x": 11,
+        "y": 6,
+        "routine": "LancesRoomDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "scriptTile",
+        "x": 16,
+        "y": 24,
+        "routine": "LancesRoomDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": []
+      }
     ]
   },
   {
@@ -19986,6 +21985,39 @@
         "label": "Noop",
         "desc": "The script has finished — nothing more runs here. (step 3 of 0–3)"
       }
+    ],
+    "scriptPhases": [
+      {
+        "step": 1,
+        "name": "SCRIPT_HALLOFFAME_OAK_CONGRATULATIONS",
+        "routine": "HallOfFameOakCongratulationsScript",
+        "sets": [],
+        "resets": [],
+        "shows": [],
+        "hides": [
+          8
+        ]
+      },
+      {
+        "step": 2,
+        "name": "SCRIPT_HALLOFFAME_RESET_EVENTS_AND_SAVE",
+        "routine": "HallOfFameResetEventsAndSaveScript",
+        "sets": [],
+        "resets": [
+          2273,
+          2278,
+          2281,
+          2286,
+          2289,
+          2294,
+          2297,
+          2302,
+          2303,
+          2305
+        ],
+        "shows": [],
+        "hides": []
+      }
     ]
   },
   {
@@ -20194,6 +22226,41 @@
         "name": "CLEANUP_SCRIPT",
         "label": "Cleanup Script",
         "desc": "The scene tears down — the game is won."
+      }
+    ],
+    "scriptPhases": [
+      {
+        "step": 3,
+        "name": "SCRIPT_CHAMPIONSROOM_RIVAL_DEFEATED",
+        "routine": "ChampionsRoomRivalDefeatedScript",
+        "sets": [
+          2305
+        ],
+        "resets": [],
+        "shows": [],
+        "hides": []
+      },
+      {
+        "step": 4,
+        "name": "SCRIPT_CHAMPIONSROOM_OAK_ARRIVES",
+        "routine": "ChampionsRoomOakArrivesScript",
+        "sets": [],
+        "resets": [],
+        "shows": [
+          214
+        ],
+        "hides": []
+      },
+      {
+        "step": 8,
+        "name": "SCRIPT_CHAMPIONSROOM_OAK_EXITS",
+        "routine": "ChampionsRoomOakExitsScript",
+        "sets": [],
+        "resets": [],
+        "shows": [],
+        "hides": [
+          214
+        ]
       }
     ]
   },
@@ -21982,6 +24049,65 @@
         "label": "Rocket Exit",
         "desc": "A scripted character is walking off the map. (step 2 of 0–2)"
       }
+    ],
+    "storageSpots": [
+      {
+        "kind": "scriptRow",
+        "y": 6,
+        "span": "row",
+        "routine": "GameCornerRocketBattleScript",
+        "step": 1,
+        "events": [],
+        "filters": [
+          {
+            "ind": 70,
+            "action": "hide",
+            "step": 2,
+            "stepName": "SCRIPT_GAMECORNER_ROCKET_EXIT",
+            "routine": "GameCornerRocketExitScript",
+            "viaChain": true
+          }
+        ],
+        "chain": [
+          "GameCornerRocketExitScript",
+          "GameCornerDefaultScript"
+        ]
+      },
+      {
+        "kind": "scriptCol",
+        "x": 8,
+        "span": "col",
+        "routine": "GameCornerRocketBattleScript",
+        "step": 1,
+        "events": [],
+        "filters": [
+          {
+            "ind": 70,
+            "action": "hide",
+            "step": 2,
+            "stepName": "SCRIPT_GAMECORNER_ROCKET_EXIT",
+            "routine": "GameCornerRocketExitScript",
+            "viaChain": true
+          }
+        ],
+        "chain": [
+          "GameCornerRocketExitScript",
+          "GameCornerDefaultScript"
+        ]
+      }
+    ],
+    "scriptPhases": [
+      {
+        "step": 2,
+        "name": "SCRIPT_GAMECORNER_ROCKET_EXIT",
+        "routine": "GameCornerRocketExitScript",
+        "sets": [],
+        "resets": [],
+        "shows": [],
+        "hides": [
+          70
+        ]
+      }
     ]
   },
   {
@@ -22764,6 +24890,99 @@
         "label": "Rival Exits",
         "desc": "The rival leaves the Tower."
       }
+    ],
+    "storageSpots": [
+      {
+        "kind": "scriptTile",
+        "x": 5,
+        "y": 15,
+        "routine": "PokemonTower2FDefaultScript",
+        "step": 0,
+        "events": [
+          {
+            "ind": 240,
+            "action": "reset",
+            "step": 0,
+            "stepName": "SCRIPT_POKEMONTOWER2F_DEFAULT",
+            "routine": "PokemonTower2FDefaultScript",
+            "viaChain": false
+          },
+          {
+            "ind": 240,
+            "action": "set",
+            "step": 0,
+            "stepName": "SCRIPT_POKEMONTOWER2F_DEFAULT",
+            "routine": "PokemonTower2FDefaultScript",
+            "viaChain": false
+          }
+        ],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "scriptTile",
+        "x": 6,
+        "y": 14,
+        "routine": "PokemonTower2FDefaultScript",
+        "step": 0,
+        "events": [
+          {
+            "ind": 240,
+            "action": "reset",
+            "step": 0,
+            "stepName": "SCRIPT_POKEMONTOWER2F_DEFAULT",
+            "routine": "PokemonTower2FDefaultScript",
+            "viaChain": false
+          },
+          {
+            "ind": 240,
+            "action": "set",
+            "step": 0,
+            "stepName": "SCRIPT_POKEMONTOWER2F_DEFAULT",
+            "routine": "PokemonTower2FDefaultScript",
+            "viaChain": false
+          }
+        ],
+        "filters": [],
+        "chain": []
+      }
+    ],
+    "scriptPhases": [
+      {
+        "step": 0,
+        "name": "SCRIPT_POKEMONTOWER2F_DEFAULT",
+        "routine": "PokemonTower2FDefaultScript",
+        "sets": [
+          240
+        ],
+        "resets": [
+          240
+        ],
+        "shows": [],
+        "hides": []
+      },
+      {
+        "step": 1,
+        "name": "SCRIPT_POKEMONTOWER2F_DEFEATED_RIVAL",
+        "routine": "PokemonTower2FDefeatedRivalScript",
+        "sets": [
+          241
+        ],
+        "resets": [],
+        "shows": [],
+        "hides": []
+      },
+      {
+        "step": 2,
+        "name": "SCRIPT_POKEMONTOWER2F_RIVAL_EXITS",
+        "routine": "PokemonTower2FRivalExitsScript",
+        "sets": [],
+        "resets": [],
+        "shows": [],
+        "hides": [
+          56
+        ]
+      }
     ]
   },
   {
@@ -23448,6 +25667,97 @@
         "label": "End Battle",
         "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
+    ],
+    "storageSpots": [
+      {
+        "kind": "scriptTile",
+        "x": 8,
+        "y": 10,
+        "routine": "PokemonTower5FDefaultScript",
+        "step": 0,
+        "events": [
+          {
+            "ind": 265,
+            "action": "reset",
+            "step": 0,
+            "stepName": "SCRIPT_POKEMONTOWER5F_DEFAULT",
+            "routine": "PokemonTower5FDefaultScript",
+            "viaChain": false
+          }
+        ],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "scriptTile",
+        "x": 8,
+        "y": 11,
+        "routine": "PokemonTower5FDefaultScript",
+        "step": 0,
+        "events": [
+          {
+            "ind": 265,
+            "action": "reset",
+            "step": 0,
+            "stepName": "SCRIPT_POKEMONTOWER5F_DEFAULT",
+            "routine": "PokemonTower5FDefaultScript",
+            "viaChain": false
+          }
+        ],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "scriptTile",
+        "x": 9,
+        "y": 10,
+        "routine": "PokemonTower5FDefaultScript",
+        "step": 0,
+        "events": [
+          {
+            "ind": 265,
+            "action": "reset",
+            "step": 0,
+            "stepName": "SCRIPT_POKEMONTOWER5F_DEFAULT",
+            "routine": "PokemonTower5FDefaultScript",
+            "viaChain": false
+          }
+        ],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "scriptTile",
+        "x": 9,
+        "y": 11,
+        "routine": "PokemonTower5FDefaultScript",
+        "step": 0,
+        "events": [
+          {
+            "ind": 265,
+            "action": "reset",
+            "step": 0,
+            "stepName": "SCRIPT_POKEMONTOWER5F_DEFAULT",
+            "routine": "PokemonTower5FDefaultScript",
+            "viaChain": false
+          }
+        ],
+        "filters": [],
+        "chain": []
+      }
+    ],
+    "scriptPhases": [
+      {
+        "step": 0,
+        "name": "SCRIPT_POKEMONTOWER5F_DEFAULT",
+        "routine": "PokemonTower5FDefaultScript",
+        "sets": [],
+        "resets": [
+          265
+        ],
+        "shows": [],
+        "hides": []
+      }
     ]
   },
   {
@@ -23692,6 +26002,43 @@
         "label": "Marowak Battle",
         "desc": "A scripted battle stage of this map's story. (step 4 of 0–4)"
       }
+    ],
+    "storageSpots": [
+      {
+        "kind": "scriptTile",
+        "x": 16,
+        "y": 10,
+        "routine": "PokemonTower6FDefaultScript",
+        "step": 0,
+        "events": [
+          {
+            "ind": 273,
+            "action": "set",
+            "step": 4,
+            "stepName": "SCRIPT_POKEMONTOWER6F_MAROWAK_BATTLE",
+            "routine": "PokemonTower6FMarowakBattleScript",
+            "viaChain": true
+          }
+        ],
+        "filters": [],
+        "chain": [
+          "PokemonTower6FMarowakBattleScript",
+          "PokemonTower6FPlayerMovingScript"
+        ]
+      }
+    ],
+    "scriptPhases": [
+      {
+        "step": 4,
+        "name": "SCRIPT_POKEMONTOWER6F_MAROWAK_BATTLE",
+        "routine": "PokemonTower6FMarowakBattleScript",
+        "sets": [
+          273
+        ],
+        "resets": [],
+        "shows": [],
+        "hides": []
+      }
     ]
   },
   {
@@ -23902,6 +26249,19 @@
         "name": "WARP_TO_MR_FUJI_HOUSE",
         "label": "Warp To Mr Fuji House",
         "desc": "Stage 4 of this map's scripted events (0–4). The game walks these steps in order as the map's story plays out."
+      }
+    ],
+    "scriptPhases": [
+      {
+        "step": 4,
+        "name": "SCRIPT_POKEMONTOWER7F_WARP_TO_MR_FUJI_HOUSE",
+        "routine": "PokemonTower7FWarpToMrFujiHouseScript",
+        "sets": [],
+        "resets": [],
+        "shows": [],
+        "hides": [
+          67
+        ]
       }
     ]
   },
@@ -24682,6 +27042,47 @@
         "name": "SET_SCRIPT_AFTER_MOVE",
         "label": "Set Script After Move",
         "desc": "Stage 6 of this map's scripted events (0–6). The game walks these steps in order as the map's story plays out."
+      }
+    ],
+    "storageSpots": [
+      {
+        "kind": "scriptTile",
+        "x": 2,
+        "y": 3,
+        "routine": "SafariZoneGateDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "SafariZoneGateWouldYouLikeToJoinScript",
+          "SafariZoneGatePlayerMovingRightScript"
+        ]
+      },
+      {
+        "kind": "scriptTile",
+        "x": 2,
+        "y": 4,
+        "routine": "SafariZoneGateDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "SafariZoneGateWouldYouLikeToJoinScript",
+          "SafariZoneGatePlayerMovingRightScript"
+        ]
+      }
+    ],
+    "scriptPhases": [
+      {
+        "step": 5,
+        "name": "SCRIPT_SAFARIZONEGATE_LEAVING_SAFARI",
+        "routine": "SafariZoneGateLeavingSafariScript",
+        "sets": [],
+        "resets": [
+          591
+        ],
+        "shows": [],
+        "hides": []
       }
     ]
   },
@@ -25658,6 +28059,46 @@
         "label": "Object Moving2",
         "desc": "Stage 3 of this map's scripted events (0–3). The game walks these steps in order as the map's story plays out."
       }
+    ],
+    "storageSpots": [
+      {
+        "kind": "scriptRow",
+        "y": 8,
+        "span": "row",
+        "routine": "SeafoamIslandsB3FDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "SeafoamIslandsB3FObjectMoving1Script"
+        ]
+      },
+      {
+        "kind": "scriptCol",
+        "x": 15,
+        "span": "col",
+        "routine": "SeafoamIslandsB3FDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "SeafoamIslandsB3FObjectMoving1Script"
+        ]
+      },
+      {
+        "kind": "scriptCol",
+        "x": 18,
+        "span": "col",
+        "routine": "SeafoamIslandsB3FMoveObjectScript",
+        "step": 2,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "SeafoamIslandsB3FObjectMoving2Script",
+          "SeafoamIslandsB3FDefaultScript",
+          "SeafoamIslandsB3FObjectMoving1Script"
+        ]
+      }
     ]
   },
   {
@@ -25902,6 +28343,164 @@
         "name": "OBJECT_MOVING3",
         "label": "Object Moving3",
         "desc": "Stage 4 of this map's scripted events (0–4). The game walks these steps in order as the map's story plays out."
+      }
+    ],
+    "storageSpots": [
+      {
+        "kind": "scriptTile",
+        "x": 17,
+        "y": 20,
+        "routine": "SeafoamIslandsB4FDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "SeafoamIslandsB4FObjectMoving1Script"
+        ]
+      },
+      {
+        "kind": "scriptTile",
+        "x": 17,
+        "y": 21,
+        "routine": "SeafoamIslandsB4FDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "SeafoamIslandsB4FObjectMoving1Script"
+        ]
+      },
+      {
+        "kind": "scriptTile",
+        "x": 16,
+        "y": 20,
+        "routine": "SeafoamIslandsB4FDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "SeafoamIslandsB4FObjectMoving1Script"
+        ]
+      },
+      {
+        "kind": "scriptTile",
+        "x": 16,
+        "y": 21,
+        "routine": "SeafoamIslandsB4FDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "SeafoamIslandsB4FObjectMoving1Script"
+        ]
+      },
+      {
+        "kind": "scriptTile",
+        "x": 14,
+        "y": 4,
+        "routine": "SeafoamIslandsB4FDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "SeafoamIslandsB4FObjectMoving1Script"
+        ]
+      },
+      {
+        "kind": "scriptTile",
+        "x": 14,
+        "y": 5,
+        "routine": "SeafoamIslandsB4FDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "SeafoamIslandsB4FObjectMoving1Script"
+        ]
+      },
+      {
+        "kind": "scriptTile",
+        "x": 17,
+        "y": 20,
+        "routine": "SeafoamIslandsB4FMoveObjectScript",
+        "step": 2,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "SeafoamIslandsB4FObjectMoving2Script",
+          "SeafoamIslandsB4FDefaultScript",
+          "SeafoamIslandsB4FObjectMoving1Script"
+        ]
+      },
+      {
+        "kind": "scriptTile",
+        "x": 17,
+        "y": 21,
+        "routine": "SeafoamIslandsB4FMoveObjectScript",
+        "step": 2,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "SeafoamIslandsB4FObjectMoving2Script",
+          "SeafoamIslandsB4FDefaultScript",
+          "SeafoamIslandsB4FObjectMoving1Script"
+        ]
+      },
+      {
+        "kind": "scriptTile",
+        "x": 16,
+        "y": 20,
+        "routine": "SeafoamIslandsB4FMoveObjectScript",
+        "step": 2,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "SeafoamIslandsB4FObjectMoving2Script",
+          "SeafoamIslandsB4FDefaultScript",
+          "SeafoamIslandsB4FObjectMoving1Script"
+        ]
+      },
+      {
+        "kind": "scriptTile",
+        "x": 16,
+        "y": 21,
+        "routine": "SeafoamIslandsB4FMoveObjectScript",
+        "step": 2,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "SeafoamIslandsB4FObjectMoving2Script",
+          "SeafoamIslandsB4FDefaultScript",
+          "SeafoamIslandsB4FObjectMoving1Script"
+        ]
+      },
+      {
+        "kind": "scriptTile",
+        "x": 14,
+        "y": 4,
+        "routine": "SeafoamIslandsB4FMoveObjectScript",
+        "step": 2,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "SeafoamIslandsB4FObjectMoving2Script",
+          "SeafoamIslandsB4FDefaultScript",
+          "SeafoamIslandsB4FObjectMoving1Script"
+        ]
+      },
+      {
+        "kind": "scriptTile",
+        "x": 14,
+        "y": 5,
+        "routine": "SeafoamIslandsB4FMoveObjectScript",
+        "step": 2,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "SeafoamIslandsB4FObjectMoving2Script",
+          "SeafoamIslandsB4FDefaultScript",
+          "SeafoamIslandsB4FObjectMoving1Script"
+        ]
       }
     ]
   },
@@ -27568,6 +30167,45 @@
         "label": "Karate Master Post Battle",
         "desc": "The after-victory scene (TM handout / parting words) plays. (step 3 of 0–3)"
       }
+    ],
+    "storageSpots": [
+      {
+        "kind": "scriptRow",
+        "y": 3,
+        "span": "row",
+        "routine": "FightingDojoDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "scriptCol",
+        "x": 4,
+        "span": "col",
+        "routine": "FightingDojoDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": []
+      }
+    ],
+    "scriptPhases": [
+      {
+        "step": 3,
+        "name": "SCRIPT_FIGHTINGDOJO_KARATE_MASTER_POST_BATTLE",
+        "routine": "FightingDojoKarateMasterPostBattleScript",
+        "sets": [
+          849,
+          850,
+          851,
+          852,
+          853
+        ],
+        "resets": [],
+        "shows": [],
+        "hides": []
+      }
     ]
   },
   {
@@ -28798,6 +31436,64 @@
         "label": "Player Moving Right",
         "desc": "A cutscene is stepping the player around this map. (step 3 of 0–3)"
       }
+    ],
+    "storageSpots": [
+      {
+        "kind": "scriptTile",
+        "x": 7,
+        "y": 4,
+        "routine": "Route16Gate1FDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "Route16Gate1FPlayerMovingUpScript",
+          "Route16Gate1FGuardScript",
+          "Route16Gate1FPlayerMovingRightScript"
+        ]
+      },
+      {
+        "kind": "scriptTile",
+        "x": 8,
+        "y": 4,
+        "routine": "Route16Gate1FDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "Route16Gate1FPlayerMovingUpScript",
+          "Route16Gate1FGuardScript",
+          "Route16Gate1FPlayerMovingRightScript"
+        ]
+      },
+      {
+        "kind": "scriptTile",
+        "x": 9,
+        "y": 4,
+        "routine": "Route16Gate1FDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "Route16Gate1FPlayerMovingUpScript",
+          "Route16Gate1FGuardScript",
+          "Route16Gate1FPlayerMovingRightScript"
+        ]
+      },
+      {
+        "kind": "scriptTile",
+        "x": 10,
+        "y": 4,
+        "routine": "Route16Gate1FDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "Route16Gate1FPlayerMovingUpScript",
+          "Route16Gate1FGuardScript",
+          "Route16Gate1FPlayerMovingRightScript"
+        ]
+      }
     ]
   },
   {
@@ -29114,6 +31810,64 @@
         "name": "PLAYER_MOVING_RIGHT",
         "label": "Player Moving Right",
         "desc": "A cutscene is stepping the player around this map. (step 3 of 0–3)"
+      }
+    ],
+    "storageSpots": [
+      {
+        "kind": "scriptTile",
+        "x": 3,
+        "y": 4,
+        "routine": "Route18Gate1FDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "Route18Gate1FPlayerMovingUpScript",
+          "Route18Gate1FGuardScript",
+          "Route18Gate1FPlayerMovingRightScript"
+        ]
+      },
+      {
+        "kind": "scriptTile",
+        "x": 4,
+        "y": 4,
+        "routine": "Route18Gate1FDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "Route18Gate1FPlayerMovingUpScript",
+          "Route18Gate1FGuardScript",
+          "Route18Gate1FPlayerMovingRightScript"
+        ]
+      },
+      {
+        "kind": "scriptTile",
+        "x": 5,
+        "y": 4,
+        "routine": "Route18Gate1FDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "Route18Gate1FPlayerMovingUpScript",
+          "Route18Gate1FGuardScript",
+          "Route18Gate1FPlayerMovingRightScript"
+        ]
+      },
+      {
+        "kind": "scriptTile",
+        "x": 6,
+        "y": 4,
+        "routine": "Route18Gate1FDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "Route18Gate1FPlayerMovingUpScript",
+          "Route18Gate1FGuardScript",
+          "Route18Gate1FPlayerMovingRightScript"
+        ]
       }
     ]
   },
@@ -29487,6 +32241,38 @@
         "name": "NOOP",
         "label": "Noop",
         "desc": "The script has finished — nothing more runs here. (step 2 of 0–2)"
+      }
+    ],
+    "storageSpots": [
+      {
+        "kind": "scriptRow",
+        "y": 4,
+        "span": "row",
+        "routine": "Route22Gate_Script",
+        "step": -1,
+        "events": [],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "scriptTile",
+        "x": 2,
+        "y": 4,
+        "routine": "Route22GateDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "scriptTile",
+        "x": 2,
+        "y": 5,
+        "routine": "Route22GateDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": []
       }
     ]
   },
@@ -29875,6 +32661,20 @@
         "name": "END_BATTLE",
         "label": "End Battle",
         "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
+      }
+    ],
+    "scriptPhases": [
+      {
+        "step": 0,
+        "name": "SCRIPT_VICTORYROAD2F_DEFAULT",
+        "routine": "VictoryRoad2FDefaultScript",
+        "sets": [
+          1336,
+          1343
+        ],
+        "resets": [],
+        "shows": [],
+        "hides": []
       }
     ]
   },
@@ -30428,6 +33228,23 @@
         "name": "END_BATTLE",
         "label": "End Battle",
         "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
+      }
+    ],
+    "scriptPhases": [
+      {
+        "step": 0,
+        "name": "SCRIPT_VICTORYROAD3F_DEFAULT",
+        "routine": "VictoryRoad3FDefaultScript",
+        "sets": [
+          1632
+        ],
+        "resets": [],
+        "shows": [
+          96
+        ],
+        "hides": [
+          122
+        ]
       }
     ]
   },
@@ -31146,6 +33963,23 @@
         "label": "Beat Giovanni",
         "desc": "Stage 3 of this map's scripted events (0–3). The game walks these steps in order as the map's story plays out."
       }
+    ],
+    "scriptPhases": [
+      {
+        "step": 3,
+        "name": "SCRIPT_ROCKETHIDEOUTB4F_BEAT_GIOVANNI",
+        "routine": "RocketHideoutB4FBeatGiovanniScript",
+        "sets": [
+          1703
+        ],
+        "resets": [],
+        "shows": [
+          135
+        ],
+        "hides": [
+          131
+        ]
+      }
     ]
   },
   {
@@ -31428,6 +34262,28 @@
         "label": "End Battle",
         "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
+    ],
+    "storageSpots": [
+      {
+        "kind": "cardKeyDoor",
+        "x": 2,
+        "y": 2,
+        "routine": "SilphCo2FGateCallbackScript",
+        "step": -1,
+        "events": [],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "cardKeyDoor",
+        "x": 5,
+        "y": 2,
+        "routine": "SilphCo2FGateCallbackScript",
+        "step": -1,
+        "events": [],
+        "filters": [],
+        "chain": []
+      }
     ]
   },
   {
@@ -31628,6 +34484,28 @@
         "name": "END_BATTLE",
         "label": "End Battle",
         "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
+      }
+    ],
+    "storageSpots": [
+      {
+        "kind": "cardKeyDoor",
+        "x": 4,
+        "y": 4,
+        "routine": "SilphCo3FGateCallbackScript",
+        "step": -1,
+        "events": [],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "cardKeyDoor",
+        "x": 4,
+        "y": 8,
+        "routine": "SilphCo3FGateCallbackScript",
+        "step": -1,
+        "events": [],
+        "filters": [],
+        "chain": []
       }
     ]
   },
@@ -31845,6 +34723,28 @@
         "name": "END_BATTLE",
         "label": "End Battle",
         "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
+      }
+    ],
+    "storageSpots": [
+      {
+        "kind": "cardKeyDoor",
+        "x": 6,
+        "y": 2,
+        "routine": "SilphCo4FGateCallbackScript",
+        "step": -1,
+        "events": [],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "cardKeyDoor",
+        "x": 4,
+        "y": 6,
+        "routine": "SilphCo4FGateCallbackScript",
+        "step": -1,
+        "events": [],
+        "filters": [],
+        "chain": []
       }
     ]
   },
@@ -32118,6 +35018,38 @@
         "label": "End Battle",
         "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
+    ],
+    "storageSpots": [
+      {
+        "kind": "cardKeyDoor",
+        "x": 2,
+        "y": 3,
+        "routine": "SilphCo5FGateCallbackScript",
+        "step": -1,
+        "events": [],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "cardKeyDoor",
+        "x": 6,
+        "y": 3,
+        "routine": "SilphCo5FGateCallbackScript",
+        "step": -1,
+        "events": [],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "cardKeyDoor",
+        "x": 5,
+        "y": 7,
+        "routine": "SilphCo5FGateCallbackScript",
+        "step": -1,
+        "events": [],
+        "filters": [],
+        "chain": []
+      }
     ]
   },
   {
@@ -32351,6 +35283,18 @@
         "name": "END_BATTLE",
         "label": "End Battle",
         "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
+      }
+    ],
+    "storageSpots": [
+      {
+        "kind": "cardKeyDoor",
+        "x": 6,
+        "y": 2,
+        "routine": "SilphCo6F_GateCallbackScript",
+        "step": -1,
+        "events": [],
+        "filters": [],
+        "chain": []
       }
     ]
   },
@@ -32651,6 +35595,82 @@
         "label": "Rival Exit",
         "desc": "A scripted character is walking off the map. (step 5 of 0–5)"
       }
+    ],
+    "storageSpots": [
+      {
+        "kind": "cardKeyDoor",
+        "x": 3,
+        "y": 5,
+        "routine": "SilphCo7F_GateCallbackScript",
+        "step": -1,
+        "events": [],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "cardKeyDoor",
+        "x": 2,
+        "y": 10,
+        "routine": "SilphCo7F_GateCallbackScript",
+        "step": -1,
+        "events": [],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "cardKeyDoor",
+        "x": 6,
+        "y": 10,
+        "routine": "SilphCo7F_GateCallbackScript",
+        "step": -1,
+        "events": [],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "scriptTile",
+        "x": 2,
+        "y": 3,
+        "routine": "SilphCo7FDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "scriptTile",
+        "x": 3,
+        "y": 3,
+        "routine": "SilphCo7FDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": []
+      }
+    ],
+    "scriptPhases": [
+      {
+        "step": 4,
+        "name": "SCRIPT_SILPHCO7F_RIVAL_AFTER_BATTLE",
+        "routine": "SilphCo7FRivalAfterBattleScript",
+        "sets": [
+          1856
+        ],
+        "resets": [],
+        "shows": [],
+        "hides": []
+      },
+      {
+        "step": 5,
+        "name": "SCRIPT_SILPHCO7F_RIVAL_EXIT",
+        "routine": "SilphCo7FRivalExitScript",
+        "sets": [],
+        "resets": [],
+        "shows": [],
+        "hides": [
+          167
+        ]
+      }
     ]
   },
   {
@@ -32822,6 +35842,18 @@
         "name": "END_BATTLE",
         "label": "End Battle",
         "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
+      }
+    ],
+    "storageSpots": [
+      {
+        "kind": "cardKeyDoor",
+        "x": 4,
+        "y": 3,
+        "routine": "SilphCo8FGateCallbackScript",
+        "step": -1,
+        "events": [],
+        "filters": [],
+        "chain": []
       }
     ]
   },
@@ -36203,6 +39235,48 @@
         "label": "End Battle",
         "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
+    ],
+    "storageSpots": [
+      {
+        "kind": "cardKeyDoor",
+        "x": 4,
+        "y": 1,
+        "routine": "SilphCo9FGateCallbackScript",
+        "step": -1,
+        "events": [],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "cardKeyDoor",
+        "x": 2,
+        "y": 9,
+        "routine": "SilphCo9FGateCallbackScript",
+        "step": -1,
+        "events": [],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "cardKeyDoor",
+        "x": 5,
+        "y": 9,
+        "routine": "SilphCo9FGateCallbackScript",
+        "step": -1,
+        "events": [],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "cardKeyDoor",
+        "x": 6,
+        "y": 5,
+        "routine": "SilphCo9FGateCallbackScript",
+        "step": -1,
+        "events": [],
+        "filters": [],
+        "chain": []
+      }
     ]
   },
   {
@@ -36395,6 +39469,18 @@
         "label": "End Battle",
         "desc": "The leader/boss battle just ended — the badge/aftermath dialogue runs. (step 2 of 0–2)"
       }
+    ],
+    "storageSpots": [
+      {
+        "kind": "cardKeyDoor",
+        "x": 4,
+        "y": 5,
+        "routine": "SilphCo10FGateCallbackScript",
+        "step": -1,
+        "events": [],
+        "filters": [],
+        "chain": []
+      }
     ]
   },
   {
@@ -36572,6 +39658,51 @@
         "name": "GIOVANNI_AFTER_BATTLE",
         "label": "Giovanni After Battle",
         "desc": "The scripted battle just ended — the aftermath dialogue runs. (step 5 of 0–5)"
+      }
+    ],
+    "storageSpots": [
+      {
+        "kind": "cardKeyDoor",
+        "x": 6,
+        "y": 3,
+        "routine": "SilphCo11FGateCallbackScript",
+        "step": -1,
+        "events": [],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "scriptTile",
+        "x": 13,
+        "y": 6,
+        "routine": "SilphCo11FDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": []
+      },
+      {
+        "kind": "scriptTile",
+        "x": 12,
+        "y": 7,
+        "routine": "SilphCo11FDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": []
+      }
+    ],
+    "scriptPhases": [
+      {
+        "step": 5,
+        "name": "SCRIPT_SILPHCO11F_GIOVANNI_AFTER_BATTLE",
+        "routine": "SilphCo11FGiovanniAfterBattleScript",
+        "sets": [
+          1935
+        ],
+        "resets": [],
+        "shows": [],
+        "hides": []
       }
     ]
   },
@@ -37121,6 +40252,56 @@
         "label": "Noop",
         "desc": "The script has finished — nothing more runs here. (step 4 of 0–4)"
       }
+    ],
+    "storageSpots": [
+      {
+        "kind": "scriptTile",
+        "x": 10,
+        "y": 4,
+        "routine": "LoreleisRoomDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "LoreleisRoomPlayerIsMovingScript"
+        ]
+      },
+      {
+        "kind": "scriptTile",
+        "x": 10,
+        "y": 5,
+        "routine": "LoreleisRoomDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "LoreleisRoomPlayerIsMovingScript"
+        ]
+      },
+      {
+        "kind": "scriptTile",
+        "x": 11,
+        "y": 4,
+        "routine": "LoreleisRoomDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "LoreleisRoomPlayerIsMovingScript"
+        ]
+      },
+      {
+        "kind": "scriptTile",
+        "x": 11,
+        "y": 5,
+        "routine": "LoreleisRoomDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "LoreleisRoomPlayerIsMovingScript"
+        ]
+      }
     ]
   },
   {
@@ -37234,6 +40415,56 @@
         "label": "Noop",
         "desc": "The script has finished — nothing more runs here. (step 4 of 0–4)"
       }
+    ],
+    "storageSpots": [
+      {
+        "kind": "scriptTile",
+        "x": 10,
+        "y": 4,
+        "routine": "BrunosRoomDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "BrunosRoomPlayerIsMovingScript"
+        ]
+      },
+      {
+        "kind": "scriptTile",
+        "x": 10,
+        "y": 5,
+        "routine": "BrunosRoomDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "BrunosRoomPlayerIsMovingScript"
+        ]
+      },
+      {
+        "kind": "scriptTile",
+        "x": 11,
+        "y": 4,
+        "routine": "BrunosRoomDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "BrunosRoomPlayerIsMovingScript"
+        ]
+      },
+      {
+        "kind": "scriptTile",
+        "x": 11,
+        "y": 5,
+        "routine": "BrunosRoomDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "BrunosRoomPlayerIsMovingScript"
+        ]
+      }
     ]
   },
   {
@@ -37346,6 +40577,56 @@
         "name": "NOOP",
         "label": "Noop",
         "desc": "The script has finished — nothing more runs here. (step 4 of 0–4)"
+      }
+    ],
+    "storageSpots": [
+      {
+        "kind": "scriptTile",
+        "x": 10,
+        "y": 4,
+        "routine": "AgathasRoomDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "AgathasRoomPlayerIsMovingScript"
+        ]
+      },
+      {
+        "kind": "scriptTile",
+        "x": 10,
+        "y": 5,
+        "routine": "AgathasRoomDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "AgathasRoomPlayerIsMovingScript"
+        ]
+      },
+      {
+        "kind": "scriptTile",
+        "x": 11,
+        "y": 4,
+        "routine": "AgathasRoomDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "AgathasRoomPlayerIsMovingScript"
+        ]
+      },
+      {
+        "kind": "scriptTile",
+        "x": 11,
+        "y": 5,
+        "routine": "AgathasRoomDefaultScript",
+        "step": 0,
+        "events": [],
+        "filters": [],
+        "chain": [
+          "AgathasRoomPlayerIsMovingScript"
+        ]
       }
     ]
   },

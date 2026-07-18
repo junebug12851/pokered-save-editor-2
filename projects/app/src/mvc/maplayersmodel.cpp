@@ -80,12 +80,21 @@ MapLayersModel::MapLayersModel(MapModel* map, QObject* parent)
   buildAll();
   rebuild();
 
-  // No tile-trait overlay on by default -- the whole Tiles group starts OFF (Twilight, 2026-07-15:
-  // "all of Tiles layer disabled by default"). The map is the point; the tile meanings are things you
-  // go looking for. Warps are shown by default too, but as the Game View OBJECT layer (ViewWarps in
-  // `bits`), not as a tile-trait overlay -- see the header's `bits` default.
-  if (map != nullptr)
-    map->setLayers(0);
+  // ⭐ The SAVE-DATA RULE decides the Tiles group too (Twilight, 2026-07-17): *"even the rom-only
+  // tiles like grass and water need to be turned on by default because you can change the pokemon in
+  // them and also change whats grass in the map state ... anything that relates to the save file
+  // needs to be on by default"*.
+  //
+  // ⚠️ SUPERSEDES "all of Tiles layer disabled by default" (Twilight, 2026-07-15). This line used to
+  // force `setLayers(0)` and it was the REAL home of that decision -- MapModel's own default never
+  // survived it. Which is why the default now lives in ONE place (MapModel::shownLayers) and this
+  // constructor no longer overrides it: two defaults for one setting is how they drift apart.
+  //
+  // The test is not "is the tile drawn from the ROM?" -- nearly every tile is. It is "is there
+  // something here the save lets you change?": grass (wGrassTile + the grass encounter table), water
+  // (the water encounter table), counters (wTilesetTalkingOverTiles) and the border block
+  // (wMapBackgroundTile) all pass; walls, ledges, doors, warp tiles, elevation and cut trees are
+  // tileset facts with no byte in the save, so they stay off. @see MapModel::shownLayers
 
   // The map changed: which layers even APPLY changes with it (a map with no grass should say so
   // rather than switch on an empty overlay), so every row's "applies" is stale.

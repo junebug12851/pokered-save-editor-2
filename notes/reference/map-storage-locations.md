@@ -120,6 +120,141 @@ bitfields (`0x299C` vs `0x29AA`) with **independent numbering from 0**, so a mer
 entry's `ind` ambiguous. Each `HiddenItemDBEntry` now carries its own `ind` (**== its save bit**) and
 `isCoin`.
 
+## 2d. The macro traps that hide a THIRD of the game's flag writes (2026-07-17)
+
+Both found by writing `import_map_storage_spots.py` and **checking counts against the source**
+rather than trusting a regex that looked right. Both fail *silently* — the parse succeeds, the data
+is just quietly incomplete, which is the worst failure mode this project has.
+
+**1. `SetEvent` has EIGHT siblings.** Counted in `pret/pokered/scripts/`:
+
+| Macro | Sites | |
+|---|---|---|
+| `SetEvent` | 105 | the obvious one |
+| `SetEventReuseHL` | 17 | pure codegen (reuses HL) — semantically identical |
+| `SetEventAfterBranchReuseHL` | 14 | ditto |
+| `SetEventForceReuseHL` | 1 | ditto |
+| `ResetEvent` | 12 | |
+| `ResetEventReuseHL` | 8 | |
+| `ResetEvents` | 8 | **plural** — several flags at once |
+| `SetEvents` | 4 | **plural** |
+| `SetEventRange` | 7 | **a whole range** of flags |
+| `ResetEventRange` | 2 | |
+
+A `\b(SetEvent|ResetEvent)\s` matches **none of the suffixed ones** — the `\s` fails against the
+`R` of `ReuseHL` — so **61 of 178 sites vanish without a word**. ⚠️ The 16f-a extractor
+(`extract_map_storage_locations.py`) uses exactly that regex, so its *"117 SetEvent/ResetEvent
+sites"* is an **undercount**; the importer is the corrected reader.
+
+⚠️ **Ranges do not always name `EVENT_` constants:**
+`ResetEventRange INDIGO_PLATEAU_EVENTS_START, INDIGO_PLATEAU_EVENTS_END, 1` names two block
+markers that `events.json` has never heard of (it only carries `pretName`s). Resolving them needs
+`constants/event_constants.asm` parsed properly: `const_def` (counter := 0) · `const NAME`
+(NAME := counter++) · `const_skip N` (counter += N — **the padding gaps**) · `DEF X EQU
+const_value[ - 1]` (an alias for wherever the counter is). **510 constants**, and the aliases are
+the only way the 9 range sites resolve.
+
+**2. `predef_jump` is a Show/Hide, and demanding `predef ` drops it.** It is `predef` + `ret` — the
+tail-call form the game uses when the toggle is the routine's **last act**, which is exactly when
+it is the *climax* of a phase. **12 of the 83** Show/Hide sites use it. Pallet Town proves it in
+one routine:
+
+```asm
+    ld a, TOGGLE_DAISY_SITTING   / predef      HideObject   ; matched
+    ld a, TOGGLE_DAISY_WALKING   / predef_jump ShowObject   ; MISSED without (?:_jump)?
+```
+
+Daisy would have been recorded as **hidden and never shown again**. Pinned by
+`tst_map::phases_tellTheMapsStoryInOrder`.
+
+⚠️ **And the toggle must be captured WITH its verb** (`ld a, TOGGLE_x … predef(_jump)? (Show|Hide)Object`).
+Matching `ld a, TOGGLE_x` alone and separately asking *"does this routine contain a Show/Hide?"*
+cannot say **which** was shown and which was hidden — and Pallet Town's phase 5 does **one of
+each**.
+
+## 2e. What each PHASE of a map does — the story, in order (2026-07-17)
+
+> **Fairy Fox:** *"the event flags not only need to keep track of the map locations that called
+> them, they need to keep track of which script phases a map goes through like (First phase flags)
+> (second phase flags) like which scripts and locations did what to them turning them on off
+> etc... have the flags be aware of there states across scripts"* — and, for filter flags:
+> *"i need them to be aware of which are on and off and where and by whom"*.
+
+A flag's **action is never flattened away**: a set and a reset of the same flag are opposite facts,
+and a union of them says nothing. So every write keeps its **phase** (the `wCurMapScript` value —
+the same number the "Current script" dropdown holds, so the story and the dropdown speak one
+language), its **routine**, its **action**, and whether it was reached **via the chain**.
+
+Pallet Town, straight out of the importer, and it reads like the story it is:
+
+```
+phase 0  SCRIPT_PALLETTOWN_DEFAULT        turns ON  Oak Appeared In Pallet
+phase 1  SCRIPT_PALLETTOWN_OAK_HEY_WAIT   shows     Prof. Oak
+phase 5  SCRIPT_PALLETTOWN_DAISY          turns ON  Daisy Walking
+                                          turns ON  Pallet After Getting Pokeballs 2
+                                          shows     Daisy Walking
+                                          hides     Daisy Sitting
+```
+
+- **`scriptPhases` is NOT limited to located routines.** A phase that writes its flags from a text
+  box has no tile and is still a phase of the map. **28 maps / 61 phases** change the world.
+- ⚠️ **Filter actions are recorded as the game's VERB, not the bit.** A missable's bit is
+  **set = HIDDEN**, so `ShowObject` *clears* it. "Shown/hidden" is what a person means; the
+  inversion is precisely what gets muddled.
+- Model: `MapDBEntryFlagWrite` / `MapScriptPhase`; surfaces `MapModel::mapPhases()` and
+  `MapModel::flagHistory(ind, isEvent)` — the latter walks **all 249 maps**, because a flag is not
+  owned by one (Silph Co's bits span 12 floors).
+- ⚠️ **This awareness is for the PANEL LIST, not the tabs** (leadership, 2026-07-17: *"we dont need
+  too much ui clutter just have the tabs as i describe them"*). The canvas stays quiet.
+
+## 2f. The canvas's visual language, and the tab strip (leadership, 2026-07-17)
+
+Five rulings, in the order she gave them. Together they are a **language**, not a set of looks —
+each one says what you can *do* with a thing before you touch it.
+
+| | The rule | Why it is not arbitrary |
+|---|---|---|
+| **Save data is ON** | *"anything related to the save file is on by default"* — and *"even the rom-only tiles like grass and water … because you can change the pokemon in them and also change whats grass in the map state"* | The test is **not** "is it drawn from the ROM?" (nearly every tile is) but **"is there something here the save lets you change?"**. This is a save editor; what the save remembers is the point. |
+| **Solid + filled = movable** | *"stuff draggable, deletable, insertable, etc.... should have a solid fill and box"* | Warps, signs, people. |
+| **Dashed + unfilled = fixed** | *"stuff that allows editing things from fixed locations like scripts and stuff should have a dashed outline and not be filled"* | A script trigger sits where the cartridge tests coords; a hidden pickup's tile **is** its save bit's identity. You edit what they do, never where they are. |
+| **One movable makes the CELL solid** | *"if there are multiple tabs fill and use solid line only if any of the tabs contain one thing that matches the rules above"* | The box is the handle for the **cell**. If anything in it can be picked up, the cell can. A dashed box beside a solid one inside one cell would say two things about one target. |
+| **Only movable tabs drag** | *"tabs can be dragged out directly and dragged in snapping in… "* + *"i mean tabs that can be moved not fixed ones"* | ⏳ Not built — the movable kinds aren't spots yet. |
+
+⚠️ **This RETIRES the old solid-vs-dashed meaning** (solid = shown, dashed = hidden), which spent
+the same ink on a different question. A switched-off object now says so with the **⚑** and a fainter
+line; outline *style* is reserved for *"can I move this?"*.
+
+**The strip: non-tile tabs LEFT, tile traits RIGHT.** The first cut put both on the left with a gap
+between them and was corrected — *"i said the tile traits go right not left i said the non tile
+traits go left"*. Opposite sides, so the two families can never read as one strip.
+
+⚠️ **ONE TAB PER TRAIT PER BLOCK.** A block is 4×4 tiles, so a grassy block holds **sixteen** grass
+tiles. Filing each as its own spot stacked sixteen identical "Grass" tabs and overflowed into the
+next block — an unbroken grey bar down the whole map. Sixteen tabs that all say the same thing and
+go to the same place **disambiguate nothing**, which is a tab's only job. The truthful 8×8 highlight
+is not lost: `MapEngine::overlay()` already paints every tile at its real size. **The tab is the
+handle; the overlay is the highlight.**
+
+⚠️ **A spot's HIGHLIGHT is drawn once, by the block owning its top-left** — even though it is *filed*
+on every block it touches (that is the aggregation rule, and it is right for the tabs). Without that
+guard Pallet Town's north-row trigger drew its full-width rectangle **ten times**, stacking a
+translucent range into a solid bar. Both of these were caught by the **mandatory screenshot review**
+and neither was visible in the code.
+
+📐 **The density question, answered with numbers.** Leadership asked *"why does a block have 40
+tabs?"* — prompted by me miscounting aloud. **It doesn't.** Pallet Town's busiest block carries
+**four** (1 script + its 3 event flags); the row across the top is **ten blocks × four**, not one
+block × forty. It spans them because the cartridge's trigger genuinely is the whole row:
+
+```asm
+ld a, [wYCoord]
+cp 1 ; is player near north exit?   ; <- no X test at all
+```
+
+**99 located spots are single tiles** (`dbmapcoord`) with exact places; only **37** are ranges.
+Pinned by `tst_map::hotspots_aBlockOnlyCarriesWhatOverlapsIt`. **Describe what the code does, not
+what you think you saw** — the same lesson as the screen-box wording correction.
+
 ## 3. Scripts — located only when they test the player's coords
 
 Two mechanisms, and they produce **different shapes**:

@@ -46,6 +46,8 @@
 #include <pse-db/tileset.h>
 #include <pse-db/entries/mapdbentry.h>
 #include <pse-db/entries/mapdbentryconnect.h>
+#include <pse-db/eventsdb.h>
+#include <pse-db/entries/eventdbentry.h>
 
 #include <pse-savefile/savefile.h>
 #include <pse-savefile/savefiletoolset.h>
@@ -149,6 +151,13 @@ private slots:
 
   void hotspots_boxOnlyTheThingsTheSaveKeepsAFlagFor();
   void hotspots_comeFromTheRomSoAHiddenObjectStillHasABox();
+  void hotspots_hiddenPickupsLandAtTheirRomCoords();
+  void hotspots_hiddenCoinsShowTheirAmount();
+  void hotspots_eventFlagsAppearWhereTheirScriptHappens();
+  void hotspots_tileTraitsOnlyWhenTheirLayerIsShown();
+  void phases_tellTheMapsStoryInOrder();
+  void flagHistory_saysWhoTurnedItOnAndWhere();
+  void hotspots_aBlockOnlyCarriesWhatOverlapsIt();
 };
 
 void TestMap::initTestCase()
@@ -803,6 +812,23 @@ void TestMap::model_publishesTheLoadedMap()
 // because there all tied to flags" -- so it is what the test pins. Its numbers come from the
 // cartridge via maps.json, not from us: 11 objects, 8 of them flag-governed.
 
+namespace {
+/// Every spot of @p kind, gathered back out of the blocks that own them.
+///
+/// ⚠️ Deliberately does NOT de-duplicate. A spot lands on every block its true extent touches, so a
+/// coord range legitimately appears once per block it crosses -- that is the aggregation rule, and
+/// a helper that quietly collapsed it would hide the one behaviour worth checking.
+QVariantList filterSpots(const QVariantList& blocks, const QString& kind)
+{
+  QVariantList out;
+  for (const QVariant& b : blocks)
+    for (const QVariant& s : b.toMap()["spots"].toList())
+      if (s.toMap()["kind"].toString() == kind)
+        out.append(s);
+  return out;
+}
+} // namespace
+
 void TestMap::hotspots_boxOnlyTheThingsTheSaveKeepsAFlagFor()
 {
   const QByteArray bytes = readSaveBytes(QStringLiteral("saves/natural-clean/BaseSAV.sav"));
@@ -816,9 +842,13 @@ void TestMap::hotspots_boxOnlyTheThingsTheSaveKeepsAFlagFor()
                  sf.dataExpanded->area->tileset,
                  sf.dataExpanded->area->general);
 
-  const QVariantList boxes = model.flagHotspots();
+  // The filter-flag spots, gathered back out of the blocks that own them. A 16x16 half-block is
+  // 16-aligned and the border ring is a whole number of blocks, so each of these lands in EXACTLY
+  // one block -- which this collection would notice if it ever stopped being true.
+  const QVariantList blocks = model.blockHotspots();
+  QVariantList boxes = filterSpots(blocks, QStringLiteral("filterFlag"));
 
-  // 11 objects on the map; the Girl and the two Oak Aides carry no missable and so get NO box.
+  // 11 objects on the map; the Girl and the two Oak Aides carry no missable and so get NO spot.
   // Boxing them would be clutter, and clutter is a bug.
   QCOMPARE(boxes.size(), 8);
   QCOMPARE(MapsDB::inst()->getIndAt(QStringLiteral("40"))->getSpritesSize(), 11);
@@ -827,7 +857,7 @@ void TestMap::hotspots_boxOnlyTheThingsTheSaveKeepsAFlagFor()
   QMap<int, QPair<int, int>> ballAt;   // missable -> (x, y)
   for (const QVariant& v : boxes) {
     const QVariantMap m = v.toMap();
-    const int ind = m["missable"].toInt();
+    const int ind = m["ind"].toInt();
     if (ind >= 43 && ind <= 45)
       ballAt.insert(ind, qMakePair(m["x"].toInt(), m["y"].toInt()));
   }
@@ -836,23 +866,36 @@ void TestMap::hotspots_boxOnlyTheThingsTheSaveKeepsAFlagFor()
   QCOMPARE(ballAt.value(44), qMakePair(7, 3));
   QCOMPARE(ballAt.value(45), qMakePair(8, 3));
 
-  // Every box carries the missable's real name and lands on its own tile. The geometry is the same
-  // arithmetic the signs and the player use -- and x/y are TILES, though maps.json's width/height
-  // are BLOCKS. Getting that wrong is what put a Route 22 sign off the map once.
+  // Every spot carries the missable's real name and HIGHLIGHTS its own half-block. The geometry is
+  // the same arithmetic the signs and the player use -- and x/y are on the WALK GRID (16x16), though
+  // maps.json's width/height are in BLOCKS (32x32). Getting that wrong put a Route 22 sign off the
+  // map once.
   for (const QVariant& v : boxes) {
     const QVariantMap m = v.toMap();
-    QVERIFY(m["missable"].toInt() >= 0);
+    QVERIFY(m["ind"].toInt() >= 0);
     QVERIFY(!m["name"].toString().isEmpty());
-    QCOMPARE(m["rectX"].toInt(),
+    QCOMPARE(m["unit"].toString(), QStringLiteral("halfBlock"));
+    QCOMPARE(m["extX"].toInt(),
              MapEngine::mapBorder * MapEngine::blockPx + m["x"].toInt() * 16);
-    QCOMPARE(m["rectY"].toInt(),
+    QCOMPARE(m["extY"].toInt(),
              MapEngine::mapBorder * MapEngine::blockPx + m["y"].toInt() * 16);
-    QCOMPARE(m["rectW"].toInt(), 16);
-    QCOMPARE(m["rectH"].toInt(), 16);
+    QCOMPARE(m["extW"].toInt(), 16);
+    QCOMPARE(m["extH"].toInt(), 16);
+  }
+
+  // The HIT TARGET is the block, and it is uniform 32x32 -- deliberately a different thing from the
+  // highlight above. It claims to be nothing but the cursor cell, which is why it isn't a lie.
+  for (const QVariant& b : blocks) {
+    const QVariantMap m = b.toMap();
+    QCOMPARE(m["rectW"].toInt(), MapEngine::blockPx);
+    QCOMPARE(m["rectH"].toInt(), MapEngine::blockPx);
+    QCOMPARE(m["rectX"].toInt(), m["blockX"].toInt() * MapEngine::blockPx);
+    QCOMPARE(m["rectY"].toInt(), m["blockY"].toInt() * MapEngine::blockPx);
+    QVERIFY(!m["spots"].toList().isEmpty());   // a block with nothing on it must not exist
   }
 
   // Oak stands in TWO places on this map (missables 46 and 49) -- the other thing she named. Both
-  // get a box, at different tiles.
+  // get a spot, at different tiles.
   int oaks = 0;
   QSet<QPair<int, int>> oakTiles;
   for (const QVariant& v : boxes) {
@@ -879,7 +922,7 @@ void TestMap::hotspots_comeFromTheRomSoAHiddenObjectStillHasABox()
                  sf.dataExpanded->area->tileset,
                  sf.dataExpanded->area->general);
 
-  const int before = model.flagHotspots().size();
+  const int before = filterSpots(model.blockHotspots(), QStringLiteral("filterFlag")).size();
 
   // THE KEYSTONE. Hide every one of them -- the whole point of the feature is that the boxes come
   // from the cartridge's cast, not from the save's sprite slots, so hiding an object must NOT take
@@ -887,12 +930,347 @@ void TestMap::hotspots_comeFromTheRomSoAHiddenObjectStillHasABox()
   for (int i = 42; i <= 49; i++)
     sf.dataExpanded->world->missables->missablesSet(i, true);
 
-  QCOMPARE(model.flagHotspots().size(), before);
+  QCOMPARE(filterSpots(model.blockHotspots(), QStringLiteral("filterFlag")).size(), before);
   QCOMPARE(before, 8);
 
   // And the save agrees they are hidden -- which is what dashes the box in the canvas.
   for (int i = 42; i <= 49; i++)
     QVERIFY(sf.dataExpanded->world->missables->missablesAt(i));
+}
+
+/// Hidden pickups land on the map, at the ROM's own coordinates, with their real item on them.
+/// Viridian Forest is the first two rows of `HiddenItemCoords`, so it pins the bit<->place identity
+/// at the exact place it is easiest to get transposed.
+void TestMap::hotspots_hiddenPickupsLandAtTheirRomCoords()
+{
+  const QByteArray bytes = readSaveBytes(QStringLiteral("saves/natural-clean/BaseSAV.sav"));
+  SaveFile sf;
+  loadInto(sf, bytes);
+
+  sf.dataExpanded->area->map->curMap = 51;   // Viridian Forest
+
+  MapModel model(sf.dataExpanded->area->map,
+                 sf.dataExpanded->area->player,
+                 sf.dataExpanded->area->tileset,
+                 sf.dataExpanded->area->general);
+
+  const QVariantList items = filterSpots(model.blockHotspots(), QStringLiteral("hiddenItem"));
+  QCOMPARE(items.size(), 2);   // `hidden_item VIRIDIAN_FOREST, 1, 18` and `, 16, 42`
+
+  QMap<int, QVariantMap> byInd;
+  for (const QVariant& v : items)
+    byInd.insert(v.toMap()["ind"].toInt(), v.toMap());
+
+  // Bit 0 == row 0 of the ROM's table == the Potion at (1, 18). Index identity, end to end:
+  // the save's bit, the ROM's row, the tile, and the item all have to agree.
+  QVERIFY(byInd.contains(0));
+  QCOMPARE(byInd[0]["x"].toInt(), 1);
+  QCOMPARE(byInd[0]["y"].toInt(), 18);
+  QCOMPARE(byInd[0]["item"].toString(), QStringLiteral("POTION"));
+  QCOMPARE(byInd[0]["name"].toString(), QStringLiteral("Potion")); // items.json's own spelling
+  QCOMPARE(byInd[0]["section"].toString(), QStringLiteral("hidden"));
+  QCOMPARE(byInd[0]["unit"].toString(), QStringLiteral("halfBlock"));
+
+  QVERIFY(byInd.contains(1));
+  QCOMPARE(byInd[1]["x"].toInt(), 16);
+  QCOMPARE(byInd[1]["y"].toInt(), 42);
+  QCOMPARE(byInd[1]["item"].toString(), QStringLiteral("ANTIDOTE"));
+
+  // A hidden item is NOT an event flag and NOT a filter flag -- it is its own storage kind, with
+  // its own save array. Nothing here should have been filed as either.
+  QVERIFY(filterSpots(model.blockHotspots(), QStringLiteral("hiddenCoin")).isEmpty());
+}
+
+/// The coins say how many they are -- leadership: "for the coins itd be helpful to find out how
+/// much your picking up like showing the amount".
+void TestMap::hotspots_hiddenCoinsShowTheirAmount()
+{
+  const QByteArray bytes = readSaveBytes(QStringLiteral("saves/natural-clean/BaseSAV.sav"));
+  SaveFile sf;
+  loadInto(sf, bytes);
+
+  sf.dataExpanded->area->map->curMap = 135;   // Game Corner (0x87) -- every hidden coin in the game
+
+  MapModel model(sf.dataExpanded->area->map,
+                 sf.dataExpanded->area->player,
+                 sf.dataExpanded->area->tileset,
+                 sf.dataExpanded->area->general);
+
+  const QVariantList coins = filterSpots(model.blockHotspots(), QStringLiteral("hiddenCoin"));
+  QCOMPARE(coins.size(), 12);
+
+  int total = 0;
+  for (const QVariant& v : coins) {
+    const QVariantMap m = v.toMap();
+    QVERIFY2(m["coins"].toInt() > 0, "a coin pile with no coins in it is a parse failure");
+    QVERIFY(m["name"].toString().contains(QString::number(m["coins"].toInt())));
+    total += m["coins"].toInt();
+  }
+  QCOMPARE(total, 260);   // straight out of the ROM's `COIN + n` arguments
+}
+
+/// ⭐ THE ONE THAT MATTERS: an event flag reaches the map only through a located script, and the
+/// chain is what makes it complete. Pallet Town's north row (`cp 1` on wYCoord) starts the Oak
+/// cutscene, and the flags it eventually writes live in the routines it hands off to.
+void TestMap::hotspots_eventFlagsAppearWhereTheirScriptHappens()
+{
+  const QByteArray bytes = readSaveBytes(QStringLiteral("saves/natural-clean/BaseSAV.sav"));
+  SaveFile sf;
+  loadInto(sf, bytes);
+
+  sf.dataExpanded->area->map->curMap = 0;   // Pallet Town
+
+  MapModel model(sf.dataExpanded->area->map,
+                 sf.dataExpanded->area->player,
+                 sf.dataExpanded->area->tileset,
+                 sf.dataExpanded->area->general);
+
+  const QVariantList blocks = model.blockHotspots();
+  const QVariantList events = filterSpots(blocks, QStringLiteral("eventFlag"));
+  QVERIFY2(!events.isEmpty(), "Pallet Town's north row writes event flags; they must reach the map");
+
+  // EVENT_OAK_APPEARED_IN_PALLET is written by the trigger itself; EVENT_DAISY_WALKING only by a
+  // routine further down the chain. Both belong to this place -- standing there is what causes
+  // them -- and the chained one must say so rather than pretending it fires on the tile.
+  bool sawChained = false;
+  for (const QVariant& v : events) {
+    const QVariantMap m = v.toMap();
+    QCOMPARE(m["section"].toString(), QStringLiteral("event"));
+    QVERIFY(!m["name"].toString().isEmpty());
+    QVERIFY(m["ind"].toInt() >= 0);
+    if (m["viaChain"].toBool())
+      sawChained = true;
+  }
+  QVERIFY2(sawChained, "the chain union is the whole point -- without it only 13 spots write events");
+
+  // THE AGGREGATION RULE. The trigger is a whole ROW: its highlight spans the map's full width at
+  // one half-block row, and it therefore appears on EVERY block that row crosses -- one tab each.
+  // That is not duplication; it is the rule working.
+  const QVariantList scripts = filterSpots(blocks, QStringLiteral("script"));
+  QVERIFY(!scripts.isEmpty());
+  const QVariantMap row = scripts.first().toMap();
+  QCOMPARE(row["shape"].toString(), QStringLiteral("scriptRow"));
+  QCOMPARE(row["extH"].toInt(), 16);   // one half-block tall: the row, truthfully
+  QCOMPARE(row["extW"].toInt(),
+           MapsDB::inst()->getIndAt(QStringLiteral("0"))->getWidth() * MapEngine::blockPx);
+
+  QSet<int> blocksTouched;
+  for (const QVariant& b : blocks)
+    for (const QVariant& s : b.toMap()["spots"].toList())
+      if (s.toMap()["kind"].toString() == QStringLiteral("script"))
+        blocksTouched.insert(b.toMap()["blockX"].toInt());
+  QVERIFY2(blocksTouched.size() > 1, "a row-wide trigger must be reachable from every block it crosses");
+}
+
+/// Tile traits are the 8x8 family, and they are gated on their layer being shown. Walls are on
+/// nearly every block in the game: ungated, they would drown the storage tabs the strip exists for,
+/// and "clutter is a bug".
+void TestMap::hotspots_tileTraitsOnlyWhenTheirLayerIsShown()
+{
+  const QByteArray bytes = readSaveBytes(QStringLiteral("saves/natural-clean/BaseSAV.sav"));
+  SaveFile sf;
+  loadInto(sf, bytes);
+
+  sf.dataExpanded->area->map->curMap = 0;   // Pallet Town
+
+  MapModel model(sf.dataExpanded->area->map,
+                 sf.dataExpanded->area->player,
+                 sf.dataExpanded->area->tileset,
+                 sf.dataExpanded->area->general);
+
+  // Nothing asked for -> no tile family at all.
+  QVERIFY(filterSpots(model.blockHotspots(0), QStringLiteral("tileTrait")).isEmpty());
+
+  // Ask for the doors -> the doors, and each one declares itself part of the 8x8 family.
+  const QVariantList doors =
+      filterSpots(model.blockHotspots(MapEngine::LayerDoors), QStringLiteral("tileTrait"));
+  QVERIFY2(!doors.isEmpty(), "Pallet Town has doors");
+  for (const QVariant& v : doors) {
+    const QVariantMap m = v.toMap();
+    QCOMPARE(m["unit"].toString(), QStringLiteral("tile"));  // 8x8 -- the genuinely tile-sized one
+    // A tile trait is a TILESET fact, not save storage -- it has no Map Storage row to open.
+    QCOMPARE(m["section"].toString(), QString());
+  }
+
+  // ⚠️ ONE TAB PER TRAIT PER BLOCK. A block is 4x4 tiles, so a grassy block has SIXTEEN grass
+  // tiles -- and sixteen identical "Grass" tabs, all going to the same place, disambiguate nothing
+  // and stacked into an unbroken grey bar down the whole map. (The screenshot review caught it; the
+  // code looked perfectly reasonable.) The truthful 8x8 highlight is not lost: MapEngine::overlay()
+  // already paints every tile at its real size. The tab is the handle, the overlay is the highlight.
+  const QVariantList grass =
+      filterSpots(model.blockHotspots(MapEngine::LayerGrass), QStringLiteral("tileTrait"));
+  QVERIFY2(!grass.isEmpty(), "Pallet Town has grass");
+  QSet<QPair<int, int>> blocks;
+  for (const QVariant& v : grass) {
+    const QVariantMap m = v.toMap();
+    const QPair<int, int> b{ m["extX"].toInt() / MapEngine::blockPx,
+                             m["extY"].toInt() / MapEngine::blockPx };
+    QVERIFY2(!blocks.contains(b), "a trait must appear ONCE per block, not once per tile");
+    blocks.insert(b);
+  }
+  QCOMPARE(grass.size(), blocks.size());
+}
+
+/// ⭐ The map's story, phase by phase -- "(First phase flags) (second phase flags) ... which
+/// scripts and locations did what to them turning them on off etc".
+///
+/// Pallet Town is the whole shape in one map: phase 0 turns Oak's flag ON, phase 1 SHOWS him,
+/// phase 5 turns Daisy's flag on and swaps her sitting sprite for her walking one.
+void TestMap::phases_tellTheMapsStoryInOrder()
+{
+  const QByteArray bytes = readSaveBytes(QStringLiteral("saves/natural-clean/BaseSAV.sav"));
+  SaveFile sf;
+  loadInto(sf, bytes);
+
+  MapModel model(sf.dataExpanded->area->map,
+                 sf.dataExpanded->area->player,
+                 sf.dataExpanded->area->tileset,
+                 sf.dataExpanded->area->general);
+
+  const QVariantList phases = model.mapPhases(QVariantList{ 0 });   // Pallet Town
+  QVERIFY(!phases.isEmpty());
+
+  QMap<int, QVariantMap> byStep;
+  for (const QVariant& v : phases)
+    byStep.insert(v.toMap()["step"].toInt(), v.toMap());
+
+  // Phase 0 -- the trigger's own phase -- turns Oak's flag ON. Nothing else.
+  QVERIFY(byStep.contains(0));
+  QCOMPARE(byStep[0]["sets"].toList().size(), 1);
+  QCOMPARE(byStep[0]["sets"].toList().first().toMap()["name"].toString(),
+           QStringLiteral("Oak Appeared In Pallet"));
+  QVERIFY(byStep[0]["resets"].toList().isEmpty());
+
+  // Phase 1 SHOWS Oak -- a filter flag, and the verb is "show", never the inverted bit.
+  QVERIFY(byStep.contains(1));
+  QCOMPARE(byStep[1]["shows"].toList().size(), 1);
+  QCOMPARE(byStep[1]["shows"].toList().first().toMap()["name"].toString(),
+           QStringLiteral("Prof. Oak"));
+
+  // Phase 5 swaps Daisy: hides the sitting one, shows the walking one. Both in ONE phase -- which
+  // a set-of-names could not express, and which is why the action is kept per write.
+  QVERIFY(byStep.contains(5));
+  QCOMPARE(byStep[5]["hides"].toList().size(), 1);
+  QCOMPARE(byStep[5]["hides"].toList().first().toMap()["name"].toString(),
+           QStringLiteral("Daisy Sitting"));
+  QCOMPARE(byStep[5]["shows"].toList().size(), 1);
+  QCOMPARE(byStep[5]["shows"].toList().first().toMap()["name"].toString(),
+           QStringLiteral("Daisy Walking"));
+
+  // ⚠️ REGRESSION PIN: Daisy's SHOW is `predef_jump ShowObject`, not `predef ShowObject` -- the
+  // tail-call form. A regex demanding `predef ` drops it silently, and Daisy is then recorded as
+  // hidden and never shown again. 12 of the game's 83 Show/Hide sites use predef_jump.
+  QVERIFY2(!byStep[5]["shows"].toList().isEmpty(),
+           "predef_jump ShowObject must be recognised; see TOGGLE_RE");
+
+  // Every phase names itself, so the story is readable rather than numbered.
+  for (const QVariant& v : phases) {
+    QVERIFY(!v.toMap()["label"].toString().isEmpty());
+    QVERIFY(v.toMap()["step"].toInt() >= 0);
+  }
+}
+
+/// One flag's whole story: who turns it on, in which phase, and where that can be triggered.
+void TestMap::flagHistory_saysWhoTurnedItOnAndWhere()
+{
+  const QByteArray bytes = readSaveBytes(QStringLiteral("saves/natural-clean/BaseSAV.sav"));
+  SaveFile sf;
+  loadInto(sf, bytes);
+
+  MapModel model(sf.dataExpanded->area->map,
+                 sf.dataExpanded->area->player,
+                 sf.dataExpanded->area->tileset,
+                 sf.dataExpanded->area->general);
+
+  // Find "Oak Appeared In Pallet" by name rather than hard-coding a bit index.
+  int oakFlag = -1;
+  for (int i = 0; i < EventsDB::inst()->getStoreSize(); i++) {
+    EventDBEntry* e = EventsDB::inst()->getStoreAt(i);
+    if (e != nullptr && e->getName() == QStringLiteral("Oak Appeared In Pallet")) {
+      oakFlag = i;
+      break;
+    }
+  }
+  QVERIFY(oakFlag >= 0);
+
+  const QVariantList story = model.flagHistory(oakFlag, true);
+  QVERIFY2(!story.isEmpty(), "this flag is set by Pallet Town's phase 0; its story cannot be empty");
+
+  bool sawPallet = false;
+  for (const QVariant& v : story) {
+    const QVariantMap m = v.toMap();
+    QVERIFY(m["action"].toString() == QStringLiteral("set")
+            || m["action"].toString() == QStringLiteral("reset"));
+    if (m["mapName"].toString() != QStringLiteral("Pallet Town"))
+      continue;
+    sawPallet = true;
+    QCOMPARE(m["action"].toString(), QStringLiteral("set"));
+    QCOMPARE(m["step"].toInt(), 0);
+    // ...and it has a PLACE, because phase 0 is the located north-row trigger.
+    const QVariantList at = m["locations"].toList();
+    QVERIFY2(!at.isEmpty(), "phase 0 is the north-row trigger; it has a location");
+    QCOMPARE(at.first().toMap()["kind"].toString(), QStringLiteral("scriptRow"));
+    QCOMPARE(at.first().toMap()["y"].toInt(), 1);
+  }
+  QVERIFY(sawPallet);
+
+  // A filter flag's story uses the game's VERB. Prof. Oak on Pallet Town is missable 0, and phase
+  // 1 shows him -- "show", not "cleared the bit".
+  const QVariantList oakObj = model.flagHistory(0, false);
+  QVERIFY(!oakObj.isEmpty());
+  bool sawShow = false;
+  for (const QVariant& v : oakObj) {
+    const QString a = v.toMap()["action"].toString();
+    QVERIFY(a == QStringLiteral("show") || a == QStringLiteral("hide"));
+    if (a == QStringLiteral("show"))
+      sawShow = true;
+  }
+  QVERIFY(sawShow);
+}
+
+/// A block carries ONLY what overlaps it -- and the count stays sane.
+///
+/// Leadership asked the sharp question: *"a block should only have tabs for the things it overlaps,
+/// scripts and stuff should have clear locations so why does a block have 40 tabs?"* -- prompted by
+/// me miscounting out loud. It does not: Pallet Town's busiest block carries a handful. The row of
+/// strips across the top is TEN blocks with FOUR tabs each, not one block with forty, and the row
+/// spans them because the cartridge's trigger really is the whole row (`cp 1` on wYCoord, no X
+/// test at all). This pins the real number so the question can never be answered by guesswork again.
+void TestMap::hotspots_aBlockOnlyCarriesWhatOverlapsIt()
+{
+  const QByteArray bytes = readSaveBytes(QStringLiteral("saves/natural-clean/BaseSAV.sav"));
+  SaveFile sf;
+  loadInto(sf, bytes);
+
+  sf.dataExpanded->area->map->curMap = 0;   // Pallet Town
+
+  MapModel model(sf.dataExpanded->area->map,
+                 sf.dataExpanded->area->player,
+                 sf.dataExpanded->area->tileset,
+                 sf.dataExpanded->area->general);
+
+  // Storage only (no Tiles overlays): the busiest block is the north row's -- 1 script + 3 events.
+  int worst = 0;
+  for (const QVariant& b : model.blockHotspots(0))
+    worst = qMax(worst, b.toMap()["spots"].toList().size());
+  QCOMPARE(worst, 4);
+
+  // Every spot on a block must actually intersect that block -- the aggregation rule, enforced.
+  // A spot filed on a block it doesn't touch would be a tab that points somewhere else entirely.
+  for (const QVariant& b : model.blockHotspots(MapEngine::LayerGrass | MapEngine::LayerWater)) {
+    const QVariantMap m = b.toMap();
+    const int bx = m["blockX"].toInt() * MapEngine::blockPx;
+    const int by = m["blockY"].toInt() * MapEngine::blockPx;
+    for (const QVariant& s : m["spots"].toList()) {
+      const QVariantMap v = s.toMap();
+      const int x0 = v["extX"].toInt(), x1 = x0 + v["extW"].toInt() - 1;
+      const int y0 = v["extY"].toInt(), y1 = y0 + v["extH"].toInt() - 1;
+      QVERIFY2(x1 >= bx && x0 <= bx + MapEngine::blockPx - 1
+               && y1 >= by && y0 <= by + MapEngine::blockPx - 1,
+               qPrintable(QString("spot '%1' is filed on a block it does not overlap")
+                            .arg(v["name"].toString())));
+    }
+  }
 }
 
 QTEST_MAIN(TestMap)

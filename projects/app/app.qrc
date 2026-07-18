@@ -646,7 +646,7 @@
         <file>ui/app/screens/non-modal/map/ConnectionArrow.qml</file>
         <file>ui/app/screens/non-modal/map/WarpField.qml</file>
         <file>ui/app/screens/non-modal/map/MapSign.qml</file>
-        <file>ui/app/screens/non-modal/map/MapFlagBox.qml</file>
+        <file>ui/app/screens/non-modal/map/MapBlockHotspot.qml</file>
         <file>ui/app/screens/non-modal/map/SignField.qml</file>
         <file>ui/app/screens/non-modal/map/WarpStatePanel.qml</file>
         <file>ui/app/screens/non-modal/map/CharacterStatePanel.qml</file>
