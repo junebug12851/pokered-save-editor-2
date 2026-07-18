@@ -338,20 +338,33 @@ Item {
     //
     //    `hilite: false` -- their own component draws the box; a second outline from the hotspot
     //    layer would be two answers to one question. What they gain here is the TAB.
-    function object(list, kind, section, name) {
+    // ⚠️ `id` is the SELECTION KEY, and the two lists do not agree on its name: a sprite is
+    // identified by its SLOT (`npcList` emits `slot`, 1-15), a warp/sign by its `ind`. Reading
+    // `o.ind` off a sprite yields **undefined**, which coerces to **0** -- and slot 0 IS THE PLAYER.
+    // That is exactly Twilight's *"if i manage to click a tab trying to select an npc it sometimes
+    // selects the player"*: not "sometimes" at all -- every sprite tab selected the player, and it
+    // only looked intermittent because the player is often who you wanted anyway.
+    //
+    // ⚠️ And the box is placed from the object's own WALK-GRID coords, not `rectX/rectY`: those carry
+    // the console's 4px OAM lift, so a sprite near a block's top edge files onto the block ABOVE the
+    // one it stands on and its tab appears on the wrong cell. (Same trap as the player's.)
+    function object(list, kind, section, key, name) {
       for (let i = 0; i < list.length; i++) {
         const o = list[i];
-        const ext = { extX: o.rectX, extY: o.rectY, extW: 16, extH: 16 };
-        cell(Math.floor(o.rectX / px), Math.floor(o.rectY / px)).spots.push({
-          kind: kind, ind: o.ind, unit: "halfBlock", section: section,
+        const ex = canvasRoot.mapBorderPx + o.x * 16;
+        const ey = canvasRoot.mapBorderPx + o.y * 16;
+        cell(Math.floor(ex / px), Math.floor(ey / px)).spots.push({
+          kind: kind, ind: key(o), unit: "halfBlock", section: section,
           name: name(o), desc: "", hilite: false,
-          extX: ext.extX, extY: ext.extY, extW: ext.extW, extH: ext.extH,
+          extX: ex, extY: ey, extW: 16, extH: 16,
         });
       }
     }
-    object(canvasRoot.npcs,  "sprite", "details", o => o.name !== undefined ? o.name : qsTr("Person"));
-    object(canvasRoot.warps, "warp",   "details", o => qsTr("Door → %1").arg(o.destName !== undefined ? o.destName : "?"));
-    object(canvasRoot.signs, "sign",   "details", o => qsTr("Sign"));
+    object(canvasRoot.npcs,  "sprite", "details", o => o.slot,
+           o => o.name !== undefined ? o.name : qsTr("Person"));
+    object(canvasRoot.warps, "warp",   "details", o => o.ind,
+           o => qsTr("Door → %1").arg(o.destName !== undefined ? o.destName : "?"));
+    object(canvasRoot.signs, "sign",   "details", o => o.ind, o => qsTr("Sign"));
 
     // 3. THE PLAYER. *"the player doesnt have a box yet its editable too"* -- and he is: you can
     //    drag him anywhere on the map. He is drawn by his own MapSprite (slot 0) rather than being
@@ -393,6 +406,48 @@ Item {
   /// Hover is the honest test here (rather than `overPanel`'s geometry): the tabs already track it,
   /// there can be hundreds of them, and no grab policy can defeat a plain boolean.
   property bool overTab: false
+
+  // ── THE CELL CURSOR ────────────────────────────────────────────────────────────────────────
+  //
+  /// The block the pointer is in, or -1. **One** HoverHandler on the map, not one MouseArea per
+  /// block, and that is two fixes in one thing:
+  ///
+  /// 1. ⚠️ **THE FLICKER.** *"the tabs when moused over glitch on and off rapidly"* — and it was a
+  ///    feedback loop of my own making. The strip appeared on the block's own `MouseArea.containsMouse`,
+  ///    the strip is a CHILD of that block, and **a child MouseArea steals hover from its parent**.
+  ///    So: hover block → strip appears under the cursor → strip takes the hover → parent goes false
+  ///    → strip disappears → parent true again → … at frame rate. A hover test can never live on an
+  ///    item that hover-reactive children cover.
+  ///    A `HoverHandler` on the MAP does not have that problem: it stays hovered while the pointer is
+  ///    anywhere inside, children included, so nothing can steal it and there is no loop to enter.
+  ///
+  /// 2. ⭐ **EVERY CELL REACTS.** *"All tiles are supposed to react when moused over even if they have
+  ///    no tabs keep uniformity and standardization the cells are cells no matter if anything is in
+  ///    them or not."* Per-block MouseAreas only existed where there was something, so empty cells
+  ///    were dead — the exact inconsistency. Tracking the pointer's block instead means the grid is
+  ///    whole: **every** cell answers, whether it holds anything or not. It also costs one item
+  ///    instead of ~540 on a map like Route 12.
+  property int hoverBlockX: -1
+  property int hoverBlockY: -1
+
+  /// ⭐ THE MOVABLE OBJECT under the pointer, as `"blockX,blockY"` — or `""`.
+  ///
+  /// > *"if mousing over things that can move on the map in the cell, the highlight changes to the
+  /// >  moveable object and away from the cell to indicate its moveable, also the cell tabs go away
+  /// >  when mousing over a moveable item — unless it takes up the whole cell … in that case its
+  /// >  'fullscreen' within the cell so it works on the tab system"* — Fairy Fox, 2026-07-17
+  ///
+  /// This is what makes the two gestures legible instead of fighting: **point at the thing and you
+  /// get the thing** (its own outline lights, the cell's furniture withdraws, and you can just drag
+  /// it). **Point at the cell around it and you get the cell** (its tabs, for everything filed
+  /// there). The map stops guessing which you meant, because your cursor already said.
+  ///
+  /// A movable object is a 16×16 half-block inside a 32×32 cell — a quarter of it — so there is
+  /// always cell left to point at. If one ever fills its cell (`fullCell`), the tabs stay: they
+  /// would otherwise be unreachable, and a thing you cannot reach is worse than a thing that
+  /// overlaps.
+  property string hoverMovable: ""
+  property bool hoverMovableFullCell: false
 
   /// Which storage kinds the Layers panel is currently showing -- what the tab strip is allowed to
   /// tab. *"the tab strip only needs to have tabs based on the active layers"* (Fairy Fox).
@@ -1066,6 +1121,39 @@ Item {
         color: "transparent"
         border.width: 2
         border.color: canvas.screenColor
+      }
+
+      // ── THE CELL CURSOR ─────────────────────────────────────────────────────────────────────
+      //
+      // ONE handler for the whole map. @see canvasRoot.hoverBlockX -- it explains why this cannot
+      // be a MouseArea per block (the flicker) and why it must cover every cell (uniformity).
+      HoverHandler {
+        id: cellHover
+        // A HoverHandler stays hovered while the pointer is over CHILDREN too, so tabs, sprites and
+        // chips never steal it -- which is exactly what a MouseArea could not manage.
+        onPointChanged: {
+          const bx = Math.floor((point.position.x / canvasRoot.zoom) / brg.map.blockSize);
+          const by = Math.floor((point.position.y / canvasRoot.zoom) / brg.map.blockSize);
+          canvasRoot.hoverBlockX = bx;
+          canvasRoot.hoverBlockY = by;
+        }
+        onHoveredChanged: if (!hovered) { canvasRoot.hoverBlockX = -1; canvasRoot.hoverBlockY = -1; }
+      }
+
+      /// EVERY cell answers the pointer -- *"the cells are cells no matter if anything is in them or
+      /// not"*. One rectangle that follows the cursor's block, so an empty stretch of water reacts
+      /// exactly like the block with the Snorlax on it. Borders only, no fill: it must never tint the
+      /// artwork underneath (rule 2 -- the visual language is carried by lines).
+      Rectangle {
+        visible: canvasRoot.hoverBlockX >= 0 && brg.mapLayers.showFlagBoxes
+        x: canvasRoot.hoverBlockX * brg.map.blockSize * canvasRoot.zoom
+        y: canvasRoot.hoverBlockY * brg.map.blockSize * canvasRoot.zoom
+        width: brg.map.blockSize * canvasRoot.zoom
+        height: brg.map.blockSize * canvasRoot.zoom
+        color: "transparent"
+        border.width: 1
+        border.color: "#66ffffff"
+        z: 1
       }
 
       // ── Pointing at things ──────────────────────────────────────────────────────────────────

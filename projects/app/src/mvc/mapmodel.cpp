@@ -4536,7 +4536,16 @@ QVariantList MapModel::blockHotspots(quint32 tileLayers) const
         // fact: GRASS and WATER are where the wild Pokémon are, and those tables are editable, so
         // they open the **Wild Pokémon** panel. The rest open the **Tileset** panel, which is what
         // a tile trait *is*. Nothing on the canvas is a label you can only look at.
-        const bool wild = (layer == MapEngine::LayerGrass || layer == MapEngine::LayerWater);
+        //
+        // ⚠️ ...but ONLY WHERE THERE REALLY ARE ANY. *"The invalid areas do not need to display as
+        // having wild pokemon."* Route 12 proves the case from the cartridge: `Route12WildMons` is
+        // `def_grass_wildmons 15` with **no water block at all** -- its river needs Surf and holds
+        // nothing. `wWaterRate` is 0, and a water tab promising encounters there would be a lie the
+        // console never told. Rate 0 = no encounters = the trait keeps its Tileset destination,
+        // which is what it honestly is.
+        const bool wildLayer = (layer == MapEngine::LayerGrass || layer == MapEngine::LayerWater);
+        const bool wild = wildLayer
+                          && ((layer == MapEngine::LayerGrass) ? grassEnabled() : waterEnabled());
 
         QVariantMap v;
         v["kind"]    = "tileTrait";

@@ -1093,19 +1093,57 @@ void TestMap::hotspots_tileTraitsOnlyWhenTheirLayerIsShown()
     QCOMPARE(m["section"].toString(), QStringLiteral("tiles"));
   }
 
-  // ⭐ EVERY SPOT HAS A REAL DESTINATION -- and this line used to assert the exact opposite
-  // (`section == ""` for a tile trait, "it has no Map Storage row to open"). That empty string was
-  // not a harmless label: the tab AND the block's hit area were `enabled:` only when a section
-  // existed, so it switched water and grass **completely off** -- no hover, no tooltip, no click --
-  // across most of a water route. Twilight: *"clicking water doesnt even bring up wild mons"*.
+  // ⚠️ PALLET TOWN'S GRASS PROMISES NOTHING, and that is the point.
   //
-  // Grass and water open the WILD POKÉMON panel, because that is what they are: where the wild
-  // Pokémon live, and that table is editable. Nothing on the canvas is a label you can only look at.
-  const QVariantList grassSpots =
-      filterSpots(model.blockHotspots(MapEngine::LayerGrass), QStringLiteral("tileTrait"));
-  QVERIFY(!grassSpots.isEmpty());
-  for (const QVariant& v : grassSpots)
+  // It has grass tiles and **no wild encounters** (`wGrassRate` 0 -- it is a town). So its grass
+  // keeps the Tileset destination: *"The invalid areas do not need to display as having wild
+  // pokemon."* This assertion used to demand "wild" here and failed, correctly -- the test was
+  // wrong, not the rule.
+  for (const QVariant& v : filterSpots(model.blockHotspots(MapEngine::LayerGrass),
+                                       QStringLiteral("tileTrait")))
+    QCOMPARE(v.toMap()["section"].toString(), QStringLiteral("tiles"));
+
+  // ⭐ ...and where there ARE encounters, grass opens the WILD POKÉMON panel -- because that is what
+  // grass IS, and that table is editable. Route 12 is the case, straight from the cartridge:
+  // `Route12WildMons` is `def_grass_wildmons 15` (Oddish/Pidgey/Venonat) and, notably, has **no
+  // water block at all** -- so its river needs Surf and holds nothing, and its water must NOT claim
+  // otherwise. Both halves of the rule, on one map.
+  //
+  // ⚠️ It needs the FORGED SAVE, not `curMap = 23` on this one. The wild tables live in the SAVE's
+  // Area block, so poking a map id gives you Route 12's map wearing Pallet Town's encounter tables
+  // -- the chimera (reference/forged-saves.md), and `grassEnabled()` would answer for the wrong
+  // town. This fixture was walked to by the real console, so its tables are Route 12's own.
+  const QByteArray r12bytes = readSaveBytes(QStringLiteral("saves/forged-maps/Route12.sav"));
+  SaveFile r12sf;
+  loadInto(r12sf, r12bytes);
+  QCOMPARE(int(r12sf.dataExpanded->area->map->curMap), 23);
+
+  // ⚠️ The FULL constructor. `AreaPokemon` is the 10th argument and defaults to nullptr, and
+  // `grassRate()` is `pokemon ? pokemon->grassRate : 0` -- so the short 4-arg form used elsewhere in
+  // this file answers **0 encounters for every map in the game**, silently. That is not a test
+  // detail: any caller that builds a MapModel without the encounter block gets a canvas where no
+  // grass or water ever offers wild Pokémon.
+  MapModel r12(r12sf.dataExpanded->area->map,
+               r12sf.dataExpanded->area->player,
+               r12sf.dataExpanded->area->tileset,
+               r12sf.dataExpanded->area->general,
+               nullptr, nullptr, nullptr, nullptr, nullptr,
+               r12sf.dataExpanded->area->pokemon);
+
+  QVERIFY2(r12.grassEnabled(), "Route 12's grass rate is 15 -- it has encounters");
+  QVERIFY2(!r12.waterEnabled(), "Route 12 has NO water encounters (pret: no water block at all)");
+
+  const QVariantList r12grass =
+      filterSpots(r12.blockHotspots(MapEngine::LayerGrass), QStringLiteral("tileTrait"));
+  QVERIFY(!r12grass.isEmpty());
+  for (const QVariant& v : r12grass)
     QCOMPARE(v.toMap()["section"].toString(), QStringLiteral("wild"));
+
+  // The water on that same map is real water -- and it must not promise Pokémon the console never
+  // put there. THE LIE THIS PREVENTS is the whole reason the rule exists.
+  for (const QVariant& v : filterSpots(r12.blockHotspots(MapEngine::LayerWater),
+                                       QStringLiteral("tileTrait")))
+    QCOMPARE(v.toMap()["section"].toString(), QStringLiteral("tiles"));
 
   // The rule, over every kind at once: a spot with no destination is a hole in the map.
   const QVariantList all = model.blockHotspots(MapEngine::LayerGrass | MapEngine::LayerWater

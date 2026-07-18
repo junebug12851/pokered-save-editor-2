@@ -80,6 +80,12 @@ public:
   /// @p button which mouse button (Left/Right/Middle) -- so right-click menus can be driven too.
   bool debugTap(const QPointF& at, int clicks = 1, Qt::MouseButton button = Qt::LeftButton);
 
+  /// DEBUG: move the pointer to @p at **with no button held** -- i.e. HOVER. Drives
+  /// `MouseArea.containsMouse`, `HoverHandler.hovered` and every `onEntered`, exactly as a real
+  /// cursor does. @see debugserver.cpp -> "hover", and the note on the implementation for why
+  /// "hover can't be tested" was wrong.
+  bool debugHover(const QPointF& at);
+
   /// DEBUG: open the details editor for party mon @p index (drives the QML
   /// AppWindow.debugOpenPartyDetails). Backs --screen pokemonDetails. @return false
   /// if the item/mon can't be resolved.

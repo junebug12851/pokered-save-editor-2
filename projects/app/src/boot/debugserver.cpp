@@ -369,6 +369,35 @@ QJsonObject execute(const QJsonObject& c)
   //
   //   {"cmd":"tap","x":120,"y":300}          -- a scene coordinate
   //   {"cmd":"tap","obj":"someItem"}         -- ...or the centre of a named item
+  // HOVER -- the pointer, no button. Everything the map does under the cursor (the cell outline,
+  // the tab strip appearing, a tab lighting its own box) is driven by this and by nothing else, so
+  // without it none of that could be checked without a human. @see MainWindow::debugHover
+  if(cmd == QStringLiteral("hover")) {
+    auto* mw = MainWindow::getInstance();
+    if(mw == nullptr) return err(QStringLiteral("no window"));
+
+    QPointF at;
+    if(c.contains(QStringLiteral("obj"))) {
+      QObject* o = findItem(c.value(QStringLiteral("obj")).toString());
+      auto* item = qobject_cast<QQuickItem*>(o);
+      if(item == nullptr)
+        return err(QStringLiteral("no item: ") + c.value(QStringLiteral("obj")).toString());
+      at = item->mapToScene(QPointF(item->width() / 2.0, item->height() / 2.0));
+    }
+    else {
+      at = QPointF(c.value(QStringLiteral("x")).toDouble(),
+                   c.value(QStringLiteral("y")).toDouble());
+    }
+
+    if(!mw->debugHover(at))
+      return err(QStringLiteral("hover failed"));
+
+    QJsonObject where;
+    where[QStringLiteral("x")] = at.x();
+    where[QStringLiteral("y")] = at.y();
+    return ok(where);
+  }
+
   if(cmd == QStringLiteral("tap")) {
     auto* mw = MainWindow::getInstance();
     if(mw == nullptr) return err(QStringLiteral("no window"));

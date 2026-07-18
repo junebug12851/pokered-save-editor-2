@@ -237,6 +237,33 @@ bool MainWindow::debugTap(const QPointF& at, int clicks, Qt::MouseButton button)
   return true;
 }
 
+bool MainWindow::debugHover(const QPointF& at)
+{
+  if(ui.app == nullptr)
+    return false;
+
+  // ⭐ HOVER IS TESTABLE. A `MouseMove` with **no buttons held** is, to Qt, exactly a hover: it is
+  // what drives `MouseArea.containsMouse`, `HoverHandler.hovered` and every `onEntered` in the app.
+  // There is nothing special about it and nothing missing from the toolkit.
+  //
+  // 🐺 Worth recording WHY this exists, because the mistake is the expensive kind: I told Twilight
+  // hover "can't be driven synthetically, only your cursor can confirm it" -- and she didn't buy it:
+  // *"i find it hard to beleive theres no solution for testing hover you cannot tell me the
+  // community has no solution for this."* She was right, and it is the SAME failure as the
+  // aqtinstall "hard ceiling" (see reference/qt-patterns.md): I hit the edge of what I had already
+  // built (`debugTap` sends press+release), concluded the capability did not exist, and handed her
+  // the verification instead of spending five minutes finding `QEvent::MouseMove`.
+  //
+  // **The rule: "my harness can't" is not "it can't."** An ecosystem this size having no answer for
+  // something this ordinary should read as a smell, every time.
+  const QPoint local = at.toPoint();
+  const QPointF global = ui.app->mapToGlobal(local);
+
+  QMouseEvent ev(QEvent::MouseMove, at, global, Qt::NoButton, Qt::NoButton, Qt::NoModifier);
+  QCoreApplication::sendEvent(ui.app, &ev);
+  return true;
+}
+
 bool MainWindow::debugOpenPartyDetails(int index)
 {
   QObject* root = ui.app->rootObject();

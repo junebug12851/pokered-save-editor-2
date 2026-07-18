@@ -1,5 +1,39 @@
 # Qt / QML Patterns
 
+## 🐺 "HOVER CAN'T BE TESTED" — wrong, and wrong the SAME WAY as the aqtinstall "ceiling" — 2026-07-17
+
+I told Twilight that hover could not be driven synthetically — *"only your cursor can confirm the
+strip appearing, the tabs lighting their own boxes"* — and handed her the verification. She didn't
+buy it:
+
+> *"i find it hard to beleive theres no solution for testing hover you cannot tell me the community
+> has no solution for this"*
+
+She was right, and the answer is **two lines**:
+
+```cpp
+QMouseEvent ev(QEvent::MouseMove, at, global, Qt::NoButton, Qt::NoButton, Qt::NoModifier);
+QCoreApplication::sendEvent(ui.app, &ev);
+```
+
+**A `MouseMove` with no buttons held IS a hover.** It drives `MouseArea.containsMouse`,
+`HoverHandler.hovered` and every `onEntered` in the app — there is nothing special about it and
+nothing missing from the toolkit. Now shipped as `MainWindow::debugHover` + the harness's
+`{"cmd":"hover","x":…,"y":…}`. Verified live: hovering the map updates the status bar's
+`tile 11, 15 · block 5, 7` and pops the warp's tooltip, entirely from a synthetic event.
+
+⚠️ **The failure mode, and it is the expensive one, because this is the SECOND time in one day:**
+the aqtinstall section below records me declaring a hard *ceiling* ("Windows CI can have at most
+6.10.x") off one lazy step — the released tool couldn't, therefore it was impossible; the fix had
+been merged four months earlier. This is the same move: `debugTap` sends press+release, so I hit the
+edge of **what I had already built**, concluded the *capability* did not exist, and made her do it
+by hand.
+
+> **The rule: "my harness can't" is not "it can't", and "the API I already wrote doesn't" is not
+> "the API doesn't."** An ecosystem this size having no answer for something this ordinary is a
+> **smell, not a finding**. Go and look before you tell someone a thing is impossible — especially
+> before you make it their job.
+
 ## 🖱️ A MouseArea CANNOT beat a TapHandler underneath it — 2026-07-17 (the third time)
 
 **Handlers all fire before any item sees a press.** Qt delivers a press to **every pointer handler

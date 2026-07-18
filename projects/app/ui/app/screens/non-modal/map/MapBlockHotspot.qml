@@ -109,13 +109,27 @@ Item {
   /// target -- reads THIS, never the raw list, so a hidden layer can never be reached by accident.
   readonly property var spots: hot.block.spots.filter(s => hot.activeKinds.indexOf(s.kind) >= 0)
 
-  /// Is the cursor on this block (or on its own strip)? The strip only exists while it is.
+  /// Is the cursor in this block? Read from the canvas's ONE HoverHandler, never from a MouseArea
+  /// of our own.
   ///
-  /// ⚠️ `|| hot.hoveredSpot >= 0` is load-bearing, not belt-and-braces: the tabs sit inside the
-  /// block, but a tab is BIGGER than the cell it lives in when it scales up under the cursor, and
-  /// the moment the pointer is over the tab rather than the block, `hit.containsMouse` can go false.
-  /// Without this the strip vanishes exactly as you reach for it, and nothing is ever clickable.
-  readonly property bool showTabs: hit.containsMouse || hot.hoveredSpot >= 0
+  /// ⚠️ This is the flicker fix. A per-block `MouseArea` cannot host this test, because the tab
+  /// strip is a CHILD of the block and **a child MouseArea steals hover from its parent**: strip
+  /// appears → takes the hover → parent goes false → strip hides → parent true → … at frame rate.
+  /// *"the tabs when moused over glitch on and off rapidly"*. The canvas's HoverHandler stays
+  /// hovered over children, so there is no loop to enter. @see MapCanvas.hoverBlockX
+  ///
+  /// ⭐ ...and the strip WITHDRAWS when the pointer is on a movable object in this very cell
+  /// (*"the cell tabs go away when mousing over a moveable item"*). Point at the thing and you get
+  /// the thing — its own outline, ready to drag. Point at the cell around it and you get the cell's
+  /// tabs. Your cursor says which you meant, so nothing has to guess.
+  /// Unless it fills the cell, in which case the tabs are the only way in and must stay.
+  /// @see MapCanvas.hoverMovable
+  readonly property bool showTabs: hot.canvas.hoverBlockX === hot.block.blockX
+                                   && hot.canvas.hoverBlockY === hot.block.blockY
+                                   && !(hot.canvas.hoverMovable === hot.blockKey
+                                        && !hot.canvas.hoverMovableFullCell)
+
+  readonly property string blockKey: hot.block.blockX + "," + hot.block.blockY
 
   /// The tab the cursor is on, or -1. Hovering a tab LIGHTS ITS OWN SPOT on the map -- which is the
   /// answer to *"nothing comes up when i mouse over a square"*: a strip of coloured dots means
@@ -230,6 +244,12 @@ Item {
     return spot.name;
   }
 
+  /// How thick a box's line is. *"since we're only using borders youll have to make them a teensy
+  /// bit thicker"* — with no fill to carry it, the LINE is the whole visual language, so solid-vs-
+  /// dashed has to be legible at a glance over four shades of Game Boy grey. One px is not enough
+  /// to tell a dash from a stroke; two is.
+  readonly property int lineWidth: Math.max(2, Math.round(1.5 * hot.canvas.zoom))
+
   /// Can you MOVE this thing -- drag it, delete it, put a new one down?
   ///
   /// > *"stuff draggable, deletable, insertable, etc.... should have a solid fill and box, stuff
@@ -326,18 +346,22 @@ Item {
       // The decision is the BLOCK's, not this spot's: one movable thing in the cell makes the whole
       // cell solid and filled. @see hot.anyMovable
 
-      // The SOLID, FILLED box -- only when something in this cell can be picked up.
+      // The SOLID box -- something in this cell can be picked up.
+      //
+      // ⚠️ NO FILL. Anywhere. Twilight's settled call, 2026-07-17: *"Yea i guess dont fill in the
+      // boxes but youll have to do that for all boxes on the map keep and maintain standardization.
+      // I still want dashed and solid lines for visual language since we're only using borders
+      // youll have to make them a teensy bit thicker."*
+      //
+      // So the language is carried ENTIRELY by the line: **solid = movable, dashed = fixed**, and
+      // both are a touch thicker to make the difference readable at 1x over four shades of grey.
+      // Nothing is ever washed -- a fill over Game Boy art repaints the thing you are trying to
+      // look at, which is the mistake that tinted every Poké Ball in Oak's Lab green.
       Rectangle {
         anchors.fill: parent
         visible: hot.anyMovable
-        // A light wash of the layer's own ink -- present enough to say "solid fill", faint enough
-        // that the artwork underneath is still the thing you look at. (A heavy wash tinted every
-        // Poké Ball in Oak's Lab green once, and the screenshot review caught it.)
-        color: {
-          const c = Qt.color(hot.inkOf(modelData.kind));
-          return Qt.rgba(c.r, c.g, c.b, 0.18);
-        }
-        border.width: Math.max(1, Math.round(hot.canvas.zoom))
+        color: "transparent"
+        border.width: hot.lineWidth
         border.color: hot.inkOf(modelData.kind)
         radius: 2
       }
@@ -360,10 +384,10 @@ Item {
         onPaint: {
           const ctx = getContext("2d");
           ctx.reset();
-          const w = Math.max(1, Math.round(hot.canvas.zoom));
+          const w = hot.lineWidth;   // the same weight as the solid box, so only the DASH differs
           ctx.lineWidth = w;
           ctx.strokeStyle = hot.inkOf(modelData.kind);
-          ctx.setLineDash([Math.max(2, 3 * hot.canvas.zoom), Math.max(2, 3 * hot.canvas.zoom)]);
+          ctx.setLineDash([Math.max(3, 3 * hot.canvas.zoom), Math.max(3, 3 * hot.canvas.zoom)]);
           ctx.strokeRect(w / 2, w / 2, width - w, height - w);
         }
         // The dashes must be repainted when the zoom changes them.
@@ -511,35 +535,14 @@ Item {
     }
   }
 
-  // ── The block's own hover ──────────────────────────────────────────────────────────────────
+  // ⚠️ NO MouseArea here, and that is deliberate on two counts.
   //
-  // HOVER ONLY. It never clicks, and it never blocks: `acceptedButtons: Qt.NoButton` lets every
-  // press fall straight through to whatever is really under the cursor -- the sprite, the door, the
-  // canvas's own drag. That matters, because this area covers the WHOLE map now, and a hit target
-  // that swallowed clicks would have broken dragging everywhere. Twilight: *"Clicking on things too
-  // is often buggy or glitchy"* -- an invisible grid stealing presses is exactly how that feels.
+  // 1. It cannot host the hover test -- the tab strip is its child, and a child MouseArea steals
+  //    hover from its parent, which is the flicker. @see showTabs.
+  // 2. It must not accept presses: this item spans a whole block, and an invisible grid that
+  //    swallowed clicks would break dragging everywhere on the canvas.
   //
-  // ⚠️ It also used to be `enabled:` only for a single-spot block with a section, which meant the
-  // block under your cursor usually wasn't listening at all. Now: if there is anything here, hover
-  // says so. CLICKING is the tabs' job, uniformly -- a cell that guessed which of several things
-  // you meant would be choosing behind your back.
-  MouseArea {
-    id: hit
-    anchors.fill: parent
-    hoverEnabled: true
-    enabled: hot.spots.length > 0
-    acceptedButtons: Qt.NoButton   // hover only -- never steal a press
-    z: -1                          // and never sit above the things it describes
-  }
-
-  /// The whole cell tints while the cursor is in it, so you can SEE which block's strip you are
-  /// reading. Without this a strip of dots floats next to nothing in particular.
-  Rectangle {
-    anchors.fill: parent
-    visible: hit.containsMouse
-    color: "#18ffffff"
-    border.width: 1
-    border.color: "#40ffffff"
-    z: -1
-  }
+  // Hover comes from the canvas's ONE HoverHandler; the CELL OUTLINE it draws covers every block,
+  // including the empty ones. Clicking is the tabs' job, uniformly -- a cell that guessed which of
+  // several things you meant would be choosing behind your back.
 }

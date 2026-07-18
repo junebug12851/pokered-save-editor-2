@@ -1,5 +1,25 @@
 # Debug Automation Harness & Fast-Dev Loop
 
+## 🖱️ `hover` — the pointer, no button (added 2026-07-17)
+
+```json
+{"cmd":"hover","x":400,"y":300}      // or {"cmd":"hover","obj":"someItem"}
+```
+
+Drives `MouseArea.containsMouse`, `HoverHandler.hovered` and every `onEntered` **exactly as a real
+cursor does** — because that is all a hover is: a `QEvent::MouseMove` with **no buttons held**.
+Everything the map screen does under the pointer (the cell outline, the tab strip appearing, a tab
+lighting its own box, a tooltip) is driven by this and nothing else, so without it none of it could
+be checked without a human sitting there. Verified live: one `hover` updates the status bar's
+`tile 11, 15 · block 5, 7` and pops a warp's tooltip.
+
+🐺 **It exists because I claimed hover was untestable and Twilight refused to accept it** — *"i find
+it hard to beleive theres no solution for testing hover you cannot tell me the community has no
+solution for this"*. She was right; it took two lines. Same failure as the aqtinstall "hard ceiling"
+the same day: I hit the edge of what I had **already built** (`tap` sends press+release), and
+reported the *capability* as missing. **"My harness can't" is not "it can't."**
+See [`qt-patterns.md`](qt-patterns.md) (top).
+
 The DEBUG-only automation harness (added 2026-07-09, `feat(app): debug-only automation harness`) turns
 manual iteration into a fast, hands-off loop: **launch straight to the screen you're editing with a save
 already loaded, then preview QML edits live via hot-reload** — no clicking through the New File modal, no

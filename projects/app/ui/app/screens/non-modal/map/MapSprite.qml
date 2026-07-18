@@ -130,11 +130,24 @@ Item {
   // The fill is light (#26 ~ 15%): a sprite is the only movable object with ARTWORK of its own, and
   // the wash has to say "you can pick this up" without repainting the character. A heavy wash is
   // what tinted every Poké Ball in Oak's Lab green and got caught in review.
+  // ⚠️ NO FILL -- borders only, and SOLID because a sprite is movable.
+  //
+  // Twilight's settled call, 2026-07-17: *"Yea i guess dont fill in the boxes but youll have to do
+  // that for all boxes on the map keep and maintain standardization. I still want dashed and solid
+  // lines for visual language since we're only using borders youll have to make them a teensy bit
+  // thicker."* So the whole language rides on the LINE: solid = you can pick this up, dashed = it
+  // lives where the cartridge put it. A wash over a sprite repaints the character it is describing.
+  //
+  // ⚠️ And it is ALWAYS on: it used to appear only when SELECTED, so the map showed outlines on an
+  // apparently arbitrary subset -- *"some sprites have no box, some do"* -- and the player, the one
+  // thing you can drag anywhere, had none at all.
   Rectangle {
     visible: !sprite.selected
     anchors.fill: parent
-    color: sprite.isPlayer ? "#260072b2" : "#26cc79a7"
-    border.width: 1
+    color: "transparent"
+    // 2px, matching MapBlockHotspot.lineWidth: with no fill, one pixel cannot carry the difference
+    // between a stroke and a dash over four shades of grey.
+    border.width: 2
     // The layer's own colour, so the box, its tab and the Layers panel row are visibly one thing:
     // the Player his own blue, everybody else People & objects pink. AMBER overrides both when the
     // map has not loaded this sprite's picture -- the one thing you cannot see by looking, because
@@ -162,7 +175,7 @@ Item {
     z: 20
     anchors.fill: parent
     anchors.margins: -2
-    color: "#26cc79a7"
+    color: "transparent"   // borders only -- @see the always-on box above
     border.width: 2
     border.color: "#cc79a7"
 
@@ -248,6 +261,23 @@ Item {
     enabled: !sprite.canvas.panning && sprite.canvas.tool !== "zoom"
     hoverEnabled: true
     cursorShape: sprite.dragging ? Qt.ClosedHandCursor : Qt.PointingHandCursor
+
+    // ⭐ Tell the canvas a MOVABLE thing is under the pointer, so the cell hands the highlight over
+    // and withdraws its tabs: *"the highlight changes to the moveable object and away from the cell
+    // to indicate its moveable, also the cell tabs go away when mousing over a moveable item"*.
+    // Point at the thing → drag the thing. Point at the cell → get the cell's tabs.
+    // A sprite is a 16x16 half-block inside a 32x32 cell, so it never fills it -- there is always
+    // cell left to point at, and `fullCell` stays false.
+    onContainsMouseChanged: {
+      const key = Math.floor((sprite.canvas.mapBorderPx + sprite.liveX * 16) / 32) + ","
+                + Math.floor((sprite.canvas.mapBorderPx + sprite.liveY * 16) / 32);
+      if (area.containsMouse) {
+        sprite.canvas.hoverMovable = key;
+        sprite.canvas.hoverMovableFullCell = false;
+      } else if (sprite.canvas.hoverMovable === key) {
+        sprite.canvas.hoverMovable = "";
+      }
+    }
 
     // Do not let the Flickable steal the drag and pan the map out from under us.
     preventStealing: true
