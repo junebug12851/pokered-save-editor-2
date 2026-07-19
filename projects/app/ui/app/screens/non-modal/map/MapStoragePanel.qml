@@ -684,13 +684,18 @@ Item {
             model: {
               panel.revision; panel.editTick;
               if (!scriptSection.hasStates) return [];
+              // No "Custom" row (leadership, 2026-07-19): currentStateId() always
+              // determines a best stage from the dead-giveaway flags and/or the step
+              // byte, and every raw step value rides as its own "s<value>" entry.
               const states = brg.map.stateList(scriptSection.stateMapId);
-              const cur = brg.map.currentStateId(scriptSection.stateMapId);
               let out = [];
-              if (cur === "")
-                out.push({ id: "", label: qsTr("Custom (matches no stage)"), desc: "" });
               for (let i = 0; i < states.length; i++) {
                 const s = states[i];
+                if (s.kind === "step") {  // synthesized raw step ("s<value>")
+                  out.push({ id: s.id, label: qsTr("Step %1 — %2").arg(s.script).arg(s.name),
+                             desc: s.desc, kind: s.kind });
+                  continue;
+                }
                 const tag = s.kind === "transient" ? qsTr(" (mid-cutscene)") : "";
                 out.push({ id: s.id, label: s.id + ". " + s.name + tag, desc: s.desc, kind: s.kind });
               }

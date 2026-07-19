@@ -527,14 +527,21 @@ public:
 
   /// The blueprint's states for @p mapInd (-1 = current map), UI-ready:
   /// `{ id, kind, name, desc, timeline, trigger, script, scriptName, derived, isCurrent }`
-  /// — resting stages in story order, then the transients, exactly as the data orders them.
-  /// Empty when the map has no blueprint.
+  /// — resting stages in story order, then the transients, exactly as the data orders
+  /// them, then a synthesized `"s<value>"` raw-step entry for every script value NO state
+  /// carries (the engine battle steps and friends) so every script value is reachable
+  /// through the state menu ("if a state is not a script then a script needs to be in a
+  /// state" — leadership, 2026-07-19). Empty when the map has no blueprint.
   Q_INVOKABLE QVariantList stateList(int mapInd = -1) const;
 
-  /// Which state the live save matches for @p mapInd (-1 = current map): a resting stage's
-  /// id when its whole save block matches (script byte + owned events + the map's own
-  /// missables), else a transient's id when only the byte matches one, else "" (custom —
-  /// shown honestly, never guessed).
+  /// The app's best determination of where map @p mapInd (-1 = current map) sits in its
+  /// progression — NEVER "" while a blueprint exists (leadership, 2026-07-19: no
+  /// "custom / not recognized"; the app does its best from the dead-giveaway flags and/or
+  /// the current map script). In order: a resting stage whose whole save block matches
+  /// exactly (latest first); a transient whose script byte matches; a synthesized
+  /// `"s<value>"` raw step the byte names; else the best-SCORING resting stage — +1 per
+  /// matching owned event / own missable / script byte, -1 per mismatch, latest stage
+  /// winning ties (monotone flags read "at least this far"). "" only without a blueprint.
   Q_INVOKABLE QString currentStateId(int mapInd = -1) const;
 
   /// One state's full record (as @ref stateList shapes it, plus `notes` and the absolute

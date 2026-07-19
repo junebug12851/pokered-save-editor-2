@@ -28,6 +28,9 @@
  * Every write below is exactly the blueprint's named facts — nothing else moves.
  */
 
+#include <climits>
+
+#include <QSet>
 #include <QVariantList>
 #include <QVariantMap>
 
@@ -101,6 +104,100 @@ QString branchParentOf(const QVariantMap& branches, const QString& id)
   return QString();
 }
 
+/// Best-effort resemblance score for a resting stage: +1 per save fact the live save
+/// matches (owned set/cleared events, the map's own missables, the script byte), -1 per
+/// mismatch. The dead-giveaway flags carry the verdict; the byte is one fact among them.
+int stageScore(const MapStateStage& st, const MapStateBlueprint* bp, World* worldAll,
+               AreaMap* map, int curMapInd)
+{
+  if (!st.hasSave || worldAll == nullptr || worldAll->events == nullptr
+      || worldAll->missables == nullptr)
+    return INT_MIN;
+  int score = liveScriptByteFor(bp, worldAll, map, curMapInd) == st.script ? 1 : -1;
+  for (const auto& ev : st.set)
+    if (ev.owned)
+      score += worldAll->events->eventsAt(ev.ind) ? 1 : -1;
+  for (const auto& ev : st.cleared)
+    if (ev.owned)
+      score += worldAll->events->eventsAt(ev.ind) ? -1 : 1;
+  for (const auto& mis : st.missables)
+    score += worldAll->missables->missablesAt(mis.ind) == mis.hide ? 1 : -1;
+  return score;
+}
+
+/// The best-scoring RESTING stage — the app's "do its best" answer for a save between
+/// stages. Latest-first iteration + strict `>` makes the LATEST stage win ties: with
+/// monotone story flags a tie reads "progressed at least this far".
+QString bestRestingId(const MapStateBlueprint* bp, World* worldAll, AreaMap* map,
+                      int curMapInd)
+{
+  const auto& stages = bp->getStages();
+  int best = INT_MIN;
+  QString bestId;
+  for (int i = stages.size() - 1; i >= 0; --i) {
+    if (stages[i].kind != QLatin1String("resting"))
+      continue;
+    const int s = stageScore(stages[i], bp, worldAll, map, curMapInd);
+    if (s > best) {
+      best = s;
+      bestId = stages[i].id;
+    }
+  }
+  return bestId;
+}
+
+/// Script values carried by NO state (the engine trainer-battle steps and friends, 143
+/// across the 98 blueprints) — surfaced as synthesized `"s<value>"` raw steps so every
+/// script value is reachable through the state menu ("if a state is not a script then a
+/// script needs to be in a state" — leadership, 2026-07-19). Returns (value, SCRIPT_*).
+QList<QPair<int, QString>> uncoveredScriptValues(const MapStateBlueprint* bp)
+{
+  QList<QPair<int, QString>> out;
+  QSet<int> covered;
+  for (const auto& st : bp->getStages())
+    covered.insert(st.script);
+  for (const QVariant& v : bp->getScriptValues()) {
+    const QVariantMap m = v.toMap();
+    const int val = m.value(QStringLiteral("value")).toInt();
+    if (covered.contains(val))
+      continue;
+    covered.insert(val);  // one entry per value even if the table repeats it
+    out.append({val, m.value(QStringLiteral("name")).toString()});
+  }
+  return out;
+}
+
+/// A synthesized raw step's display name: the map's own friendly step label
+/// (maps.json scriptEntries) when it has one, else the SCRIPT_* constant's tail.
+QString rawStepLabel(int mapInd, int value, const QString& scriptName)
+{
+  auto* entry = MapsDB::inst()->getIndAt(QString::number(mapInd));
+  if (entry != nullptr)
+    for (const auto& st : entry->getScriptSteps())
+      if (int(st.id) == value && !st.label.isEmpty())
+        return st.label;
+  if (!scriptName.isEmpty()) {
+    // SCRIPT_BILLSHOUSE_CLEANUP -> "Cleanup" (best tail we can make of the constant)
+    const int cut = scriptName.lastIndexOf(QLatin1Char('_'));
+    if (cut >= 0 && cut + 1 < scriptName.size()) {
+      QString tail = scriptName.mid(cut + 1).toLower();
+      tail[0] = tail[0].toUpper();
+      return tail;
+    }
+  }
+  return QStringLiteral("Step %1").arg(value);
+}
+
+/// Parses a synthesized `"s<value>"` id; returns the value or -1.
+int synthesizedStepValue(const QString& id)
+{
+  if (!id.startsWith(QLatin1Char('s')) || id.size() < 2)
+    return -1;
+  bool ok = false;
+  const int v = id.mid(1).toInt(&ok);
+  return ok ? v : -1;
+}
+
 }  // namespace
 
 bool MapModel::hasStateBlueprint(int mapIndArg) const
@@ -131,6 +228,25 @@ QVariantList MapModel::stateList(int mapIndArg) const
     m[QStringLiteral("isCurrent")] = (st.id == cur);
     out.append(m);
   }
+  // Every script value NO state carries rides along as a synthesized raw step, so the
+  // state menu can name (and set) any value the byte can legally hold from the table.
+  for (const auto& uc : uncoveredScriptValues(bp)) {
+    const QString id = QStringLiteral("s%1").arg(uc.first);
+    QVariantMap m;
+    m[QStringLiteral("id")] = id;
+    m[QStringLiteral("kind")] = QStringLiteral("step");  // synthesized raw step
+    m[QStringLiteral("name")] = rawStepLabel(ind, uc.first, uc.second);
+    m[QStringLiteral("desc")] = QStringLiteral(
+        "A raw state step outside the researched stages (the engine passes through it "
+        "mid-mechanism). Picking it writes only the step byte.");
+    m[QStringLiteral("timeline")] = QString();
+    m[QStringLiteral("trigger")] = QString();
+    m[QStringLiteral("script")] = uc.first;
+    m[QStringLiteral("scriptName")] = uc.second;
+    m[QStringLiteral("derived")] = false;
+    m[QStringLiteral("isCurrent")] = (id == cur);
+    out.append(m);
+  }
   return out;
 }
 
@@ -155,7 +271,18 @@ QString MapModel::currentStateId(int mapIndArg) const
     if (st.kind == QLatin1String("transient") && st.script == byte)
       return st.id;
 
-  return QString();  // custom — said honestly, never guessed
+  // A raw step value no state carries names itself (the synthesized "s<value>" entry).
+  for (const auto& uc : uncoveredScriptValues(bp))
+    if (uc.first == byte)
+      return QStringLiteral("s%1").arg(byte);
+
+  // No exact match anywhere: the app does its BEST from the dead-giveaway flags + the
+  // byte — the best-scoring resting stage, latest winning ties. Never "" (leadership,
+  // 2026-07-19: no "custom / not recognized"; determine the progression regardless).
+  const QString best = bestRestingId(bp, worldAll, map, mapInd());
+  if (!best.isEmpty())
+    return best;
+  return stages.isEmpty() ? QString() : stages.first().id;
 }
 
 QVariantMap MapModel::stateAt(const QString& id, int mapIndArg) const
@@ -163,6 +290,23 @@ QVariantMap MapModel::stateAt(const QString& id, int mapIndArg) const
   QVariantMap m;
   const int ind = mapIndArg < 0 ? mapInd() : mapIndArg;
   const auto* bp = MapStatesDB::inst()->at(ind);
+  if (bp != nullptr) {
+    // A synthesized raw step ("s<value>") answers with its own small record.
+    const int rawVal = synthesizedStepValue(id);
+    if (rawVal >= 0 && bp->stage(id) == nullptr) {
+      for (const auto& uc : uncoveredScriptValues(bp)) {
+        if (uc.first != rawVal)
+          continue;
+        m[QStringLiteral("id")] = id;
+        m[QStringLiteral("kind")] = QStringLiteral("step");
+        m[QStringLiteral("name")] = rawStepLabel(ind, rawVal, uc.second);
+        m[QStringLiteral("script")] = rawVal;
+        m[QStringLiteral("scriptName")] = uc.second;
+        m[QStringLiteral("derived")] = false;
+        return m;
+      }
+    }
+  }
   const auto* st = bp == nullptr ? nullptr : bp->stage(id);
   if (st == nullptr)
     return m;
@@ -186,7 +330,24 @@ void MapModel::applyState(const QString& id, int mapIndArg)
 {
   const int ind = mapIndArg < 0 ? mapInd() : mapIndArg;
   const auto* bp = MapStatesDB::inst()->at(ind);
-  const auto* st = bp == nullptr ? nullptr : bp->stage(id);
+  if (bp == nullptr)
+    return;
+
+  // A synthesized raw step writes ONLY the step byte — both homes, nothing else.
+  const int rawVal = synthesizedStepValue(id);
+  if (rawVal >= 0 && bp->stage(id) == nullptr) {
+    if (bp->getScriptSlot() >= 0 && worldAll != nullptr && worldAll->scripts != nullptr)
+      worldAll->scripts->scriptsSet(bp->getScriptSlot(), rawVal);
+    if (bp->getMapInd() == mapInd() && map != nullptr
+        && map->curMapScript != var8(rawVal)) {
+      map->curMapScript = rawVal;
+      map->curMapScriptChanged();
+    }
+    emit changed();
+    return;
+  }
+
+  const auto* st = bp->stage(id);
   if (st == nullptr)
     return;
 
@@ -233,10 +394,19 @@ bool MapModel::rollForward(int mapIndArg)
   const auto& order = bp->getOrder();
   const auto& branches = bp->getBranches();
   if (cur.isEmpty()) {
-    // A custom state rolls INTO the line at its start.
+    // Degenerate (a blueprint with no scoreable stage): enter the line at its start.
     if (order.isEmpty())
       return false;
     applyState(order.first(), ind);
+    return true;
+  }
+  // A synthesized raw step sits OFF the line — forward snaps to the app's best
+  // determination of the resting stage (the dead-giveaway flags decide).
+  if (synthesizedStepValue(cur) >= 0 && bp->stage(cur) == nullptr) {
+    const QString best = bestRestingId(bp, worldAll, map, mapInd());
+    if (best.isEmpty())
+      return false;
+    applyState(best, ind);
     return true;
   }
   // A transient "N.k" belongs to stage N's exit — roll from N.
@@ -276,7 +446,9 @@ bool MapModel::rollBack(int mapIndArg)
     return false;
   QString cur = currentStateId(ind);
   if (cur.isEmpty())
-    return false;  // a custom state has no "previous"; rolling forward enters the line
+    return false;  // degenerate — no scoreable stage to stand on
+  if (synthesizedStepValue(cur) >= 0 && bp->stage(cur) == nullptr)
+    return false;  // a raw step has no "previous"; rolling forward re-enters the line
   if (cur.contains(QLatin1Char('.'))) {
     // Mid-cutscene: back means the stage the cutscene leaves.
     applyState(cur.section(QLatin1Char('.'), 0, 0), ind);

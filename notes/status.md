@@ -11,6 +11,23 @@ release: `0.16.6-alpha`, shipped 2026-07-11.) Single source of truth: repo-root 
 `tst_db_integrity` now 15 (two new pins: `everyFlyDestinationSitsAtItsMapId`,
 `everyTradeResolvesAndSitsAtItsBit`).
 
+### 🧭 "CUSTOM" RETIRED — best-effort state matching + every step is a state (2026-07-19, `0.43.5-alpha`)
+
+Fairy Fox's follow-up brief, delivered in full. Story: [`sessions/2026-07/2026-07-19.md`](sessions/2026-07/2026-07-19.md).
+
+- ⭐ **No more "Custom / not recognized"** on the Details or World (Map Storage) state pickers:
+  `currentStateId()` always determines a stage — exact match → transient byte → synthesized raw
+  step → **best-scoring resting stage** (dead-giveaway flags + the byte; latest wins ties).
+  BaseSAV's in-between Pallet reads **"2. Oak has led you to the lab"** now.
+- ⭐ **Every script value is IN a state**: the 143 table values no stage carried ride as
+  synthesized `"s<value>"` raw-step entries ("Step 6 — Noop", italic, byte-only apply). The raw
+  step controls (Details "Current state step", World "Something else…") stay as the power path.
+- Supersedes the 2026-07-17 honest-custom doctrine (recorded: plans/map-states.md → MS-4b;
+  reference/map-states.md amended). **Pinned:** `tst_map_states` 9/9 (new
+  `bestEffort_neverCustom_andRawStepsResolve` — all 98 blueprints answer non-empty; raw-step
+  apply is byte-exact); `tst_qml_screens` 28/28; `tst_map` 37/37. Screenshot-reviewed (combo,
+  popup, World section). ⏳ Owed: her live pass.
+
 ### 🌍 GLOBAL PROGRESSION — the cross-map deep dive: 70 resets, 5 classes, the spine (2026-07-19)
 
 Fairy Fox's brief — order the per-map timelines globally; her bet: later maps unset flags the

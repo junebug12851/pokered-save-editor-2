@@ -128,6 +128,17 @@ Semantics that keep it honest:
   **"Construct the map on change"** switch, ON by default (seamless — leadership's call); OFF =
   the old one-byte power path with the stale-header notice. Screenshot-reviewed (panel, picker
   popup, storage heading). ⏳ Twilight's live pass owed.
+- ✅ **Phase MS-4b — best-effort matching; "Custom" retired (2026-07-19, `0.43.5-alpha`).**
+  Leadership: *"remove … the not recognized custom thing, just have the app do its best to
+  determine the map progression via dead giveaway flags and/or current map script. If a state
+  is not a script then a script needs to be in a state."* `currentStateId()` never answers ""
+  while a blueprint exists: exact resting match → transient byte match → a synthesized
+  `"s<value>"` raw step the byte names → the best-SCORING resting stage (+1 per matching owned
+  event / own missable / script byte, −1 per mismatch, latest wins ties). Every script value NO
+  stage carries (143 across the blueprints) is synthesized into the state list as a raw step
+  ("Step 6 — Noop", italic, byte-only apply). Both pickers' Custom rows removed; the raw
+  step controls stay as the power path. **Supersedes MS-2/MS-4's "honest custom" answer.**
+  Pinned by `tst_map_states::bestEffort_neverCustom_andRawStepsResolve`.
 - **Phase MS-5 — Randomizer hook (NOT BUILT).** State-aware map randomization: pick a random
   resting stage per map from the blueprints instead of raw bytes (wire into the world/area
   randomize paths).

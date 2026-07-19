@@ -112,6 +112,17 @@ script values against the map's own table, badges against the eight — or gener
 curation cannot invent a flag. Stage-id uniqueness, advance targets and progression order are
 validated across all 98 files.
 
+## Matching is BEST-EFFORT (amended 2026-07-19, leadership)
+
+The original model answered "" (custom) for a save matching no stage exactly. **Retired.** The
+app now always determines a stage: exact resting match (latest first) → a transient the byte
+names → a synthesized `"s<value>"` raw step (every script value NO stage carries is surfaced as
+one, so *every* script value is in a state) → else the **best-scoring** resting stage — +1 per
+matching owned event / own missable / script byte, −1 per mismatch, latest stage winning ties
+(monotone story flags read "at least this far"). The dead-giveaway flags carry the verdict; the
+byte is one fact among them. Raw step entries apply byte-only; the step/byte controls remain the
+power path. `mapmodel_states.cpp`; pinned by `tst_map_states`.
+
 ## What it means for our code
 
 - **"Map script" should read "Map state"** everywhere on the map screen (Twilight's call in the

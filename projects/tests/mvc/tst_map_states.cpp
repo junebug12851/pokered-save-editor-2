@@ -30,6 +30,7 @@
  *    the blueprint's entry spot, the live step resuming the map's own stored progression).
  */
 
+#include <QSet>
 #include <QtTest>
 
 #include "../helpers/savefilefixture.h"
@@ -81,6 +82,7 @@ private slots:
 
   void db_loadsEveryBlueprint_andEveryReferenceResolves();
   void stateList_readsTheProgression();
+  void bestEffort_neverCustom_andRawStepsResolve();
   void applyState_writesOnlyStateBytes();
   void roll_walksTheProgressionBothWays();
   void gymStage_movesItsBadge_andOnlyItsBadge();
@@ -174,12 +176,81 @@ void TestMapStates::stateList_readsTheProgression()
   QVERIFY2(sawTransient, "transient cutscene values must be SHOWN (leadership, 2026-07-17)");
 
   // ⚠️ BaseSAV is a PLAYED save, and its Pallet Town sits genuinely BETWEEN stages 2 and 3
-  // (Daisy walks, the Town Map is given — but the Poke Balls were never collected). The
-  // honest answer for an in-between save is "" (custom), never a guess. Applying a stage
-  // then matches it exactly.
-  QCOMPARE(r->map->currentStateId(-1), QString());
+  // (Daisy walks, the Town Map is given — but the Poke Balls were never collected).
+  // Leadership (2026-07-19) retired the "" (custom) answer: the app now does its BEST from
+  // the dead-giveaway flags + the step byte, so the in-between save must resolve to one of
+  // its neighbouring stages — never to nothing. Applying a stage then matches it exactly.
+  const QString between = r->map->currentStateId(-1);
+  QVERIFY2(between == QStringLiteral("2") || between == QStringLiteral("3"),
+           qPrintable(QStringLiteral("in-between Pallet must best-match stage 2 or 3, got '%1'")
+                        .arg(between)));
   r->map->applyState(QStringLiteral("1"), -1);
   QCOMPARE(r->map->currentStateId(-1), QStringLiteral("1"));
+
+  delete r;
+}
+
+/// Leadership, 2026-07-19: NO "custom / not recognized" — every blueprint map must answer
+/// with a state on a real save, and every raw step value no stage carries must surface as
+/// (and resolve to) a synthesized "s<value>" entry that writes ONLY the step byte.
+void TestMapStates::bestEffort_neverCustom_andRawStepsResolve()
+{
+  Rig* r = makeRig();
+  auto* world = r->sf.dataExpanded->world;
+
+  // 1. The never-custom pin, across ALL blueprints on the played fixture.
+  const auto& store = MapStatesDB::inst()->getStore();
+  for (auto it = store.constBegin(); it != store.constEnd(); ++it)
+    QVERIFY2(!r->map->currentStateId(it.key()).isEmpty(),
+             qPrintable(QStringLiteral("map %1 answered '' (custom) — retired 2026-07-19")
+                          .arg(it.key())));
+
+  // 2. Find a blueprint with a script value NO state carries (they exist: the engine
+  //    battle steps and friends). The list must synthesize it as "s<value>".
+  const MapStateBlueprint* bp = nullptr;
+  int rawVal = -1;
+  for (auto it = store.constBegin(); it != store.constEnd() && rawVal < 0; ++it) {
+    if (it.value()->getScriptSlot() < 0)
+      continue;
+    QSet<int> covered;
+    for (const auto& st : it.value()->getStages())
+      covered.insert(st.script);
+    for (const QVariant& v : it.value()->getScriptValues()) {
+      const int val = v.toMap().value(QStringLiteral("value")).toInt();
+      if (!covered.contains(val)) {
+        bp = it.value();
+        rawVal = val;
+        break;
+      }
+    }
+  }
+  QVERIFY2(bp != nullptr, "no blueprint with an uncovered script value found (regen moved?)");
+
+  const int ind = bp->getMapInd();
+  const QString rawId = QStringLiteral("s%1").arg(rawVal);
+  bool listed = false;
+  for (const QVariant& v : r->map->stateList(ind))
+    if (v.toMap().value(QStringLiteral("id")).toString() == rawId) {
+      listed = true;
+      QCOMPARE(v.toMap().value(QStringLiteral("kind")).toString(), QStringLiteral("step"));
+    }
+  QVERIFY2(listed, qPrintable(QStringLiteral("state list of map %1 misses raw step %2")
+                                .arg(ind).arg(rawId)));
+
+  // 3. The byte holding that value NAMES the synthesized step…
+  world->scripts->scriptsSet(bp->getScriptSlot(), rawVal);
+  QCOMPARE(r->map->currentStateId(ind), rawId);
+
+  // 4. …and APPLYING a synthesized step writes ONLY step-byte territory.
+  r->sf.flattenData();
+  const QByteArray before = snapshot(r->sf);
+  r->map->applyState(rawId, ind);
+  r->sf.flattenData();
+  const QByteArray after = snapshot(r->sf);
+  for (int off : diffOffsets(before, after))
+    QVERIFY2((off >= 0x289C && off <= 0x2915) || off == 0x2CE5,
+             qPrintable(QStringLiteral("raw step apply moved byte 0x%1 outside the step "
+                                       "bytes").arg(off, 4, 16, QChar('0'))));
 
   delete r;
 }
@@ -217,7 +288,8 @@ void TestMapStates::roll_walksTheProgressionBothWays()
 {
   Rig* r = makeRig();
 
-  // Pin the origin: the played fixture is a custom in-between; the line starts at "1".
+  // Pin the origin: the played fixture is an in-between (best-matched, not exact); start
+  // the walk from a cleanly-applied "1".
   r->map->applyState(QStringLiteral("1"), -1);
   QCOMPARE(r->map->currentStateId(-1), QStringLiteral("1"));
   QVERIFY(r->map->rollForward(-1));

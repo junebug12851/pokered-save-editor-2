@@ -197,6 +197,7 @@ Item {
     // underneath it. Here that put the yellow "!" icons (right-anchored on each field's label row)
     // behind the scrollbar. See ui-patterns.md; it is a recurring gotcha and this is the fix.
     ColumnLayout {
+      objectName: "detailsContent"   // the DEBUG harness full-length-shots the panel via this
       width: scroller.availableWidth - 22
       spacing: 8
 
@@ -319,6 +320,7 @@ Item {
 
             ComboBox {
               id: stateCombo
+              objectName: "progressionStateCombo"   // the DEBUG harness scrolls/reads this
               Layout.fillWidth: true
               Layout.preferredHeight: 30
               font.pixelSize: 12
@@ -326,17 +328,19 @@ Item {
               valueRole: "id"
               model: {
                 details.revision;
+                // No "Custom / not recognized" row (leadership, 2026-07-19): the model's
+                // currentStateId() always determines a best stage from the dead-giveaway
+                // flags and/or the current map script — the list is only real states
+                // (researched stages + every raw step value, synthesized "s<value>").
                 const states = brg.map.stateList(-1);
-                const cur = brg.map.currentStateId(-1);
                 let out = [];
-                if (cur === "")
-                  out.push({ id: "", label: qsTr("Custom (matches no researched state)"),
-                             desc: qsTr("The save's flags and script byte don't line up with "
-                                        + "any researched stage of this map — every byte is "
-                                        + "yours to keep. Picking a state below writes that "
-                                        + "stage's full save block."), kind: "custom" });
                 for (let i = 0; i < states.length; i++) {
                   const s = states[i];
+                  if (s.kind === "step") {  // synthesized raw step ("s<value>")
+                    out.push({ id: s.id, label: qsTr("Step %1 — %2").arg(s.script).arg(s.name),
+                               desc: s.desc, kind: s.kind });
+                    continue;
+                  }
                   const tag = s.kind === "transient" ? qsTr(" (mid-cutscene)")
                             : s.derived ? qsTr(" (derived)") : "";
                   out.push({ id: s.id, label: s.id + ". " + s.name + tag,
@@ -365,7 +369,7 @@ Item {
                     Layout.fillWidth: true
                     text: modelData.label
                     font.pixelSize: 12
-                    font.italic: modelData.kind === "transient"
+                    font.italic: modelData.kind === "transient" || modelData.kind === "step"
                     color: brg.settings.textColorDark
                     elide: Text.ElideRight
                   }
