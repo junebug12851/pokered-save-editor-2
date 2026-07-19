@@ -294,7 +294,7 @@ guard Pallet Town's north-row trigger drew its full-width rectangle **ten times*
 translucent range into a solid bar. Both of these were caught by the **mandatory screenshot review**
 and neither was visible in the code.
 
-📐 **The density question, answered with numbers.** Leadership asked *"why does a block have 40
+**The density question, answered with numbers.** Leadership asked *"why does a block have 40
 tabs?"* — prompted by me miscounting aloud. **It doesn't.** Pallet Town's busiest block carries
 **four** (1 script + its 3 event flags); the row across the top is **ten blocks × four**, not one
 block × forty. It spans them because the cartridge's trigger genuinely is the whole row:
@@ -395,7 +395,7 @@ PalletTownOakHeyWaitScript:
 ⚠️ **The script is gated by an EVENT flag, not "allowed there by a filter flag"** — the filter flag is
 what it *changes*. Direction matters when you draw it.
 
-🚩 **Consequence not yet handled: the script-step CHAIN.** The trigger routine and the routines it
+**Consequence not yet handled: the script-step CHAIN.** The trigger routine and the routines it
 leads to are *different* routines, and the flags are spread across all of them
 (`PalletTownDefaultScript` → `OakHeyWait` → `OakWalksToPlayer` → …). The extractor attributes flags
 **per routine**, so a trigger currently shows only *its own* writes — **13** located spots write events

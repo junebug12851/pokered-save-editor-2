@@ -69,7 +69,7 @@ does this the moment it finishes copying:
 very next `LoadMapHeader` bail out before it can overwrite anything. Your warps are the ones the
 console runs on.
 
-> ### 🔴 The rule, stated the way the screen must state it
+> ### The rule, stated the way the screen must state it
 >
 > **An edited warp is really there.** Load the save and the door is where you put it, going where
 > you aimed it.
@@ -169,7 +169,7 @@ already modelled elsewhere and not warp business.)*
 | 3 | `scriptedWarp` — *"Scripted Warp"* | **`BIT_WARP_FROM_CUR_SCRIPT`** | **"Warp me right now, no tile needed."** `OverworldLoop` tests it *every frame* and jumps straight to `WarpFound2`. Set by exactly **one** script in the game: **Pokémon Tower 7F** (Mr. Fuji carrying you to his house). |
 | 4 | `isDungeonWarp` — *"Is Dungeon Warp"* | **`BIT_ON_DUNGEON_WARP`** | **"You are standing on a hole."** Suppresses wild battles (`NewBattle` returns early) so you can't get jumped mid-fall. Cleared on arrival. |
 
-> ### 🟡 BOTH OF THESE ARE WIPED THE MOMENT THE SAVE LOADS — and so is the entire byte
+> ### BOTH OF THESE ARE WIPED THE MOMENT THE SAVE LOADS — and so is the entire byte
 >
 > `wStatusFlags3` has an **alias**: `wCableClubDestinationMap` is *the same byte*. And
 > `SpecialEnterMap` — which is on the Continue path — does:
@@ -215,7 +215,7 @@ already modelled elsewhere and not warp business.)*
 *(bit 7 = `BIT_USED_FLY`, which v2 keeps as `AreaPlayer::flyOutofBattle` — also misnamed; it means
 "you arrived by Fly, play the landing animation".)*
 
-### Group E — *"where you came from"* — 💀 **DEAD BYTES**
+### Group E — *"where you came from"* — ❌ **DEAD BYTES**
 
 | Save | WRAM | v1/v2 name | **Real name** |
 |---|---|---|---|
@@ -241,7 +241,7 @@ let them be edited, and **say plainly that changing them does nothing**.
 
 ---
 
-## 4. ⭐ The two bytes that ARE the workflow — and were on the wrong screen
+## 4. The two bytes that ARE the workflow — and were on the wrong screen
 
 Twilight's instinct — *"from map needs to be in the top toolbar, it's important to workflow"* — is
 right, but **`wWarpedFromWhichMap` is not the field she means.** These two are:
@@ -311,7 +311,7 @@ check for**. The **pair** must be one of these twelve:
 Note the hole number is **1-based**, and `Victory Road 2F` has **no hole 1**. A map that's in the
 list with a hole number that isn't paired with it is just as broken as a map that isn't in the list.
 
-> 🐞 **AND WE ARE CURRENTLY WRITING GARBAGE INTO BOTH.**
+> **AND WE ARE CURRENTLY WRITING GARBAGE INTO BOTH.**
 >
 > `AreaWarps::randomize()` **and `AreaWarps::setTo()`** — the second of which runs on any "place the
 > player on this map" — do this:
@@ -338,28 +338,28 @@ list with a hole number that isn't paired with it is just as broken as a map tha
 ## 6. The complete table — every warp byte, one row each
 
 `!` = **regenerated / rewritten on load** (the yellow-exclamation group).
-`💀` = written by the game, **never read** by it.
-`🔫` = a value the console can be hurt by.
+`❌` = written by the game, **never read** by it.
+`⚠️` = a value that can destabilize the console.
 
 | ! | Save | WRAM | Real name | Plain-English name | Range |
 |---|---|---|---|---|---|
 | | `0x265A` | `$D3AE` | `wNumberOfWarps` | **Doors on this map** | 0–32 |
 | | `0x265B` | `$D3AF` | `wWarpEntries` | **The doors** (Y, X, arrival point, destination map) × 32 | — |
 | | `0x26DB` | `$D42F` | `wDestinationWarpID` | **Arriving at door #** (`$FF` = don't move me) | 0–255 |
-| | `0x2611` | `$D365` | `wLastMap` ⭐ | **Outside is…** (where `$FF` doors lead) | map id |
-| | `0x29C5` | `$D719` | `wLastBlackoutMap` ⭐ | **Wake up at…** (blackout / Dig / Escape Rope) | map id |
-| 🔫 | `0x29C6` | `$D71A` | `wDestinationMap` | **Fly / special warp sends you to…** | 13 legal |
-| 🔫 | `0x29C9` | `$D71D` | `wDungeonWarpDestinationMap` | **Falling drops you onto…** | 7 legal |
-| 🔫 | `0x29CA` | `$D71E` | `wWhichDungeonWarp` | **…through hole #** (1-based) | 1–3 |
+| | `0x2611` | `$D365` | `wLastMap` | **Outside is…** (where `$FF` doors lead) | map id |
+| | `0x29C5` | `$D719` | `wLastBlackoutMap` | **Wake up at…** (blackout / Dig / Escape Rope) | map id |
+| ⚠️ | `0x29C6` | `$D71A` | `wDestinationMap` | **Fly / special warp sends you to…** | 13 legal |
+| ⚠️ | `0x29C9` | `$D71D` | `wDungeonWarpDestinationMap` | **Falling drops you onto…** | 7 legal |
+| ⚠️ | `0x29CA` | `$D71E` | `wWhichDungeonWarp` | **…through hole #** (1-based) | 1–3 |
 | **!** | `0x29D9` b3 | `$D72D` | `BIT_WARP_FROM_CUR_SCRIPT` | **Script is warping you now** | flag |
 | **!** | `0x29D9` b4 | `$D72D` | `BIT_ON_DUNGEON_WARP` | **Standing on a hole** (no wild battles) | flag |
 | | `0x29DE` b2 | `$D732` | `BIT_FLY_OR_DUNGEON_WARP` | **A special warp is in progress** | flag |
 | | `0x29DE` b3 | `$D732` | `BIT_FLY_WARP` | **Arrive with the drop-in animation** | flag |
 | | `0x29DE` b4 | `$D732` | `BIT_DUNGEON_WARP` | **You fell down a hole** | flag |
-| | `0x29DE` b6 | `$D732` | `BIT_ESCAPE_WARP` ⭐ | **Dig / Escape Rope / blacked out** | flag |
+| | `0x29DE` b6 | `$D732` | `BIT_ESCAPE_WARP` | **Dig / Escape Rope / blacked out** | flag |
 | | `0x29DF` b2 | `$D733` | `BIT_FORCED_WARP` | **Doors fire without walking into them** | flag |
-| 💀 | `0x29E7` | `$D73B` | `wWarpedFromWhichWarp` | **Came in through door #** (nothing reads it) | 0–255 |
-| 💀 | `0x29E8` | `$D73C` | `wWarpedFromWhichMap` | **Came from map** (nothing reads it) | map id |
+| ❌ | `0x29E7` | `$D73B` | `wWarpedFromWhichWarp` | **Came in through door #** (nothing reads it) | 0–255 |
+| ❌ | `0x29E8` | `$D73C` | `wWarpedFromWhichMap` | **Came from map** (nothing reads it) | map id |
 
 **Neighbours that belong to other panels but are warp-adjacent:**
 `wMovementFlags` (`0x29E2`) bits 0/1/2 = `BIT_STANDING_ON_DOOR` / `BIT_EXITING_DOOR` /
@@ -389,7 +389,7 @@ Exactly the shape of the sprite pass: the model is a straight port of v1, and it
 
 ---
 
-## 7b. 🐺 The cry-wolf trap — and it nearly shipped
+## 7b. The cry-wolf trap — and it nearly shipped
 
 The hazard's warning has **two** conditions, not one, and the screenshot review is what found it.
 

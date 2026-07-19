@@ -125,7 +125,7 @@ You opened the door.
 So its actual job is: **"did you start a run and come back to the lobby? then wipe the whole Elite 4
 run and make them fight it again."**
 
-> 🚨 **The consequence of the wrong label, stated plainly:** a checkbox reading *"Defeated Lorelei"*
+> **The consequence of the wrong label, stated plainly:** a checkbox reading *"Defeated Lorelei"*
 > that a user ticks does **not** record a victory. It arms an **Elite-Four-progress reset** that fires
 > the next time they walk into the Indigo Plateau lobby. **The label promises progress and the bit
 > delivers erasure.** This is not a cosmetic naming nit.

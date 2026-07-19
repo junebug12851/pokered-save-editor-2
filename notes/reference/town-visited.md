@@ -114,7 +114,7 @@ town, different answer, entirely because of which map the save is parked on.
 The UI must mark **the current map's own town row** as rewritten-on-load, dynamically. It is the
 first field we have where *which* row wears the `!` depends on the save.
 
-🚩 **This is a source read and it is load-bearing**, so it is not to be trusted until the cartridge
+**This is a source read and it is load-bearing**, so it is not to be trusted until the cartridge
 says so — the sprite-persistence pass was wrong in exactly this way. `scripts/emu/probe_town_visited.py`,
 three questions:
 
@@ -228,7 +228,7 @@ page — above the map script, since "have I even been here" precedes anything t
 maps — *"for places that take a visited one"*. A route or a building has no bit and must not grow a
 dead switch; clutter is a bug.
 
-🚩 **The alike group is deliberately built as a general mechanism, not a towns feature** — *"We
+**The alike group is deliberately built as a general mechanism, not a towns feature** — *"We
 should do this for other data but i cant think of any now."* **Candidate second member: the ten
 in-game trades** ([`in-game-trades.md`](in-game-trades.md)) — different bits, same kind of thing, one
 per place, and they would want exactly the same "show me all ten" and "clear them all" affordances.

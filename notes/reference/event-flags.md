@@ -69,7 +69,7 @@ That is the case for the tabs, made by the cartridge itself.
 flag". It is gated by an **event flag** (`EVENT_FOLLOWED_OAK_INTO_LAB`) plus the coordinate test. The
 filter flag is what the script **changes**, not what permits it. Direction reversed — the rest holds.
 
-**🚩 And it breaks an assumption this plan was about to bake in: a script's location is not always a
+**And it breaks an assumption this plan was about to bake in: a script's location is not always a
 TILE.** `cp 1` on `wYCoord` is not a square — it is **the entire north row of Pallet Town**. So a
 "script box" cannot be assumed to be one 16×16 outline; some are lines, regions, or conditions that no
 extractor can reduce to a coordinate at all. Counted:
@@ -341,7 +341,7 @@ polish of the 507 named descriptions, Phase 6 (model verification), Phase 7 (DB 
 > the console." **That was too strong** — flags don't execute, but they *drive* executed script pointers
 > (mechanism below), so a crash is possible in principle.
 >
-> 🔬 **…but the ALL-FLAGS-ON claim did NOT reproduce (console, 2026-07-16). Status: UNREPRODUCED.**
+> **…but the ALL-FLAGS-ON claim did NOT reproduce (console, 2026-07-16). Status: UNREPRODUCED.**
 > Leadership reported "turning all flags on crashes the game", and it was recorded here as established.
 > The cartridge says otherwise so far. With **every one of the 2,560 flags set** (`emu_boot all_flags`),
 > the console: booted healthy in Pallet (888 frames) → walked into **Oak's Lab** (the densest
@@ -472,7 +472,7 @@ ghost        -> NO BATTLE (script=1, ow=True) - stalled/blocked
 forge, not a game bug). Arming it also needs `wRoute22CurScript = DEFAULT` **and** the rival object shown
 (missable) — flags alone are not enough.
 
-**🔎 A real candidate did fall out of it — `ghost`:** armed (WANTS + 1ST) but the rival object **hidden**
+**A real candidate did fall out of it — `ghost`:** armed (WANTS + 1ST) but the rival object **hidden**
 → the coord trigger fires, the script advances to 1, and **no battle ever engages** (stalled). That is a
 genuine **flag ↔ missable inconsistency** (the flags say "ambush armed", the sprite says "nobody here"),
 and it is a **suspected softlock** worth its own probe. (It also contradicts the probe docstring's claim
