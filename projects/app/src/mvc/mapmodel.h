@@ -536,12 +536,12 @@ public:
 
   /// The app's best determination of where map @p mapInd (-1 = current map) sits in its
   /// progression — NEVER "" while a blueprint exists (leadership, 2026-07-19: no
-  /// "custom / not recognized"; the app does its best from the dead-giveaway flags and/or
-  /// the current map script). In order: a resting stage whose whole save block matches
-  /// exactly (latest first); a transient whose script byte matches; a synthesized
-  /// `"s<value>"` raw step the byte names; else the best-SCORING resting stage — +1 per
-  /// matching owned event / own missable / script byte, -1 per mismatch, latest stage
-  /// winning ties (monotone flags read "at least this far"). "" only without a blueprint.
+  /// "custom / not recognized"). In order: a transient whose script byte matches (the
+  /// byte parked mid-cutscene is literal); then the LATER of (latest exactly-matching
+  /// resting stage, latest resting stage with DELTA EVIDENCE — any OWNED event /
+  /// filter-flag / byte giveaway that is NEW at that stage present in the save: "if
+  /// stage 3 flags are set we're in stage 3"); then a synthesized `"s<value>"` raw step
+  /// the byte names; else the best-scoring resting stage. "" only without a blueprint.
   Q_INVOKABLE QString currentStateId(int mapInd = -1) const;
 
   /// One state's full record (as @ref stateList shapes it, plus `notes` and the absolute

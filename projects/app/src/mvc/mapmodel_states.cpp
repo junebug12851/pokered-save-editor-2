@@ -30,6 +30,7 @@
 
 #include <climits>
 
+#include <QHash>
 #include <QSet>
 #include <QVariantList>
 #include <QVariantMap>
@@ -146,6 +147,78 @@ QString bestRestingId(const MapStateBlueprint* bp, World* worldAll, AreaMap* map
   return bestId;
 }
 
+/// DELTA EVIDENCE — does the live save carry any of the giveaway facts that are NEW in
+/// stage @p st versus the previous resting stage @p prev? (Leadership, 2026-07-19: "if
+/// stage 3 … flags are set doesn't that mean we're in stage 3".) A giveaway is: an event
+/// this stage newly sets — **OWNED only**: a context flag is another map's (often global)
+/// story, and counting it would pin every map at its final stage on any late-game save
+/// and make rolling back unreadable — a filter-flag visibility this stage newly flips
+/// (and the save agrees), or the step byte newly resting on this stage's script value.
+bool stageHasEvidence(const MapStateStage& st, const MapStateStage* prev,
+                      const MapStateBlueprint* bp, World* worldAll, AreaMap* map,
+                      int curMapInd)
+{
+  if (!st.hasSave || worldAll == nullptr || worldAll->events == nullptr
+      || worldAll->missables == nullptr)
+    return false;
+
+  QSet<int> prevSet;
+  if (prev != nullptr)
+    for (const auto& ev : prev->set)
+      prevSet.insert(ev.ind);
+  for (const auto& ev : st.set) {
+    if (!ev.owned || prevSet.contains(ev.ind))
+      continue;  // context flag, or not new at this stage
+    if (worldAll->events->eventsAt(ev.ind))
+      return true;
+  }
+
+  if (prev != nullptr) {
+    QHash<int, bool> prevMis;
+    for (const auto& mis : prev->missables)
+      prevMis.insert(mis.ind, mis.hide);
+    for (const auto& mis : st.missables) {
+      if (prevMis.value(mis.ind, mis.hide) == mis.hide)
+        continue;  // visibility unchanged from the previous stage
+      if (worldAll->missables->missablesAt(mis.ind) == mis.hide)
+        return true;
+    }
+    if (st.script != prev->script
+        && liveScriptByteFor(bp, worldAll, map, curMapInd) == st.script)
+      return true;
+  }
+  return false;
+}
+
+/// The resting-stage determination: the LATER of (latest exactly-matching stage, latest
+/// stage with delta evidence). Exact still recognises a clean save; evidence lets a save
+/// carrying any of a later stage's giveaways read as that later stage.
+QString evidenceOrExactRestingId(const MapStateBlueprint* bp, World* worldAll,
+                                 AreaMap* map, int curMapInd)
+{
+  const auto& stages = bp->getStages();
+  QVector<int> resting;
+  for (int i = 0; i < stages.size(); ++i)
+    if (stages[i].kind == QLatin1String("resting"))
+      resting.append(i);
+
+  int exactPos = -1, evidPos = -1;
+  for (int r = resting.size() - 1; r >= 0; --r)
+    if (stageMatches(stages[resting[r]], bp, worldAll, map, curMapInd)) {
+      exactPos = resting[r];
+      break;
+    }
+  for (int r = resting.size() - 1; r >= 0; --r) {
+    const MapStateStage* prev = r > 0 ? &stages[resting[r - 1]] : nullptr;
+    if (stageHasEvidence(stages[resting[r]], prev, bp, worldAll, map, curMapInd)) {
+      evidPos = resting[r];
+      break;
+    }
+  }
+  const int pos = qMax(exactPos, evidPos);
+  return pos >= 0 ? stages[pos].id : QString();
+}
+
 /// Script values carried by NO state (the engine trainer-battle steps and friends, 143
 /// across the 98 blueprints) — surfaced as synthesized `"s<value>"` raw steps so every
 /// script value is reachable through the state menu ("if a state is not a script then a
@@ -167,25 +240,59 @@ QList<QPair<int, QString>> uncoveredScriptValues(const MapStateBlueprint* bp)
   return out;
 }
 
+/// Is this step name the do-nothing sentinel? ("Noop"/"Nop" — a parked script, not a
+/// story beat; leadership 2026-07-19: the bare word is a poor title.)
+bool isNoopName(const QString& s)
+{
+  const QString n = s.toLower().remove(QLatin1Char('-')).remove(QLatin1Char('_'));
+  return n == QLatin1String("noop") || n == QLatin1String("nop");
+}
+
 /// A synthesized raw step's display name: the map's own friendly step label
 /// (maps.json scriptEntries) when it has one, else the SCRIPT_* constant's tail.
+/// The do-nothing sentinel reads honestly instead of the bare "Noop".
 QString rawStepLabel(int mapInd, int value, const QString& scriptName)
+{
+  QString label;
+  auto* entry = MapsDB::inst()->getIndAt(QString::number(mapInd));
+  if (entry != nullptr)
+    for (const auto& st : entry->getScriptSteps())
+      if (int(st.id) == value && !st.label.isEmpty()) {
+        label = st.label;
+        break;
+      }
+  if (label.isEmpty() && !scriptName.isEmpty()) {
+    // SCRIPT_BILLSHOUSE_CLEANUP -> "Cleanup" (best tail we can make of the constant)
+    const int cut = scriptName.lastIndexOf(QLatin1Char('_'));
+    if (cut >= 0 && cut + 1 < scriptName.size()) {
+      label = scriptName.mid(cut + 1).toLower();
+      label[0] = label[0].toUpper();
+    }
+  }
+  if (label.isEmpty())
+    return QStringLiteral("Step %1").arg(value);
+  if (isNoopName(label) || isNoopName(scriptName.section(QLatin1Char('_'), -1)))
+    return QStringLiteral("Idle (script parked)");
+  return label;
+}
+
+/// A synthesized raw step's description: the map's own step description (maps.json)
+/// when it has one; the parked sentinel gets its honest sentence.
+QString rawStepDesc(int mapInd, int value, const QString& scriptName)
 {
   auto* entry = MapsDB::inst()->getIndAt(QString::number(mapInd));
   if (entry != nullptr)
     for (const auto& st : entry->getScriptSteps())
-      if (int(st.id) == value && !st.label.isEmpty())
-        return st.label;
-  if (!scriptName.isEmpty()) {
-    // SCRIPT_BILLSHOUSE_CLEANUP -> "Cleanup" (best tail we can make of the constant)
-    const int cut = scriptName.lastIndexOf(QLatin1Char('_'));
-    if (cut >= 0 && cut + 1 < scriptName.size()) {
-      QString tail = scriptName.mid(cut + 1).toLower();
-      tail[0] = tail[0].toUpper();
-      return tail;
-    }
-  }
-  return QStringLiteral("Step %1").arg(value);
+      if (int(st.id) == value && !st.desc.isEmpty()
+          && !isNoopName(st.label))
+        return st.desc;
+  if (isNoopName(scriptName.section(QLatin1Char('_'), -1)))
+    return QStringLiteral(
+        "The map runs no script at this step — the parked value a finished map's byte "
+        "often rests on. Picking it writes only the step byte.");
+  return QStringLiteral(
+      "A raw state step outside the researched stages (the engine passes through it "
+      "mid-mechanism). Picking it writes only the step byte.");
 }
 
 /// Parses a synthesized `"s<value>"` id; returns the value or -1.
@@ -236,9 +343,7 @@ QVariantList MapModel::stateList(int mapIndArg) const
     m[QStringLiteral("id")] = id;
     m[QStringLiteral("kind")] = QStringLiteral("step");  // synthesized raw step
     m[QStringLiteral("name")] = rawStepLabel(ind, uc.first, uc.second);
-    m[QStringLiteral("desc")] = QStringLiteral(
-        "A raw state step outside the researched stages (the engine passes through it "
-        "mid-mechanism). Picking it writes only the step byte.");
+    m[QStringLiteral("desc")] = rawStepDesc(ind, uc.first, uc.second);
     m[QStringLiteral("timeline")] = QString();
     m[QStringLiteral("trigger")] = QString();
     m[QStringLiteral("script")] = uc.first;
@@ -257,28 +362,27 @@ QString MapModel::currentStateId(int mapIndArg) const
   if (bp == nullptr || worldAll == nullptr)
     return QString();
 
-  // Resting stages, LATEST first — where two stages could both read as a match, the
-  // furthest story position wins (in practice they differ by their owned flags).
+  // A byte parked mid-cutscene is the literal current state — the transients first.
   const auto& stages = bp->getStages();
-  for (int i = stages.size() - 1; i >= 0; --i)
-    if (stages[i].kind == QLatin1String("resting")
-        && stageMatches(stages[i], bp, worldAll, map, mapInd()))
-      return stages[i].id;
-
-  // Then the transients — the byte alone names them (they carry no save block).
   const int byte = liveScriptByteFor(bp, worldAll, map, mapInd());
   for (const auto& st : stages)
     if (st.kind == QLatin1String("transient") && st.script == byte)
       return st.id;
 
-  // A raw step value no state carries names itself (the synthesized "s<value>" entry).
+  // The resting determination: the LATER of exact-match and delta-evidence (a save
+  // carrying any of stage 3's giveaway flags IS in stage 3 — leadership, 2026-07-19).
+  const QString rid = evidenceOrExactRestingId(bp, worldAll, map, mapInd());
+  if (!rid.isEmpty())
+    return rid;
+
+  // Only a byte to go on: a raw step value no state carries names itself. (Demoted
+  // below the flag evidence — "Noop" is a parked script, not a story position.)
   for (const auto& uc : uncoveredScriptValues(bp))
     if (uc.first == byte)
       return QStringLiteral("s%1").arg(byte);
 
-  // No exact match anywhere: the app does its BEST from the dead-giveaway flags + the
-  // byte — the best-scoring resting stage, latest winning ties. Never "" (leadership,
-  // 2026-07-19: no "custom / not recognized"; determine the progression regardless).
+  // Nothing matched and nothing gave evidence: the best-scoring resting stage, latest
+  // winning ties. Never "" (no "custom / not recognized") while a blueprint exists.
   const QString best = bestRestingId(bp, worldAll, map, mapInd());
   if (!best.isEmpty())
     return best;
@@ -403,7 +507,9 @@ bool MapModel::rollForward(int mapIndArg)
   // A synthesized raw step sits OFF the line — forward snaps to the app's best
   // determination of the resting stage (the dead-giveaway flags decide).
   if (synthesizedStepValue(cur) >= 0 && bp->stage(cur) == nullptr) {
-    const QString best = bestRestingId(bp, worldAll, map, mapInd());
+    QString best = evidenceOrExactRestingId(bp, worldAll, map, mapInd());
+    if (best.isEmpty())
+      best = bestRestingId(bp, worldAll, map, mapInd());
     if (best.isEmpty())
       return false;
     applyState(best, ind);

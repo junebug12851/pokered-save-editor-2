@@ -11,6 +11,28 @@ release: `0.16.6-alpha`, shipped 2026-07-11.) Single source of truth: repo-root 
 `tst_db_integrity` now 15 (two new pins: `everyFlyDestinationSitsAtItsMapId`,
 `everyTradeResolvesAndSitsAtItsBit`).
 
+### 🎚️ FILTER FLAGS RESEARCHED + EVIDENCE MATCHING + the World panel completed (2026-07-19, `0.43.6-alpha`)
+
+The third brief of the day, delivered in full. Story:
+[`sessions/2026-07/2026-07-19.md`](sessions/2026-07/2026-07-19.md); new reference:
+[`reference/filter-flags.md`](reference/filter-flags.md).
+
+- ⭐ **All 228 filter flags researched** (`analyze_filter_flags.py` dossiers): 121 static · 44
+  Silph-sweep · 36 one-shot · 14 re-armed boulders · 13 cutscene visitors. **The chain: event
+  flag (durable) → map script (reconciler, often per-entry) → filter flag (rendered truth).**
+  Oak-in-Pallet is the written exemplar.
+- ⭐ **Evidence matching**: a save carrying any of a later stage's NEW owned giveaways (events,
+  filter-flag flips, the byte) reads as that stage — BaseSAV Pallet now answers
+  **"3. The journey underway"**. A parked "Noop" byte is demoted below flag evidence, and the
+  synthesized step reads **"Idle (script parked)"**.
+- ⭐ **World panel**: "Current state step" (the script-pointer list) + "Something else…" added —
+  same control as Details; empty Event-flags / Filter-Flags sections fully hidden.
+- 🐞 **The canvas renders filter flags LIVE now** — ghosting read the cast snapshot, so switch
+  flips and state applies didn't redraw; `misTick` + live `missablesAt` binding fix it
+  (verified on screen: Oak full ↔ ghost).
+- Green: `tst_map_states` 9/9 · `tst_qml_screens` 28/28 · full `ctest` 92/92. ⏳ Owed: her
+  live pass.
+
 ### 🧭 "CUSTOM" RETIRED — best-effort state matching + every step is a state (2026-07-19, `0.43.5-alpha`)
 
 Fairy Fox's follow-up brief, delivered in full. Story: [`sessions/2026-07/2026-07-19.md`](sessions/2026-07/2026-07-19.md).

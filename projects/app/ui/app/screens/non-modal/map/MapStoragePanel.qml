@@ -699,11 +699,9 @@ Item {
                 const tag = s.kind === "transient" ? qsTr(" (mid-cutscene)") : "";
                 out.push({ id: s.id, label: s.id + ". " + s.name + tag, desc: s.desc, kind: s.kind });
               }
-              out.push({ id: "__raw", label: qsTr("Something else…"), desc: "" });
               return out;
             }
             onActivated: {
-              if (currentValue === "__raw") { scriptSection.customMode = true; return; }
               if (currentValue !== "" && currentValue !== undefined) {
                 brg.map.applyState(currentValue, scriptSection.stateMapId);
                 panel.editTick++;
@@ -740,6 +738,78 @@ Item {
             text: stateCombo.currentIndex >= 0 && stateCombo.model[stateCombo.currentIndex] !== undefined
                   && stateCombo.model[stateCombo.currentIndex].desc !== undefined
                   ? stateCombo.model[stateCombo.currentIndex].desc : ""
+          }
+
+          // ── Current state step — the raw script byte, from the map's OWN script-pointer
+          // list (leadership, 2026-07-19: "the world panel is missing the current map
+          // script"). The state picker above stays the favored control; this is the same
+          // power path the Details panel carries.
+          Label {
+            Layout.fillWidth: true
+            Layout.topMargin: 2
+            visible: scriptSection.steps.length > 0
+            text: qsTr("Current state step")
+            font.pixelSize: 11
+            color: brg.settings.textColorMid
+          }
+          ComboBox {
+            id: storageStepCombo
+            objectName: "storageStepCombo"   // the DEBUG harness scrolls/reads this
+            Layout.fillWidth: true
+            Layout.preferredHeight: 30
+            font.pixelSize: 12
+            visible: scriptSection.steps.length > 0 && !scriptSection.customMode
+            textRole: "name"
+            valueRole: "value"
+            model: { panel.revision; return scriptSection.steps; }
+            onActivated: {
+              if (panel.wScripts) {
+                panel.wScripts.scriptsSet(scriptSection.scriptInd, currentValue);
+                panel.editTick++;
+              }
+            }
+          }
+          readonly property int stepComboIndex: {
+            panel.revision; panel.editTick;
+            const l = scriptSection.steps;
+            for (let i = 0; i < l.length; i++)
+              if (l[i].value === scriptSection.value) return i;
+            return -1;
+          }
+          Binding {
+            // The same ComboBox model-reset trap as the state picker above (qt-patterns.md).
+            target: storageStepCombo
+            property: "currentIndex"
+            value: scriptSection.stepComboIndex
+            delayed: true
+          }
+          // What the selected step MEANS — the step's own story words (maps.json).
+          Label {
+            Layout.fillWidth: true
+            wrapMode: Text.Wrap
+            font.pixelSize: 10
+            opacity: 0.55
+            visible: storageStepCombo.visible && text !== ""
+            text: {
+              panel.revision; panel.editTick;
+              const l = scriptSection.steps;
+              for (let i = 0; i < l.length; i++)
+                if (l[i].value === scriptSection.value)
+                  return l[i].desc !== undefined ? l[i].desc : "";
+              return "";
+            }
+          }
+          // The "Something else…" link only when there IS a named list to step out of.
+          Label {
+            visible: scriptSection.steps.length > 0
+            text: scriptSection.customMode ? qsTr("Pick from the list") : qsTr("Something else…")
+            font.pixelSize: 10
+            color: brg.settings.accentColor
+            MouseArea {
+              anchors.fill: parent
+              cursorShape: Qt.PointingHandCursor
+              onClicked: scriptSection.customMode = !scriptSection.customMode
+            }
           }
 
           // The custom path: full byte range, never refused — warned when it's past the map's
@@ -895,7 +965,19 @@ Item {
             panel.revision;
             return panel.curPage !== undefined ? brg.map.storageEvents(panel.curPage.ids) : [];
           }
-          visible: list.length > 0
+          // No section AT ALL when this map has nothing to show (leadership, 2026-07-19:
+          // "dont show event flags … if the map doesnt have it at all") — including the
+          // all-useless case, where every group hides behind the "!" gate and the header
+          // used to float over nothing.
+          visible: {
+            panel.revision;
+            const l = list;
+            if (l.length === 0) return false;
+            if (panel.showUseless) return true;
+            for (let i = 0; i < l.length; i++)
+              if (!l[i].useless) return true;
+            return false;
+          }
 
           /// ⭐ Grouped BY PROGRESSION STAGE first (leadership, 2026-07-18: *"Event flags need
           /// grouping in some way … map state would be a good grouping"*): a flag a blueprint
@@ -1373,6 +1455,7 @@ Item {
                 }
 
                 MapSwitch {
+                  objectName: "missableSwitch_" + mrow.modelData.ind   // the DEBUG harness flips these
                   checked: !mrow.hidden          // bit SET = HIDDEN; the switch says "on the map"
                   onToggled: {
                     if (panel.wMissables) {

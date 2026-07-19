@@ -558,6 +558,18 @@ Item {
     return brg.file.data.dataExpanded.world.missables;
   }
 
+  /// Bumped on EVERY missable write (the World panel's Filter-Flag switches, a state
+  /// apply/roll, a randomize) so the sprites' ghosting re-reads the live bits — the map
+  /// must render the filter flags as they are NOW (leadership, 2026-07-19: "things the
+  /// filter flag turns on and off … should react on the map with rendering"). The cast
+  /// list itself only rebuilds on `revision`; this tick is what keeps the drawn state
+  /// live between rebuilds.
+  property int misTick: 0
+  Connections {
+    target: canvasRoot.wMissables
+    function onMissablesChanged() { canvasRoot.misTick++; }
+  }
+
   // The four edge connections, in two views: the STRIP geometry (where each lands in the ring) and the
   // EDIT info (offset, sync, the snap landmarks). Both keyed off `revision` so an offset edit updates
   // the strip in place. @see MapConnection.qml (which is NOT a Repeater delegate, on purpose).
@@ -1087,8 +1099,15 @@ Item {
           inSet: modelData.inSpriteSet
           // The Continue-load view: a sprite the save's filter flag hides is NOT drawn -- exactly
           // as the console would not draw it. Its flag box stays (that layer is about what
-          // BELONGS here). Leadership, 2026-07-18.
-          hiddenByFlag: modelData.hidden === true
+          // BELONGS here). Leadership, 2026-07-18. ⭐ Read LIVE off WorldMissables (via misTick),
+          // not the cast row's snapshot -- a Filter-Flag switch or a state apply/roll must redraw
+          // the sprite immediately (leadership, 2026-07-19).
+          hiddenByFlag: {
+            canvasRoot.misTick;
+            return modelData.missable >= 0 && canvasRoot.wMissables
+                   ? canvasRoot.wMissables.missablesAt(modelData.missable)
+                   : modelData.hidden === true;
+          }
 
           // ⚠️ THE SLIDE. `TryWalking` moves the sprite's TILE to the destination at once and then
           // slides it a pixel a frame for 16 frames -- so the tile is where they are GOING, and

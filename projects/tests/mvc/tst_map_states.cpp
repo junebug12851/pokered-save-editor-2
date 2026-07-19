@@ -237,9 +237,24 @@ void TestMapStates::bestEffort_neverCustom_andRawStepsResolve()
   QVERIFY2(listed, qPrintable(QStringLiteral("state list of map %1 misses raw step %2")
                                 .arg(ind).arg(rawId)));
 
-  // 3. The byte holding that value NAMES the synthesized step…
-  world->scripts->scriptsSet(bp->getScriptSlot(), rawVal);
-  QCOMPARE(r->map->currentStateId(ind), rawId);
+  // 3. Raw-step byte vs flag evidence (leadership, 2026-07-19: "if stage 3 … flags are
+  //    set … it should pick the one it thinks is it" — and Noop is a parked script, not
+  //    a story position). On Pallet Town (uncovered value 6 = the Noop step):
+  //    a. the PLAYED fixture carries later-stage giveaways -> the byte parked on 6 must
+  //       NOT answer "s6"; the flags carry the verdict (a resting stage);
+  //    b. after applying stage "1" (owned giveaways cleared), byte 6 has only itself to
+  //       go on -> NOW it answers "s6".
+  const auto* pallet = MapStatesDB::inst()->at(0);
+  QVERIFY(pallet != nullptr && pallet->getScriptSlot() >= 0);
+  world->scripts->scriptsSet(pallet->getScriptSlot(), 6);   // 6 = Pallet's Noop step
+  const QString withEvidence = r->map->currentStateId(0);
+  QVERIFY2(!withEvidence.startsWith(QLatin1Char('s')),
+           qPrintable(QStringLiteral("flag evidence must outrank a parked byte, got '%1'")
+                        .arg(withEvidence)));
+  r->map->applyState(QStringLiteral("1"), 0);
+  world->scripts->scriptsSet(pallet->getScriptSlot(), 6);
+  QCOMPARE(r->map->currentStateId(0), QStringLiteral("s6"));
+  r->map->applyState(QStringLiteral("1"), 0);   // leave Pallet clean for the next pins
 
   // 4. …and APPLYING a synthesized step writes ONLY step-byte territory.
   r->sf.flattenData();

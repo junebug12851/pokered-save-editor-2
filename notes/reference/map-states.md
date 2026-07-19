@@ -112,16 +112,27 @@ script values against the map's own table, badges against the eight — or gener
 curation cannot invent a flag. Stage-id uniqueness, advance targets and progression order are
 validated across all 98 files.
 
-## Matching is BEST-EFFORT (amended 2026-07-19, leadership)
+## Matching is BEST-EFFORT (amended 2026-07-19, leadership; evidence rule same day)
 
 The original model answered "" (custom) for a save matching no stage exactly. **Retired.** The
-app now always determines a stage: exact resting match (latest first) → a transient the byte
-names → a synthesized `"s<value>"` raw step (every script value NO stage carries is surfaced as
-one, so *every* script value is in a state) → else the **best-scoring** resting stage — +1 per
-matching owned event / own missable / script byte, −1 per mismatch, latest stage winning ties
-(monotone story flags read "at least this far"). The dead-giveaway flags carry the verdict; the
-byte is one fact among them. Raw step entries apply byte-only; the step/byte controls remain the
-power path. `mapmodel_states.cpp`; pinned by `tst_map_states`.
+app always determines a stage, in this order (`mapmodel_states.cpp`, pinned by `tst_map_states`):
+
+1. **A transient the byte names** — a byte parked mid-cutscene is the literal current state.
+2. **The LATER of**: the latest resting stage matching *exactly*, and the latest resting stage
+   with **delta evidence** — any giveaway that is NEW at that stage present in the save: an
+   **owned** event it newly sets (*"if stage 3 flags are set we're in stage 3"* — owned only,
+   because a context flag is global story and would pin every map at its final stage on any
+   late-game save), a **filter-flag** visibility it newly flips (and the save agrees), or the
+   byte newly resting on its script value.
+3. **A synthesized `"s<value>"` raw step the byte names** — every script value NO stage carries
+   is surfaced as one ("if a state is not a script then a script needs to be in a state"), so
+   the state menu covers the whole table; the do-nothing sentinel reads *"Idle (script
+   parked)"*, never bare "Noop" (a parked script is not a story position, which is also why
+   this is *demoted below the flag evidence*). Applying one writes only the step byte.
+4. Else the best-scoring resting stage (+1 matching fact / −1 mismatch, latest wins ties).
+
+The raw step/byte controls remain the power path beside the favored state picker — on BOTH the
+Details panel and the World panel ("Current state step" + "Something else…").
 
 ## What it means for our code
 
