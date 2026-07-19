@@ -298,7 +298,7 @@ that gets answered — nobody should have to already know what a *counter* is).
 ## 8. Editing on the canvas
 
 - **Objects are drawn as chips on the map**: a small rounded badge at the object's tile, coloured by
-  layer, carrying a glyph (⇄ warp, 🪧 sign, the NPC's actual sprite for an NPC). At low zoom they shrink to
+  layer, carrying a glyph (⇄ warp,  sign, the NPC's actual sprite for an NPC). At low zoom they shrink to
   a dot; they never obscure the tile they mark.
 - **Select**: click. **Marquee**: drag on empty canvas with the Select tool + Shift. **Cycle** overlapping
   objects with repeated clicks (Alt+click cycles down the stack).
@@ -349,7 +349,7 @@ What gets built:
   arriving, not just sitting there.
 - **A transport, in the status bar** — ▶/⏸, **step one frame**, speed (½× · 1× · 2×), and a live frame
   counter. **Paused = frame 0**, always, deterministically.
-- 🔴 **Determinism is a hard requirement.** The headless `screenshooter`, `tst_visual_regression` and the
+- **Determinism is a hard requirement.** The headless `screenshooter`, `tst_visual_regression` and the
   `--shot` harness render **frame 0** unless told otherwise. A moving map must never make a test flap. The
   frame number is an input, never an ambient global.
 - **The console is the judge, again.** The animated tiles live in **VRAM**, so `tst_emu_parity` boots the
@@ -394,13 +394,13 @@ screen.
 
 The QML cannot do this alone, and two of these are blockers:
 
-1. 🔴 **Un-opaque the Area children.** `area.h` declares `Q_DECLARE_OPAQUE_POINTER` on `AreaMap*`,
+1. **Un-opaque the Area children.** `area.h` declares `Q_DECLARE_OPAQUE_POINTER` on `AreaMap*`,
    `AreaPlayer*`, `AreaTileset*`, `AreaWarps*`, `AreaSign*`, `AreaSprites*`, `AreaPokemon*`, `AreaNPC*`,
    `AreaLoadedSprites*` — so QML reads `area.map.*` as **`undefined`** (the exact bug that bit
    `AreaAudio` and was fixed on 2026-07-12 by `#include`-ing the header instead). **Every field in §7 is
    unreachable from QML until this is fixed.** Fix: full `#include` + drop the opaque declaration, exactly
    as `AreaGeneral`/`AreaAudio` now are. (`reference/qt-patterns.md`.)
-2. 🔴 **Defuse the `MapsDB` deep-link landmine.** `getToMap()`/`getToSprite()`/`getToMusic()` are never
+2. **Defuse the `MapsDB` deep-link landmine.** `getToMap()`/`getToSprite()`/`getToMusic()` are never
    resolved (`DB::deepLinkAll()` doesn't call `MapsDB::inst()->deepLink()`), which is why `AreaAudio::setTo`
    has been writing `0/0` and why map randomize is still commented out. **"Place the player on any map"
    dereferences those links** — it must be defused before that feature ships. Confirmed safe once called
@@ -578,7 +578,7 @@ every frame of it.
 > **All four are in.** `tst_map_sprites` (10 cases) pins them; its keystone byte-diffs the whole save
 > across a drag and demands exactly `mapX` + `mapY` moved. Full `ctest` 83/83.
 >
-> ⏳ **Owed: Twilight's live pass** — the drag, the drop, the delete and the panel are all things a still
+> **Owed: Twilight's live pass** — the drag, the drop, the delete and the panel are all things a still
 > PNG cannot review.
 
 #### What changed in the design, and why
@@ -724,7 +724,7 @@ with its range, and change.
 > `illegal && armed` — out of the table **and** something is going to read it. Pinned by
 > `guns_dontCryWolfOnAnOrdinarySave`.
 >
-> ⏳ **Owed: Twilight's live pass** — the drag, the drop, the delete, the maker tools and the pickers
+> **Owed: Twilight's live pass** — the drag, the drop, the delete, the maker tools and the pickers
 > are all things a still PNG cannot review.
 
 ---
@@ -735,7 +735,7 @@ with its range, and change.
 > verified against the cartridge, and it changes what several of these fields *are*. The headlines:
 > an **edited warp is genuinely live** on Continue (and the game restores the map's original doors when
 > the player leaves and re-enters — the sprite rule, again); **two of v1's fields are dead bytes**
-> nothing in the game reads; **two of them are loaded guns**; **two whole flags are wiped on load**;
+> nothing in the game reads; **two of them are hazards**; **two whole flags are wiped on load**;
 > and **the two bytes that actually matter aren't on the warps screen at all.**
 >
 > Warps ride on the machinery Phase 4 already built (`MapObjectsModel`, canvas selection, tile-snapped
@@ -806,7 +806,7 @@ a generic **Place** tool; this supersedes it with something better, because a *s
 a context bar is a worse affordance than **a tool per thing you make**:
 
 ```
- [ ↖  ✥  ⌕ ] │ [ ⇄+  🧍+ ] │ [ Pallet Town · Overworld ⌄ ] [ Outside is: Pallet Town ⌄ ] [ 100% ⌄ ] …
+ [ ↖  ✥  ⌕ ] │ [ ⇄+  + ] │ [ Pallet Town · Overworld ⌄ ] [ Outside is: Pallet Town ⌄ ] [ 100% ⌄ ] …
    select    │  the makers  │        what is loaded
 ```
 
@@ -816,7 +816,7 @@ something nobody has specced.
 
 - **⇄+ Place warp** — click a tile, a door appears there. Defaults to `$FF` ("back outside") because
   that is what a door usually is. The **32-cap is stated before you hit it** ("3 of 32"), never after.
-- **🧍+ Place sprite** — click a tile, a person appears there, **picture picked at random from the
+- **+ Place sprite** — click a tile, a person appears there, **picture picked at random from the
   map's own loaded sprite set** (so it can never be one of the amber "this map hasn't loaded that
   picture" sprites). This is the "create random sprite here" tool, and it is the fast path that the
   Characters bar's drag-and-drop is the *precise* path for. 15-cap stated up front.
@@ -847,9 +847,9 @@ the app is where that gets answered.
 | Shown as | Real byte | The one-liner |
 |---|---|---|
 | **Wake up at…** *(map picker)* | `wLastBlackoutMap` | "Blacking out, Dig and Escape Rope all bring you here." |
-| **Fly sends you to…** *(picker, **13 maps only**)* | `wDestinationMap` | "Where the last Fly / special warp was headed." 🔫 |
-| **Falling drops you onto…** *(picker, **7 maps only**)* | `wDungeonWarpDestinationMap` | "The floor below, if you're falling down a hole." 🔫 |
-| **…through hole #** *(1–3, **paired** with the above)* | `wWhichDungeonWarp` | "Which hole. Seafoam B1F has two; Victory Road 2F only has a #2." 🔫 |
+| **Fly sends you to…** *(picker, **13 maps only**)* | `wDestinationMap` | "Where the last Fly / special warp was headed." ⚠️ |
+| **Falling drops you onto…** *(picker, **7 maps only**)* | `wDungeonWarpDestinationMap` | "The floor below, if you're falling down a hole." ⚠️ |
+| **…through hole #** *(1–3, **paired** with the above)* | `wWhichDungeonWarp` | "Which hole. Seafoam B1F has two; Victory Road 2F only has a #2." ⚠️ |
 | **Arriving at door #** | `wDestinationWarpID` | "Which arrival point of the map you're entering. `255` = don't move me." |
 | — *a divider* — | | |
 | **A special warp is in progress** | `BIT_FLY_OR_DUNGEON_WARP` | "Set while a Fly / hole / Dig warp is mid-flight." |
@@ -858,7 +858,7 @@ the app is where that gets answered.
 | **Dig / Escape Rope / blacked out** | `BIT_ESCAPE_WARP` | "Sends you to *Wake up at…*" |
 | **Doors fire without walking into them** | `BIT_FORCED_WARP` | "Normally you must walk *into* a door. This makes touching the tile enough. (It's how the Seafoam current sweeps you along.)" |
 
-**🔫 The two loaded guns get the music-bank treatment.** The pickers offer **only the legal values**
+**The two hazards get the music-bank treatment.** The pickers offer **only the legal values**
 by default, with a **switch** to show the full 248 — and a save that already holds an illegal one is
 **shown holding it**, in `errorColor`, with the plain-English consequence ("no console has a table entry
 for this; the game will read whatever ROM bytes follow the table and drop you somewhere undefined"). It
@@ -875,8 +875,8 @@ tooltip-icon):
 |---|---|---|---|
 | ⚠ | **Script is warping you now** | `BIT_WARP_FROM_CUR_SCRIPT` | **Zeroed on load.** `wStatusFlags3` shares a byte with `wCableClubDestinationMap`, and `SpecialEnterMap` writes `0` to it on the Continue path. *Console-verified.* |
 | ⚠ | **Standing on a hole** | `BIT_ON_DUNGEON_WARP` | Same byte. **Zeroed on load.** |
-| 💀 | **Came in through door #** | `wWarpedFromWhichWarp` | **Survives the load perfectly — and nothing in the game ever reads it.** Two writes, zero reads, in the whole disassembly. |
-| 💀 | **Came from map** | `wWarpedFromWhichMap` | Same. A breadcrumb the game drops and never picks up. |
+| ❌ | **Came in through door #** | `wWarpedFromWhichWarp` | **Survives the load perfectly — and nothing in the game ever reads it.** Two writes, zero reads, in the whole disassembly. |
+| ❌ | **Came from map** | `wWarpedFromWhichMap` | Same. A breadcrumb the game drops and never picks up. |
 
 Two different kinds of "this does nothing", and the panel **says which is which** — a wiped byte and an
 unread byte are not the same fact, and collapsing them into one grey "unused" would be exactly the kind
@@ -916,7 +916,7 @@ words, with its range, its legal values, whether the game will keep it, and whet
 > members kept their (now-documented) names — the rename in **5f-0** below is deferred as an optional
 > truth-in-labelling cleanup, since it is internal-only and carries breakage risk for no user-visible
 > gain; the panel already carries the correct English names and the load-behaviour notes. Pinned by
-> **`tst_player`** (7 cases). ⏳ Owed: Twilight's live pass on the scroll, the switch and the controls.
+> **`tst_player`** (7 cases). Owed: Twilight's live pass on the scroll, the switch and the controls.
 
 > *"Let's flesh out more character details — the player detail panel should have Moving, Last Stop,
 > Current direction, X/Y Coords, X/Y Block Coords, Jumping Y, Using strength, Using Fly, Surfing
@@ -938,8 +938,8 @@ brief asks.
 
 **5f-0 — Make the model honest first (no UI).** Same precedent as 5a / sprites 4a: the byte offsets and
 bit numbers in `AreaPlayer` are **all correct**, but five fields are **misnamed** and the "rewritten on
-load" facts are undocumented. Before the panel is built on them, rename + document (there is **no loaded
-gun** here — `setTo()` only touches coords/dirs — so this is a truth-in-labelling pass, not a
+load" facts are undocumented. Before the panel is built on them, rename + document (there is **no
+hazard** here — `setTo()` only touches coords/dirs — so this is a truth-in-labelling pass, not a
 save-safety one):
 
 | v2 field | → rename toward | because |
@@ -967,7 +967,7 @@ warp panel's `[ ⚠ Show N fields the game rewrites on load ]`):
 
 **5f-2 — The `[ ⚠ Show N fields the game rewrites on load ]` switch** (off by default). Flipping it
 reveals the **ten `!` fields** each with a yellow `!` (`MapWarnIcon`) explaining *what* the console does
-(forces / zeroes / clears), and the **three `💀` dead fields** (`x/yOffsetSinceLastSpecialWarp`,
+(forces / zeroes / clears), and the **three `❌` dead fields** (`x/yOffsetSinceLastSpecialWarp`,
 `usedCardKey`) each with the grey "the game writes this and never reads it" line. **Jumping Y** and the
 ledge/spin scratch bits live here too. A wiped byte and an unread byte are **different facts** — say
 which, exactly as the warp panel does.
@@ -995,7 +995,7 @@ reads it.
 
 > **All of 6a–6d are in.** `tst_signs` (15 cases) pins them; the keystone byte-diffs the whole 32 KB
 > across a drag. Full test set green. The importer (`scripts/import_sign_text.py`) is additive-only —
-> strip its `textEntries` back out and `maps.json` is byte-identical to before. ⏳ Owed: Twilight's
+> strip its `textEntries` back out and `maps.json` is byte-identical to before. Owed: Twilight's
 > live pass on the drag, the delete, the tool and the grouped picker.
 
 > *"Let's add sign features to the map — an add-sign tool, and the details panel on the left needs
@@ -1053,27 +1053,27 @@ invent a parallel file).
 The placards join the doors and the NPCs as first-class objects, on 4b/5b's machinery. Nothing new is
 invented.
 
-- **Draw them** — a sign chip on its tile (🪧 glyph, its own layer colour), on a new **Signs** layer
+- **Draw them** — a sign chip on its tile ( glyph, its own layer colour), on a new **Signs** layer
   in the **Objects** layer group (beside People & objects, Warps).
 - **Select · drag · ✕ delete · ✎ edit** — identical to warps and sprites. A drag commits **exactly two
   bytes** (the sign's Y and X, in their own coord array). The keystone test byte-diffs the whole 32 KB
   and proves only those two moved.
 - **The reading line.** Selecting a sign shows, in the status bar, **what it says** — the first line of
-  its text, resolved through 6a's table: *"🪧 (7, 9) — “PALLET TOWN / Shades of your…”."* If the id
+  its text, resolved through 6a's table: *" (7, 9) — “PALLET TOWN / Shades of your…”."* If the id
   points past the map's table, it says **that**, in `errorColor`, with how many entries the map has.
 
 ---
 
 #### Phase 6c — The Place sign tool
 
-The tool rail (`[ ↖ ✥ ⌕ ] │ [ ⇄+ 🧍+ ]`) grows exactly **one** slot — the third maker Twilight has now
+The tool rail (`[ ↖ ✥ ⌕ ] │ [ ⇄+ + ]`) grows exactly **one** slot — the third maker Twilight has now
 briefed, and no others:
 
 ```
- [ ↖  ✥  ⌕ ] │ [ ⇄+  🧍+  🪧+ ] │ [ Pallet Town · Overworld ⌄ ] [ Outside is: … ⌄ ] [ 100% ⌄ ] …
+ [ ↖  ✥  ⌕ ] │ [ ⇄+  +  + ] │ [ Pallet Town · Overworld ⌄ ] [ Outside is: … ⌄ ] [ 100% ⌄ ] …
 ```
 
-- **🪧+ Place sign** — click a tile, a sign appears there, defaulting to the map's **first sign text**
+- **+ Place sign** — click a tile, a sign appears there, defaulting to the map's **first sign text**
   (or text id 1 if the map has none), because a fresh placard should say *something* real. The
   **16-cap is stated before you hit it** ("3 of 16"), never after.
 - A real tool by §9's rule: a cursor, a context bar, an empty state, a keyboard path; and it **respects
@@ -1084,7 +1084,7 @@ briefed, and no others:
 #### Phase 6d — The sign Details panel
 
 Left-hand Details panel, the same one warps/sprites use, showing the selected sign (and the map's own
-details when nothing is selected). A **titled group** (`🪧 Sign`) in the `FieldGroup` language, with one
+details when nothing is selected). A **titled group** (` Sign`) in the `FieldGroup` language, with one
 `?` in the title.
 
 **The group, top to bottom:**
@@ -1183,7 +1183,7 @@ Pinned by a new **`tst_connections`**, negative-controlled like `tst_warps`/`tst
 > each empty edge → a grouped map picker → `addConnection`). Four fixed items each (not Repeater
 > delegates, so an offset edit never rebuilds one mid-drag); `selectedConnection` joins the
 > one-selection-at-a-time model. `tst_qml_screens` 16/16, `tst_connections` 14/14.
-> **⏳ Remaining in 7b (owed):** the **full neighbour-map render** bleeding off the edge (Twilight's
+> **Remaining in 7b (owed):** the **full neighbour-map render** bleeding off the edge (Twilight's
 > chosen visual; today it's the faithful strip-outline proxy), the **drag-a-map-onto-the-arrow**
 > gesture (today: click-to-add only), and **Twilight's live pass** (drag/select/snap can't be reviewed
 > from a still PNG). Feature rides the **Connections** layer (turn it on to see arrows + strips).
@@ -1197,7 +1197,7 @@ The four edges become live, on 4b's object machinery + the neighbour-map rendere
   Continue-load.** `buildOverworldMap`/`applyConnections` take an optional `SaveConn` list and bleed the
   save's **raw** struct bytes; it rides in the `image://map` URL (`MapModel::source`) and `mapBuffer()`,
   so image + status bar + strip box all agree. Neighbour maps keep their ROM connections (we don't hold
-  their save state). ⏳ Remaining nicety: the **Border overlay layer** (`requestOverlay`) still uses ROM
+  their save state). Remaining nicety: the **Border overlay layer** (`requestOverlay`) still uses ROM
   connections for its ring — only visible with that guide on; low priority.
 - **The live connection = the full neighbour map.** When a connection exists, render the neighbour map
   (via `MapEngine`) as an image bleeding off that edge, clipped to a comfortable margin, dimmed slightly so
@@ -1206,7 +1206,7 @@ The four edges become live, on 4b's object machinery + the neighbour-map rendere
   > neighbour's own map (`image://map/<toMap>/<toTileset>/…`, `toTileset` added to `connectionEditList`),
   > positioned so the neighbour's shared map edge meets ours + the offset, drawn **behind** our opaque
   > buffer (z −0.5) so only the off-edge part shows, dimmed 45%, re-positioned live on an offset drag.
-  > ⏳ Owed: Twilight's live pass on the alignment (layer-gated + edge-located + zoom-dependent, so it
+  > Owed: Twilight's live pass on the alignment (layer-gated + edge-located + zoom-dependent, so it
   > can't be still-captured).
 - **Drag = offset.** Grab the neighbour map and slide it **along the shared edge only** (constrained to the
   one axis); the offset snaps to whole blocks; the nine derived bytes recompute live; the border-ring strip
@@ -1240,7 +1240,7 @@ the offset; add/delete/select behave like warps and signs.
 > flush), **re-home** direction buttons (free edges only), a **Break sync** switch that unlocks the raw
 > nine (`connectionFields` / `setConnectionField` — a raw write moves exactly its own byte(s) and
 > desyncs), Delete, and the live/restored-on-re-entry honest note. `tst_connections` 16/16,
-> `tst_qml_screens` 16/16. ⏳ Owed: the on-canvas **resize nodes** for a desynced strip (7d) and
+> `tst_qml_screens` 16/16. Owed: the on-canvas **resize nodes** for a desynced strip (7d) and
 > Twilight's live pass.
 
 Nothing selected → the map (as always). A connection selected → its inspector, on the field kit.
@@ -1355,7 +1355,7 @@ build a UI for it.
 > UI), pinned by `tst_area_pokemon::wildTables_byteOrderIsLevelThenSpecies`. Full write-up + the
 > Continue-persistence finding: [`../reference/wild-encounters.md`](../reference/wild-encounters.md).
 >
-> ⏳ **Owed: Twilight's live pass** — the drag-to-reorder, the click-to-pick species, and the inline
+> **Owed: Twilight's live pass** — the drag-to-reorder, the click-to-pick species, and the inline
 > level edit are things a still PNG can only partly review. (Screenshot: `tmp/screenshots/wild-panel2.png`.)
 
 The original sketch (kept for the record): species picker + level, drag-to-reorder, rate 0 said in
@@ -1401,7 +1401,7 @@ rest pass through.
 Renamed `AreaNPC`'s nine fields to the truth (`npcsFaceAway`→`npcsDoNotFacePlayer`, `runningTestBattle`
 →`testBattle`, `joypadSimulation`→`scriptedMovementActive`, etc.) and documented the console-verified
 persistence in the header — the `AreaPlayer`/`AreaWarps`/sprites pass. Byte offsets and bits unchanged,
-so save output is **byte-identical** (proven). `setTo()`/`randomize()` are no-ops (no loaded gun). New
+so save output is **byte-identical** (proven). `setTo()`/`randomize()` are no-ops (no hazard). New
 `tst_area_npc` pins each field's offset+bit and proves byte-exact fidelity; the one QML consumer
 (`tst_brg_chain.qml`) updated. **All affected tests green** (tst_area_npc 5, tst_area 12,
 tst_area_fragments 6, tst_area_pokemon 5, tst_qml_brg 11).
@@ -1417,7 +1417,7 @@ marks are now `✅`. (This is exactly why the probe is a gate — the guess was 
 
 #### Phase 9d — The Character panel  ✅ *(built 2026-07-15, `CharacterStatePanel.qml`; awaiting Twilight's live pass)*
 
-A right-dock panel (`id: "charstate"`, glyph ☺, wired in `Map.qml` + `app.qrc`), three titled groups
+A right-dock panel (`id: "charstate"`, glyph , wired in `Map.qml` + `app.qrc`), three titled groups
 (v1's own split), each flag a `MapSwitch` with a one-line plain-English blurb and, where the game
 rewrites it, an inline `MapWarnIcon` (**no hidden fields** — Twilight 2026-07-15; the ⚠ is a label, not
 a reason to hide):
@@ -1492,9 +1492,9 @@ Zone — the gate resets steps/balls to 502/30 on entry").
 - **15a — Research** ✅ *(2026‑07‑15)* — [`../reference/gym-safari-state.md`](../reference/gym-safari-state.md).
 - **15b — Console probe** ✅ *(2026‑07‑15, `scripts/emu/probe_gym_safari_state.py`)* — 5/6 durable;
   addresses + big‑endian pinned; `wSafariZoneGameOver` inert.
-- **15c — Model** ⏳ — a global class holding the six with byte‑exact accessors (big‑endian word for
+- **15c — Model** — a global class holding the six with byte‑exact accessors (big‑endian word for
   steps), surfaced on `MapModel`; `tst_map_storage` byte‑diffs each setter over the whole 32 KB.
-- **15d — The panel** ⏳ — `MapStoragePanel.qml`, right dock, primary‑filled storage dock icon, the map
+- **15d — The panel** — `MapStoragePanel.qml`, right dock, primary‑filled storage dock icon, the map
   combo (only‑maps‑with‑storage, current preselected), the per‑map pages, persistent vs temporary
   marking; screenshot‑reviewed then a live pass.
 
@@ -1534,7 +1534,7 @@ that sits on top. **Content phase; sits beside Phase 15 (Map Storage), not the p
 - **Fossil** → Cinnabar Lab Fossil Room. Show **both** bytes; ⚠️ **sync neither** (console‑proven
   independent) and **do not warn on a mismatched pair** (BaseSAV ships one — resting state).
 
-**🔑 THE TWO GROUP KINDS (leadership, 2026‑07‑17) — the reusable mechanism this phase introduces:**
+**THE TWO GROUP KINDS (leadership, 2026‑07‑17) — the reusable mechanism this phase introduces:**
 
 | Kind | Means | Affords | Members |
 |---|---|---|---|
@@ -1557,14 +1557,14 @@ that sits on top. **Content phase; sits beside Phase 15 (Map Storage), not the p
 - **17b — Data + DB** ✅ *(2026‑07‑17, `0.42.x`)* — `fly.json` fixed & pinned; `startedElite4` renamed
   (byte‑identical); `trades.json` extended **additively** (0 existing fields changed) + `TradesDB`
   gains map/coords/bit + `MapDBEntry::toTrades`; pinned by `tst_db_integrity` (15/15).
-- **17c — MapModel surface** ⏳ — `storageTrades` / `storageTowns` / `storageCompleted` / `storageFossil`,
+- **17c — MapModel surface** — `storageTrades` / `storageTowns` / `storageCompleted` / `storageFossil`,
   the **General page** in `storagePages()`, the `trade` kind in `blockHotspots()`, and the group model
   (each row carrying its `group` id + kind). `tst_map`/`tst_world` byte‑exact keystones.
-- **17d — The panel** ⏳ — the new sections in `MapStoragePanel.qml`, the General page, the town Visited
+- **17d — The panel** — the new sections in `MapStoragePanel.qml`, the General page, the town Visited
   checkbox, and the **alike‑group header** (view‑all + check/uncheck‑all). `MapSwitch`, never
   `FlatToggle` (the blank‑panel trap). Screenshot‑reviewed.
-- **17e — Canvas** ⏳ — trade tabs on the trader tiles (dashed‑family; Cinnabar Trade Room shows two).
-- **17f — Live pass** ⏳ — Fairy Fox drives it: the group view‑all/check‑all, the dynamic town `!`, the
+- **17e — Canvas** — trade tabs on the trader tiles (dashed‑family; Cinnabar Trade Room shows two).
+- **17f — Live pass** — Fairy Fox drives it: the group view‑all/check‑all, the dynamic town `!`, the
   fossil independence, drag/scroll/feel a still PNG cannot judge.
 
 ⚠️ **Doctrine, as everywhere:** full byte range, hack/glitch shown never refused; every setter writes
@@ -1773,7 +1773,7 @@ sites · **22** files with both · **41** files with coord triggers.
   toggle→event pairing for the 22. Routine boundaries are the unit — ⚠️ **not** proximity: "the flag
   is near the object" is the same static-co-location reasoning that produced the Route 22 false
   positive and shelved the conflicts system. Anything ambiguous gets **no tab**.
-  - ⭐ **THE DESIGN OF RECORD: truthful HIGHLIGHT, block-granular HIT TARGET.** *(leadership,
+  - **THE DESIGN OF RECORD: truthful HIGHLIGHT, block-granular HIT TARGET.** *(leadership,
     2026-07-17 — her third and settled statement on it. This **supersedes both** earlier same-day
     calls: ~~"put a box around the whole range"~~ **and** ~~"highlight the blocks separately, per-block
     or per-tile boxes"~~.)*
@@ -1839,7 +1839,7 @@ sites · **22** files with both · **41** files with coord triggers.
     | **Click** | **Priority IS the layer order the user already sees in the Layers panel** — first click goes to the **highest layer**. Not a new hidden precedence: the panel *is* the z-order, it is on screen, and it is already re-orderable and toggleable by the person clicking. |
     | **Tabs** | **The escape hatch, and they are not just labels — you can click AND DRAG them.** A tab reaches its spot **directly**, whatever is stacked above it. |
 
-    ⭐ **This is better than all three candidates, and worth understanding rather than just
+    **This is better than all three candidates, and worth understanding rather than just
     implementing.** The problem was "an invisible precedence rule fights the canvas". The answer
     doesn't invent a rule — it **reuses one already on screen and already under the user's control**,
     so precedence is inspectable and fixable by the person hitting it. And it retires the

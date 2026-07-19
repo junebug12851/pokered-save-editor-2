@@ -26,7 +26,7 @@ forward."* Ninety seconds of actually looking: issue
 **merged 2026-03-24 — four months earlier**. `install-qt-action` has an `aqtsource` input for exactly
 this case. Verified working in a throwaway venv, then shipped as a pinned `aqtsource`.
 
-**⭐ The standing lessons — three, and they generalise well past Qt:**
+**The standing lessons — three, and they generalise well past Qt:**
 
 1. **"The latest RELEASE can't" is not "it can't."** 3.3.0 is from **June 2025**; the project had
    moved on a year without cutting a tag. A release number is a publishing decision, not a statement

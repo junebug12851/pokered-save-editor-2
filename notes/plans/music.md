@@ -1,6 +1,6 @@
 # Music — the plan
 
-## 🔎 Phase 8 — "ship the `.asm`, not a `.bin`" — FEASIBILITY (2026-07-13)
+## Phase 8 — "ship the `.asm`, not a `.bin`" — FEASIBILITY (2026-07-13)
 
 Twilight asked for the music data to be pret/pokered's **assembly sheet music**, parsed line by line,
 rather than a compiled blob — under the standing *use-the-game's-own-file-formats* rule. Checked it
@@ -177,7 +177,7 @@ Each phase is independently shippable and independently *green*.
 - The **track picker** is the panel's list (real names, not `02_BA`), with the map's own music selected.
 - **The bank guard**: only 2 / 8 / 31 can be chosen; a save holding any other bank is **shown as it is,
   never rewritten**, with a plain warning that it hangs the real game.
-- 🐞 **`AreaAudio::setTo()` fixed** — it was doing `musicBank = musicID = musicEntry->bank;`, clobbering
+- **`AreaAudio::setTo()` fixed** — it was doing `musicBank = musicID = musicEntry->bank;`, clobbering
   the track id with the bank. Pinned by `tst_area::audio_setTo_keepsIdAndBankApart`, which checks **every
   map in the game**.
   ⚠️ That test also surfaced the known landmine: `MapsDB` is never deep-linked at boot, so `getToMusic()`
@@ -199,7 +199,7 @@ entire soundtrack**, including all 105 inner voices (they come free with the hea
    every command byte to match and each ROM address to map to exactly one of ours (a graph isomorphism,
    which is stronger than byte equality). **All three banks: MATCHES the cartridge.**
 
-🐞 That second check earned its keep on day one — it caught two bugs in my own disassembler (`$2x` is only
+That second check earned its keep on day one — it caught two bugs in my own disassembler (`$2x` is only
 an SFX note on CHAN4–CHAN8; `sound_loop 0` is a terminator), *before* a line of the engine existed.
 
 ⚠️ **`.wave5` has no data** — the label's bytes are whatever follows the wave table in that bank, and it's
@@ -240,13 +240,13 @@ of the same stream on the same frame" is checked, not assumed.
 
 **It found three real bugs in the port, and one in my own test rig:**
 
-1. 🐞 **`InitPitchSlideVars` CLOBBERS `de`** — it uses `d`/`e` as scratch for its divide, and the caller
+1. **`InitPitchSlideVars` CLOBBERS `de`** — it uses `d`/`e` as scratch for its divide, and the caller
    pushes `de` only *afterwards*. So a pitch-slide note starts on the **divide's leftovers**, not the
    note's pitch. The console proved it (PkmnHealed wants `$F4` at `$C066`). Not a bug to fix — a bug to
    **copy**.
-2. 🐞 **`PlaySound` does not restore `wSoundID`** — so after a drum, the engine's "current sound" *is*
+2. **`PlaySound` does not restore `wSoundID`** — so after a drum, the engine's "current sound" *is*
    the noise instrument. I had helpfully saved and restored it. (Routes1, `$C001`.)
-3. 🐞 **`wSfxHeaderPointer` was never written** by our SFX path.
+3. **`wSfxHeaderPointer` was never written** by our SFX path.
 4. ⚠️ **The dump itself was wrong at first.** Entering a map *fades the old music out*, and during the
    fade the channel sound-ids already read as the new track while **`wAudioROMBank` is still the old
    bank** — so the pointers are addresses in a *different bank's* data. Photographing that gives a dump
@@ -322,7 +322,7 @@ Work: (a) surface the inner voices in the track list (a disclosure under each tr
 notes · loops"*), (b) `Transcriber` + exporters, (c) a score view, eventually.
 
 ⚠️ **And the guard rail this research forces into Phase 1:** the **bank** byte is not a glitch, it is a
-loaded gun. An invalid bank makes the game execute arbitrary cartridge bytes as code, every frame —
+hazard. An invalid bank makes the game execute arbitrary cartridge bytes as code, every frame —
 **verified: the console stops producing frames the instant the map loads.** The bank picker offers only
 **2 / 8 / 31**; a save that already holds something else is **shown, never silently rewritten**, with a
 plain warning that it hangs the real game.
@@ -387,7 +387,7 @@ The rule: **hover auditions, click commits.** The save is never touched by movin
 | | |
 |---|---|
 | **Armed only while playing** | If nothing is playing, hovering does **nothing**. Audio never begins because a cursor drifted somewhere. ▶ is always a deliberate act. |
-| **Settle, don't sweep** | A row must be hovered for **~120 ms** before it plays. Dragging the cursor down the list at speed doesn't machine-gun the engine — only the row you *settle* on sounds. |
+| **Settle, don't sweep** | A row must be hovered for **~120 ms** before it plays. Dragging the cursor down the list at speed doesn't overload the engine — only the row you *settle* on sounds. |
 | **Instant, because it's cheap** | Switching = re-running the game's own `PlaySound` init and re-pointing the sequencer. No file to load, no decode. It lands on the **next engine frame (~17 ms)** — a clean cut, exactly like the game switching tracks, not a crossfade. |
 | **Always from the top** | A previewed track starts at its beginning, every time. |
 | **Leaving the list snaps back to the truth** | Move off the list and, after a **~400 ms** grace (so crossing a gap between rows doesn't trigger it), playback returns to the **selected** track — the one actually in the save. You always end up back on what's real, never on silence. |
@@ -414,5 +414,5 @@ answers "what is this map's music?")
 - ✅ **Phase 3** — `GbApu`.
 - ✅ **Phase 4** — `Gen1SoundEngine`, **verified frame-by-frame against the console on all 46 tracks**.
 - ✅ **Phase 5** — `MusicPlayer` + the Map screen's Music panel (▶ + hover-preview).
-- ⏳ **Twilight's live pass** — it is sound and hover; a still PNG can review neither.
+- **Twilight's live pass** — it is sound and hover; a still PNG can review neither.
 - ⬜ Phases 6–7 (SFX/cries; the inner voices in the UI + sheet music) — not started.

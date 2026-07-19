@@ -53,14 +53,14 @@ and by raw `wEventFlags + N`. Result: **531 used, 2,029 unused**, 6 defined-but-
 the exhaustive negative search the naming rule requires before any "Unknown". Detail in the reference
 note.
 
-**Phase 3 — Flag groups.** 🟡 First pass. `scripts/generate_event_dossiers.py` derives ~104 groups from
+**Phase 3 — Flag groups.** First pass. `scripts/generate_event_dossiers.py` derives ~104 groups from
 name patterns, **plus 9 range-defined groups** — per leadership, an event **range is itself a flag
 group** (its bits are literally toggled together): the Indigo Plateau Elite-Four reset (40 bits) and the
 seven gym-trainer sweeps. Range groups are preferred (evidence-based) and give the block-swept gaps a
 real group identity + a natural group-toggle. Still to do: shared-flag detection, the missable/gift/
 static-Pokémon gates from v1's `eventPokemon.json`, and editorial group names.
 
-**Phase 4 — Crash / instability analysis.** 🟡 Research done; **two claims corrected by the console
+**Phase 4 — Crash / instability analysis.** Research done; **two claims corrected by the console
 (2026-07-16)**. **Mechanism (stands):** flag bits aren't executed, but event flags drive `wCur<Map>Script`
 (set from `CheckEvent` chains) dispatched via script-pointer tables ending in `jp hl`, so an impossible
 combination *could* resolve a bad pointer. **But:**
@@ -72,10 +72,10 @@ combination *could* resolve a bad pointer. **But:**
 So: keep a **bulk-set warning** (the mechanism is real and it's an unreachable state), but word it as
 *"unpredictable and unverified"*, **never "this crashes"**. Individual sensible edits are safe. The
 softlock/progression categories (key-item gots, missable objects, one-way blockers, range sequences) stand
-as **suspected** until adjudicated. Full writeup in the reference note. ⏳ Owed: adjudicate the remaining
+as **suspected** until adjudicated. Full writeup in the reference note. Owed: adjudicate the remaining
 5 same-object governors + `route22-rival-armed-but-hidden` on the console.
 
-**Phase 5 — Author dossiers for ALL 2,560.** 🟡 First complete pass done. The generator emits
+**Phase 5 — Author dossiers for ALL 2,560.** First complete pass done. The generator emits
 `tmp/event-flags/events_dossiers.json` — **every** bit with friendly name, description, map, group,
 classification, and evidence. Taxonomy (leadership-defined): **507 named** (incl. 4 hand-researched from
 pret's `; ???`) **+ 30 block-swept** range-group members **+ 2,023 "Placeholder Flag #<hex>"** (no code
@@ -88,13 +88,13 @@ authoring proceeds.
 exists (`WorldEvents` + `EventsDB`/`events.json`, data-driven per-event `byte`+`bit`).
 - ✅ **Byte/bit maths flawless:** all 508 satisfy `byte == 0x29F3 + ind/8`, `bit == ind%8` — **0
   mismatches**, in range, no dupes. `ind` **is** pret's index. **No corruption bug.**
-- 🐞 **14 MISLABELLED + 14 phantom entries, all in the Pokémon Tower block** (`0x0EE`–`0x113`, shifted
+- **14 MISLABELLED + 14 phantom entries, all in the Pokémon Tower block** (`0x0EE`–`0x113`, shifted
   ~2 bits): the editor **writes the wrong flag** — *"In Purified Zone"* → `EVENT_BEAT_POKEMONTOWER_5_TRAINER_3`;
   *"Beat Pokemontower 7 Trainer 0"* → **`EVENT_BEAT_GHOST_MAROWAK`**. The phantoms point at placeholder
   bits pret never names, so they do **nothing**. Table + detail in the reference note.
-- 📝 The `worldevents.h` comment (*"scattered all over the save"*) is misleading — it is one contiguous
+- The `worldevents.h` comment (*"scattered all over the save"*) is misleading — it is one contiguous
   320-byte array. Truth-in-labelling fix.
-- ⏳ Owed: console-verify an event edit persists on Continue (a ~5 s MCP probe); pin with a test
+- Owed: console-verify an event edit persists on Continue (a ~5 s MCP probe); pin with a test
   (`byte==0x29F3+ind/8` for every entry + a byte-diff proving one toggle moves exactly one bit).
 
 **Phase 6b — fix the model (BEFORE any UI).** Per the sprite/tileset/warp precedent the data is fixed
@@ -201,7 +201,7 @@ reach, so warn before it and don't offer a naive global "set everything" — but
 unverified"*, **never "this crashes"** (the console did not reproduce a crash; see Phase 4).
 Design in this doc first; no build until approved.
 
-**Phase 9 — Flag ↔ map location research (new, briefed 2026-07-15).** 🟡 In progress.
+**Phase 9 — Flag ↔ map location research (new, briefed 2026-07-15).** In progress.
 `scripts/extract_flag_locations.py` → `tmp/event-flags/flag_locations.json`.
 - ✅ **Object inventory DONE (exact):** all **223 maps, 918 objects** — each with tile (X, Y), sprite,
   movement, and kind (**334 trainers, 106 item balls, 478 NPCs**). Oak's Lab confirmed: the 3 starter
@@ -214,7 +214,7 @@ Design in this doc first; no build until approved.
   `GOT_DOME_FOSSIL`, Route 12/16 Snorlax, Viridian Giovanni, Blue's House Town Map. Item balls attach to
   their got-item flag. **Oak's Lab fully correct:** 3 starter balls + Oak at (5,2)/(5,10) (the second
   carrying its flag), aides non-conditional.
-- 🔜 Remaining Phase-9 polish: extend gating-flag capture beyond the direct `CheckEvent`-before-toggle
+- Remaining Phase-9 polish: extend gating-flag capture beyond the direct `CheckEvent`-before-toggle
   cases (some toggles are script-state driven), hidden-items and trigger-tile/grass events, and the
   final `maps.json`-style shape for the app. The **inventory + conditional + core linkage** are done and
   correct — enough to build the Phase 10 hotspots on.
@@ -231,7 +231,7 @@ This is where the Events feature meets the map-storage panel the leadership orig
   attached event flags** (and count), and Phase 10 renders the outline colour from that + focuses the
   panel on those flag(s) on click.
 
-## Phase 11 — The conflicting-flags system — 🛑 SHELVED (leadership, 2026-07-16)
+## Phase 11 — The conflicting-flags system — SHELVED (leadership, 2026-07-16)
 
 > **DECISION: do not build it.** Leadership: *"maybe we should forgo a conflict system… it's too expensive
 > to figure out. It was a nice QoL perk — users not interested in advanced things could do something more
@@ -279,7 +279,7 @@ the **same tile (25,5)**, `ROUTE22_RIVAL1`/`RIVAL2`, one per battle).
 >    The static generator now *defers* to verdicts (`REFUTED_SUBJECTS`).
 > 3. **Adjudicate on the console.** Every suspicion goes to a forge-probe before it is shown to a user.
 >
-> 🔎 The probe also surfaced a **real** candidate the static pass never would have: **armed-but-hidden**
+> The probe also surfaced a **real** candidate the static pass never would have: **armed-but-hidden**
 > (`route22-rival-armed-but-hidden`, suspected/softlock) — flags arm the ambush while the rival object is
 > hidden, so the trigger fires, the script advances to 1, and **no battle engages**. A flag ↔ missable
 > inconsistency; owed its own probe.

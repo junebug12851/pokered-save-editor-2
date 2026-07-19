@@ -35,7 +35,7 @@ next begins — Twilight, mandatory: *"put in the long work for each of these co
 
 | Phase | | Phase | |
 |---|---|---|---|
-| **0** | Unblock the bridge (un-opaque the Area children; `MapsDB` deep-link) 🔴 | **7** | Area State (NPC / warp state / loaded sprites) |
+| **0** | Unblock the bridge (un-opaque the Area children; `MapsDB` deep-link) | **7** | Area State (NPC / warp state / loaded sprites) |
 | **1** | The chassis (bars, rails, dock, well) | **8** | Tileset & Blocks, properly |
 | **2** | The layer system (4 groups, eye/lock/solo) | **9** | Tools & precision |
 | **3** | The map is ALIVE (frame-accurate animation) | **10** | Motion & polish |
@@ -91,9 +91,9 @@ Phase 0 is a hard blocker: **QML cannot read a single one of those fields today.
       **Read the plan before touching it:** [`music.md`](music.md), plus
       [`../reference/gen1-sound-engine.md`](../reference/gen1-sound-engine.md) and
       [`../reference/gameboy-apu.md`](../reference/gameboy-apu.md).
-      🐞 Its Phase 1 also fixes a real bug found during the research: `AreaAudio::setTo()` writes the bank
+      Its Phase 1 also fixes a real bug found during the research: `AreaAudio::setTo()` writes the bank
       into `musicID`.
-      🎼 And the glitch-id research (verified on the cartridge) turned up a **perk**: the music region has
+      And the glitch-id research (verified on the cartridge) turned up a **perk**: the music region has
       **zero garbage ids** — it has **105 "inner voices"**, each a real song's single channel playing alone
       (id 187 = Pallet Town's bassline). They cost no extra data → **151 tracks for the price of 46**, plus
       near-free sheet-music export. ⚠️ But an invalid **bank** byte **hangs the console** (arbitrary code

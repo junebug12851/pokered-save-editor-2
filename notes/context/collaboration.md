@@ -8,7 +8,7 @@ has a deeper home, it's cross-referenced.
 
 ---
 
-## 📣 Describe what the EDIT DID — not what the world now looks like (2026-07-17)
+## Describe what the EDIT DID — not what the world now looks like (2026-07-17)
 
 She asked for one thing: *"disable camera view box by default … the outline around the player that
 would be exactly the gameboy screen view."* Exactly one bit changed (`ViewScreenBox`). But the comment,
