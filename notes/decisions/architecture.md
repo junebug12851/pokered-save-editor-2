@@ -465,3 +465,41 @@ generation fails.
 control-flow analyzer to know that `SCRIPT_PALLETTOWN_OAK_HEY_WAIT` is mid-cutscene — a research
 conclusion, not a parse); one giant JSON (per-map files match the one-file-per-thing sprite
 precedent and diff cleanly). Plan: `plans/map-states.md`; research: `reference/map-states.md`.
+
+## Docs chrome — adopted the hub's VENDORED shared-chrome bundle (2026-07-19)
+
+**Decision**: the docs-site chrome (masthead + fixed primary nav, section subnav, footer, the
+"Aa" reading/theme menu, and the palette that carries them) is now the **hub's vendored
+shared-chrome bundle** (`hub/standards/docs-site/chrome`, **chrome VERSION 2.0.0**), not a
+hand-reimplementation. We pull the master assets `main.css` + `reader.js` + `nav.js` verbatim into
+`docs/fairyfox/` and copy the bundle's `head`/`header`/`subnav`/`footer` markup into the Doxygen
+`header.html`/`footer.html` templates via the hub's **Doxygen adapter** (which names this project
+as its reference case). Adopted `chrome/VERSION` is pinned at `docs/fairyfox/CHROME_VERSION`.
+
+**Why the change**: the prior adoption (2026-07-06, hub 0.14) *reimplemented* the chrome for
+Doxygen because the bundle model did not yet exist. The hub introduced the bundle in 0.15.0 to kill
+exactly the per-project drift that reimplementation produces; for the chrome, the hub's own standard
+now says adoption **is a file copy**, not a paraphrase (`12-shared-chrome.md`). So the reader
+(`ff-docs.js`, the `.ff-top`/`.ff-header` markup, ~1000 lines of hand-built chrome CSS) was
+**retired** and replaced by the vendored bundle. `fairyfox-doxygen.css` shrank to a thin **bridge**
+whose only jobs are (1) mapping doxygen-awesome's variables onto main.css's live theme tokens so the
+generated API body tracks the reader theme, and (2) the "generated-reference boundary" layout
+reconciliation (single-page scroll under the sticky chrome; the treeview pinned below the chrome on
+**API pages only**, prose pages full-width — Twilight's rule, 2026-07-19). The screenshots gallery
+(`scripts/build_gallery.py`) wears the same bundle.
+
+**DEVIATION (documented, so it's compliant): self-hosted fonts, not Google Fonts.** The bundle's
+`head.html` loads the type families (Fraunces / Inter / JetBrains Mono) from `fonts.googleapis.com`;
+this project instead loads the **self-hosted woff2 copies** (`docs/fairyfox/fonts/fonts.css`) — same
+families and weights, no third-party IP/privacy exposure, matching the hub's own **legal-docs**
+standard. This was Twilight's explicit call on adoption (2026-07-19); a recommendation to move the
+hub bundle itself to self-hosting was filed back to the system in
+`notes/fairyfox-reports/2026-07-19-adopting-updates.md`. It is the ONLY edit to the bundle's fixed
+parts; every other part is copied verbatim.
+
+**Small project glue (kept separate from the vendored bundle)**: a `<script>` in `footer.html`
+mirrors the reader's `data-theme` onto doxygen-awesome's `light-mode`/`dark-mode` class (so the
+reference body's structural rules track the theme; sepia is structurally light), measures the sticky
+chrome height into `--ff-header-h`, and marks the active subnav pill; a pre-paint `<script>` in
+`header.html` adds `html.ff-no-sidebar` on prose pages before first paint. Full account:
+`notes/fairyfox-reports/2026-07-19-adopting-updates.md`; the mesh model: `reference/cross-project-sync.md`.

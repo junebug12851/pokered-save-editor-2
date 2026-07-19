@@ -95,9 +95,10 @@ jobs:
           # The Doxygen home becomes the Pages ROOT (so / is the docs home page).
           cp -r docs/html/. site/
           test -f site/index.html
-          # Themed screenshots gallery under /screenshots/ -- reuses the docs chrome +
-          # stylesheet (../fairyfox-doxygen.css, ../ff-docs.js, ...) so it is seamless with
-          # the rest of the site. The script copies the capture groups (screens/, editor/)
+          # Themed screenshots gallery under /screenshots/ -- wears the vendored chrome
+          # bundle (../main.css, ../reader.js, ../nav.js, ../fairyfox-doxygen.css, ...) so it
+          # is seamless with the rest of the site. The script copies the capture groups
+          # (screens/, editor/)
           # flat into site/screenshots/ and writes the gallery index.html.
           python3 scripts/build_gallery.py tmp/screenshots site/screenshots
           test -f site/screenshots/index.html

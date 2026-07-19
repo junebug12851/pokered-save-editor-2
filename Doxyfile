@@ -164,18 +164,25 @@ FULL_SIDEBAR           = NO
 # Doxygen injecting its own competing dark-mode script/toggle.
 HTML_COLORSTYLE        = LIGHT
 HTML_DYNAMIC_SECTIONS  = YES
-# Fairy Fox docs-site theme (hub mesh). doxygen-awesome is the variable-driven
-# base; fairyfox-doxygen.css re-points its variables to the hub design tokens and
-# MUST load last. See docs/fairyfox/ and notes/reference/cross-project-sync.md.
+# Fairy Fox docs-site theme (hub mesh, chrome bundle VERSION 2.0.0). The chrome is now the
+# VENDORED bundle: main.css (palette + header/subnav/footer/reader components) + reader.js +
+# nav.js, pulled from the hub master under docs/fairyfox/. doxygen-awesome is the
+# variable-driven base for the generated REFERENCE body; fairyfox-doxygen.css is the thin
+# bridge that hands doxygen-awesome's palette to main.css's live theme tokens and MUST load
+# LAST. See docs/fairyfox/, hub adapters/doxygen.md, and notes/reference/cross-project-sync.md.
 HTML_HEADER            = docs/fairyfox/header.html
 HTML_FOOTER            = docs/fairyfox/footer.html
 HTML_EXTRA_STYLESHEET  = docs/doxygen-awesome/doxygen-awesome.css \
+                         docs/fairyfox/main.css \
                          docs/fairyfox/fairyfox-doxygen.css
 # Fairy Fox chrome/reader assets, copied flat into the html output as-is:
-#   ff-docs.js         reader menu + chrome behaviour (loaded early in the header)
-#   fonts.css + woff2  self-hosted type families (Fraunces / Inter / JetBrains Mono)
+#   nav.js + reader.js  vendored bundle behaviour (loaded deferred at end of footer)
+#   fonts.css + woff2   self-hosted type families (Fraunces / Inter / JetBrains Mono) —
+#                       DOCUMENTED DEVIATION from the bundle's Google-Fonts head.html; keeps
+#                       the no-third-party-IP posture (notes/decisions/architecture.md).
 # (pse-logo.png is copied by Doxygen itself via PROJECT_ICON, so it's not listed here.)
-HTML_EXTRA_FILES       = docs/fairyfox/ff-docs.js \
+HTML_EXTRA_FILES       = docs/fairyfox/nav.js \
+                         docs/fairyfox/reader.js \
                          docs/fairyfox/fonts/fonts.css \
                          docs/fairyfox/fonts/fraunces-latin.woff2 \
                          docs/fairyfox/fonts/inter-latin.woff2 \

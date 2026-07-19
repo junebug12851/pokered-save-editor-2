@@ -1,4 +1,4 @@
-<!-- HTML footer for doxygen 1.17.0-->
+<!-- HTML footer for doxygen 1.17.0 -->
 <!-- start footer part -->
 <!--BEGIN GENERATE_TREEVIEW-->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
@@ -14,42 +14,109 @@ $generatedby&#160;<a href="https://www.doxygen.org/index.html"><img class="foote
 </small></address>
 </div><!-- doc-content -->
 <!--END !GENERATE_TREEVIEW-->
-<!-- Fairy Fox footer: shared brand + links back to the hub. Same fox mark as the header;
-     three columns (brand · Explore · This project) + a bottom bar. Mirrors the hub
-     docs-site standard reference/chrome.html footer. -->
-<footer class="ff-foot">
-  <div class="ff-foot-wrap">
-    <div class="ff-foot-brand">
+
+<!-- ===== bundle footer.html — the shared fairyfox footer (copied verbatim; structure
+     fixed, {{FF_*}} slots filled: key=pokered-save-editor-2, name=Pokered Save Editor 2).
+     The "Explore" column + the header brand/Home link are the required way back to the
+     main site. ===== -->
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-brand">
       <a class="brand" href="https://fairyfox.io/">
         <img class="brand-logo" src="https://fairyfox.io/assets/icons/fox.png" alt="" aria-hidden="true"/>
-        <span class="brand-name">Fairy&nbsp;Fox</span>
+        <span class="brand-name">Fairy Fox</span>
       </a>
-      <p>Documentation for Pokered Save Editor&nbsp;2 — a project under Fairy Fox. Built with Doxygen, themed to match fairyfox.io.</p>
+      <p>The project hub and documentation library for Fairy Fox's software work.</p>
     </div>
-    <nav class="ff-foot-col" aria-label="Fairy Fox">
-      <h2>Explore</h2>
+    <div class="footer-col">
+      <h4>Explore</h4>
       <a href="https://fairyfox.io/projects/">Projects</a>
       <a href="https://fairyfox.io/docs/">Documentation</a>
       <a href="https://fairyfox.io/blog/">Updates</a>
       <a href="https://fairyfox.io/about/">About</a>
-    </nav>
-    <nav class="ff-foot-col" aria-label="This project">
-      <h2>This project</h2>
-      <a href="$relpath^index.html">Docs home</a>
-      <a href="$relpath^pages.html">Project notes</a>
-      <a href="$relpath^screenshots/index.html">Screenshots</a>
-      <a href="https://fairyfox.io/projects/pokered-save-editor-2/">Project node&nbsp;↗</a>
-      <a href="https://github.com/junebug12851/pokered-save-editor-2">Repository&nbsp;↗</a>
-    </nav>
+    </div>
+    <div class="footer-col">
+      <h4>This project</h4>
+      <a href="https://fairyfox.io/pokered-save-editor-2/">Pokered Save Editor 2</a>
+      <a href="https://github.com/1fairyfox/pokered-save-editor-2">Repository ↗</a>
+    </div>
+    <div class="footer-col">
+      <h4>Elsewhere</h4>
+      <a href="https://github.com/1fairyfox">GitHub ↗</a>
+      <a href="https://fairyfox.io/feed.xml">Atom feed</a>
+    </div>
   </div>
-  <div class="ff-foot-bar">
-    <div class="ff-foot-wrap">
-      <span>&#169; Fairy Fox</span>
-      <span>A project under <a href="https://fairyfox.io/">Fairy&nbsp;Fox</a></span>
+  <div class="footer-bar">
+    <div class="wrap">
+      <span>© Fairy Fox</span>
+      <span>Built with the fairyfox docs-site standard</span>
       <span class="spacer"></span>
-      <a href="https://github.com/junebug12851">@junebug12851</a>
+      <a href="https://github.com/1fairyfox">@1fairyfox</a>
     </div>
   </div>
 </footer>
+
+<!-- bundle behaviour: nav.js (hamburger + Farms dropdown) then reader.js (injects the
+     "Aa" button + the reading-settings panel). Vendored master copies under docs/fairyfox/;
+     pulled at build time, never hot-linked. -->
+<script type="text/javascript" src="$relpath^nav.js" defer="defer"></script>
+<script type="text/javascript" src="$relpath^reader.js" defer="defer"></script>
+
+<!-- Project glue (NOT part of the bundle): (1) mirror the reader's data-theme onto
+     doxygen-awesome's light-mode/dark-mode class so the generated reference body's
+     structural rules track the chosen theme (sepia is structurally light); (2) mark the
+     current subnav pill .active by matching its data-ff-page to this page. Kept tiny and
+     separate so the vendored bundle stays untouched. -->
+<script type="text/javascript">
+(function(){
+  var r=document.documentElement;
+
+  // Measure the sticky chrome stack height (.site-header + .subnav) into --ff-header-h so
+  // the fixed treeview + single-page-scroll rules pin correctly; re-measure on resize and
+  // on reader text-size changes (which scale the rem-based bars).
+  function measureHeader(){
+    var h=document.querySelector(".site-header"), s=document.querySelector(".subnav");
+    var px=((h?h.offsetHeight:64)+(s?s.offsetHeight:0));
+    if(px>0) r.style.setProperty("--ff-header-h", px+"px");
+  }
+  measureHeader();
+  window.addEventListener("resize", measureHeader);
+  window.addEventListener("load", measureHeader);
+  try{ new MutationObserver(measureHeader).observe(r,{attributes:true,attributeFilter:["style"]}); }catch(e){}
+
+  function syncDoxygenTheme(){
+    var t=r.getAttribute("data-theme")||"system";
+    var dark = t==="dark" || (t==="system" && window.matchMedia &&
+               window.matchMedia("(prefers-color-scheme: dark)").matches);
+    r.classList.toggle("dark-mode", dark);
+    r.classList.toggle("light-mode", !dark);
+  }
+  syncDoxygenTheme();
+  try{
+    new MutationObserver(syncDoxygenTheme).observe(r,{attributes:true,attributeFilter:["data-theme"]});
+    if(window.matchMedia){
+      var mq=window.matchMedia("(prefers-color-scheme: dark)");
+      (mq.addEventListener?mq.addEventListener.bind(mq,"change"):mq.addListener.bind(mq))(syncDoxygenTheme);
+    }
+  }catch(e){}
+
+  // Mark the active subnav pill for this page.
+  try{
+    var path=location.pathname, file=path.substring(path.lastIndexOf("/")+1)||"index.html";
+    var key;
+    if(path.indexOf("/screenshots/")!==-1) key="screenshots";
+    else if(file==="index.html") key="index.html";
+    else if(/^(annotated|classes|hierarchy|namespaces?|files|class|struct|union|dir_|globals|functions)/.test(file)) key="api";
+    else key="notes";   // pse_* hubs, md_ notes, pages.html, changelog, credits, license, … → Notes
+    var links=document.querySelectorAll(".subnav a[data-ff-page]");
+    for(var i=0;i<links.length;i++){
+      if(links[i].getAttribute("data-ff-page")===key){
+        links[i].classList.add("active");
+        links[i].setAttribute("aria-current","page");
+      }
+    }
+  }catch(e){}
+})();
+</script>
 </body>
 </html>

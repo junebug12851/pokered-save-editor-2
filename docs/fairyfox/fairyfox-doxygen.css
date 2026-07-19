@@ -1,236 +1,88 @@
-/* SPDX-License-Identifier: MIT */
-/*
- * Fairy Fox theme layer for Doxygen (on top of doxygen-awesome).
- * --------------------------------------------------------------
- * Re-skins the generated C++ docs to the fairyfox.io design system so the docs
- * site at fairyfox.io/pokered-save-editor-2/ is seamless with the hub. This is
- * the "generator IS the site" (Case B) approach from the hub docs-site standard:
- * the values below are the normative fairyfox tokens (hub/standards/docs-site/
- * 02-design-tokens.md + 11-measurements-reference.md), re-pointing every
- * doxygen-awesome CSS variable at them rather than overriding piecemeal.
+/* ============================================================================
+ * fairyfox-doxygen.css — the THIN bridge between Doxygen (doxygen-awesome) and
+ * the vendored fairyfox chrome bundle (docs/fairyfox/main.css, chrome VERSION 2.0.0).
  *
- * THEMING: dark is the base :root. Light applies two ways — the OS default
- * (media query, only when no manual choice: `:not([data-theme])`) and an
- * explicit `data-theme="light"`. Sepia is manual-only. The reader menu
- * (ff-docs.js, key "fairyfox:reader:b") sets `data-theme` on <html> plus the
- * live reading vars (--page-font-size / --content-line-height / --content-maxwidth)
- * and recolours the accent family. This mirrors the hub's shared reader.
+ * The model changed on 2026-07-19: the chrome (header / primary-nav / subnav / footer /
+ * reader / palette) is no longer hand-reimplemented here — it is the VENDORED bundle
+ * main.css + reader.js + nav.js (hub/standards/docs-site/chrome). This file's ONLY job
+ * now is the "generated-reference boundary" (adapters/doxygen.md):
+ *   1. hand doxygen-awesome's variable palette to main.css's live theme tokens, so the
+ *      reference body (class lists, member tables, code) tracks the reader's theme/accent;
+ *   2. reconcile main.css's site-page <body> layout with Doxygen's own page structure.
+ * main.css owns the chrome + tokens + prose; doxygen-awesome owns the reference body.
  *
- * The one per-project change is the ACCENT: this project's registry colour
- * #e6488f (pink), kept across all three themes for brand identity. Every neutral
- * surface/text/line stays on the shared palette. Readers can recolour the accent
- * live from the reader menu.
- *
- * Load order (Doxyfile HTML_EXTRA_STYLESHEET): doxygen-awesome.css first, then
- * this file, so these win. The chrome (header/subnav/footer) is static markup in
- * header.html/footer.html; the reader panel is injected by ff-docs.js.
- */
+ * Load order (Doxyfile HTML_EXTRA_STYLESHEET): doxygen-awesome.css, main.css, THIS —
+ * so this wins where it must. See notes/reference/cross-project-sync.md and
+ * notes/decisions/architecture.md (the self-hosted-fonts deviation).
+ * ========================================================================== */
 
 /* ----------------------------------------------------------------------------
- * 1. Fairy Fox tokens  (dark = default; light/sepia below)
- * ------------------------------------------------------------------------- */
-:root {
-  --ff-display: "Fraunces", Georgia, "Times New Roman", serif;
-  --ff-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --ff-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-
-  --ff-radius: 20px;
-  --ff-radius-sm: 13px;
-  --ff-radius-xs: 9px;
-  --ff-maxw: 1180px;
-  --ff-maxw-text: 43rem;
-  --ff-gutter: clamp(1.15rem, 4vw, 2.75rem);
-  --ff-ease: cubic-bezier(.22, .61, .36, 1);
-
-  /* measured live by ff-docs.js from the fixed .ff-top stack */
-  --ff-header-h: 108px;
-
-  /* dark palette (default) */
-  --ff-bg: #191116;
-  --ff-bg-grad-top: #211622;
-  --ff-panel: #241823;
-  --ff-panel-2: #2a1d29;
-  --ff-panel-3: #322433;
-  --ff-line: #3a2a37;
-  --ff-line-2: #4a3646;
-  --ff-text: #f7ece6;
-  --ff-text-soft: #cdb8c2;
-  --ff-text-faint: #9c8893;
-  --ff-code-bg: #120c12;
-
-  /* per-project accent -- pokered's registered pink, applied like the hub's coral:
-     a mid pink for surfaces, a SOFT desaturated pink ink for links (not hot/neon),
-     used consistently everywhere. */
-  --ff-accent: #db5f92;
-  --ff-accent-deep: #b34a75;
-  --ff-accent-ink: #f2b7ce;
-  --ff-on-accent: #2a1016;
-  --ff-link: #f2b7ce;
-  --ff-link-hover: #f9d5e2;
-  --ff-glow: rgba(219, 95, 146, .24);
-
-  --ff-shadow: 0 1px 0 rgba(255,255,255,.03), 0 18px 40px -24px rgba(0,0,0,.8);
-  --ff-shadow-lg: 0 34px 80px -30px rgba(0,0,0,.86);
-  --ff-grain-op: .05;
-
-  /* fixed lifecycle hues (both themes) */
-  --ff-hue-alpha: #e5484d;
-  --ff-hue-beta: #e0a210;
-  --ff-hue-released: #22a06b;
-}
-
-/* Softened warm light palette — a gentle cream reading surface (never stark white).
-   Applies as the explicit "Light" reader choice AND (below) as the OS default when
-   no manual theme is set. */
-:root[data-theme="light"] {
-  --ff-bg: #fbf2ea;
-  --ff-bg-grad-top: #fff6ee;
-  --ff-panel: #fffaf5;
-  --ff-panel-2: #fdf2e9;
-  --ff-panel-3: #f7e7da;
-  --ff-line: #efddcf;
-  --ff-line-2: #e6cdba;
-  --ff-text: #2c2230;
-  --ff-text-soft: #6a5a62;
-  --ff-text-faint: #9c8b92;
-  --ff-code-bg: #2b2030;
-
-  --ff-accent: #cc2f76;
-  --ff-accent-deep: #a81f5d;
-  --ff-accent-ink: #ad1f5e;
-  --ff-on-accent: #fff8f4;
-  --ff-link: #b51f5f;
-  --ff-link-hover: #98114e;
-  --ff-glow: rgba(204, 47, 118, .26);
-
-  --ff-shadow: 0 1px 2px rgba(80,40,30,.05), 0 14px 34px -20px rgba(120,60,40,.28);
-  --ff-shadow-lg: 0 30px 70px -28px rgba(120,55,35,.4);
-  --ff-grain-op: .03;
-}
-@media (prefers-color-scheme: light) {
-  :root:not([data-theme]) {
-    --ff-bg: #fbf2ea;
-    --ff-bg-grad-top: #fff6ee;
-    --ff-panel: #fffaf5;
-    --ff-panel-2: #fdf2e9;
-    --ff-panel-3: #f7e7da;
-    --ff-line: #efddcf;
-    --ff-line-2: #e6cdba;
-    --ff-text: #2c2230;
-    --ff-text-soft: #6a5a62;
-    --ff-text-faint: #9c8b92;
-    --ff-code-bg: #2b2030;
-
-    --ff-accent: #a75078;
-    --ff-accent-deep: #863a5e;
-    --ff-accent-ink: #8a3560;
-    --ff-on-accent: #fff8f4;
-    --ff-link: #8a3560;
-    --ff-link-hover: #6f284b;
-    --ff-glow: rgba(167, 80, 120, .20);
-
-    --ff-shadow: 0 1px 2px rgba(80,40,30,.05), 0 14px 34px -20px rgba(120,60,40,.28);
-    --ff-shadow-lg: 0 30px 70px -28px rgba(120,55,35,.4);
-    --ff-grain-op: .03;
-  }
-}
-
-/* Sepia — warm paper for long reading. Manual-only (picked in the reader menu).
-   Neutrals from the hub sepia palette; accent kept in this project's pink family. */
-:root[data-theme="sepia"] {
-  --ff-bg: #ece0c8;
-  --ff-bg-grad-top: #f3e9d4;
-  --ff-panel: #f1e7d3;
-  --ff-panel-2: #e7dabf;
-  --ff-panel-3: #ddcdac;
-  --ff-line: #dccba9;
-  --ff-line-2: #cdb891;
-  --ff-text: #3d3427;
-  --ff-text-soft: #63563f;
-  --ff-text-faint: #756445;
-  --ff-code-bg: #33291b;
-
-  --ff-accent: #bb4a7a;
-  --ff-accent-deep: #97355f;
-  --ff-accent-ink: #8a2a52;
-  --ff-on-accent: #fdf6ea;
-  --ff-link: #8a2a52;
-  --ff-link-hover: #782447;
-  --ff-glow: rgba(187, 74, 122, .22);
-
-  --ff-shadow: 0 1px 2px rgba(90,60,20,.06), 0 14px 34px -20px rgba(120,80,30,.24);
-  --ff-shadow-lg: 0 30px 70px -28px rgba(120,80,30,.34);
-  --ff-grain-op: .03;
-}
-
-/* ----------------------------------------------------------------------------
- * 2. Map doxygen-awesome's variables onto the fairyfox tokens.
- *    referencing var(--ff-*) makes theming automatic (the tokens change with
- *    the reader's data-theme). The selector matches all three of doxygen-awesome's
- *    theme states — html.dark-mode, html.light-mode, and no-class (system) — each
- *    at specificity >= doxygen-awesome's own dark rule (html.dark-mode /
- *    html:not(.light-mode), both 0,1,1). Loaded after doxygen-awesome, so ours
- *    win in every state. The reader (ff-docs.js) drives the light-mode/dark-mode
- *    class so doxygen-awesome's element-level dark rules track our theme too.
+ * 1. Map doxygen-awesome's variables onto main.css's live theme tokens.
+ *    main.css defines --accent/--bg/--text/--panel/... and flips them per the
+ *    reader's data-theme; referencing them here makes the reference body theme
+ *    automatically. The selector matches all three doxygen-awesome theme states
+ *    (html.dark-mode / html.light-mode / no-class) at specificity >= its own dark
+ *    rule, and loads after doxygen-awesome, so ours win in every state. The footer
+ *    glue mirrors data-theme onto the dark-mode/light-mode class so doxygen-awesome's
+ *    element-level rules track the theme too.
  * ------------------------------------------------------------------------- */
 html.dark-mode,
 html.light-mode,
 html:not(.dark-mode):not(.light-mode) {
-  --primary-color: var(--ff-accent);
-  --primary-dark-color: var(--ff-accent-deep);
-  --primary-light-color: var(--ff-accent-ink);
-  --on-primary-color: var(--ff-on-accent);
-  --link-color: var(--ff-link);
+  --primary-color: var(--accent);
+  --primary-dark-color: var(--violet-deep);
+  --primary-light-color: var(--accent-ink);
+  --on-primary-color: var(--on-accent);
+  --link-color: var(--link);
 
-  --page-background-color: var(--ff-bg);
-  --page-foreground-color: var(--ff-text);
-  --page-secondary-foreground-color: var(--ff-text-soft);
-  --separator-color: var(--ff-line);
+  --page-background-color: var(--bg);
+  --page-foreground-color: var(--text);
+  --page-secondary-foreground-color: var(--text-soft);
+  --separator-color: var(--line);
 
-  --border-radius-large: var(--ff-radius);
-  --border-radius-medium: var(--ff-radius-sm);
-  --border-radius-small: var(--ff-radius-xs);
+  --border-radius-large: var(--radius);
+  --border-radius-medium: var(--radius-sm);
+  --border-radius-small: var(--radius-xs);
 
-  --box-shadow: var(--ff-shadow);
-  --odd-color: color-mix(in srgb, var(--ff-text) 4%, transparent);
+  --box-shadow: var(--shadow);
+  --odd-color: color-mix(in srgb, var(--text) 4%, transparent);
 
-  --font-family: var(--ff-sans);
-  --font-family-monospace: var(--ff-mono);
+  --font-family: var(--sans);
+  --font-family-monospace: var(--mono);
 
   --page-font-size: 16.5px;
   --navigation-font-size: 14.4px;
   --toc-font-size: 13.4px;
   --code-font-size: 14px;
   --title-font-size: 22px;
-  /* default reading measures — the reader menu overrides these live */
   --content-line-height: 1.65;
-  --content-maxwidth: var(--ff-maxw);
+  --content-maxwidth: var(--maxw);
 
   /* side nav + toc */
-  --side-nav-background: var(--ff-panel);
-  --side-nav-foreground: var(--ff-text-soft);
-  --toc-background: var(--ff-panel-2);
-  --toc-foreground: var(--ff-text-soft);
+  --side-nav-background: var(--panel);
+  --side-nav-foreground: var(--text-soft);
+  --toc-background: var(--panel-2);
+  --toc-foreground: var(--text-soft);
 
-  /* top header / menu */
-  --header-background: color-mix(in srgb, var(--ff-bg) 72%, transparent);
-  --header-foreground: var(--ff-text);
-  --menu-selected-background: color-mix(in srgb, var(--ff-accent) 16%, transparent);
-  --menu-focus-foreground: var(--ff-on-accent);
-  --menu-focus-background: var(--ff-accent);
+  /* top header / menu (the doxygen menu bar — hidden below, but keep it themed) */
+  --header-background: color-mix(in srgb, var(--bg) 72%, transparent);
+  --header-foreground: var(--text);
+  --menu-selected-background: color-mix(in srgb, var(--accent) 16%, transparent);
+  --menu-focus-foreground: var(--on-accent);
+  --menu-focus-background: var(--accent);
 
   /* search */
-  --searchbar-background: var(--ff-panel-2);
-  --searchbar-foreground: var(--ff-text);
+  --searchbar-background: var(--panel-2);
+  --searchbar-foreground: var(--text);
   --searchbar-border-radius: 999px;
 
   /* code + fragments */
-  --code-background: var(--ff-panel-3);
-  --code-foreground: var(--ff-accent-ink);
-  --fragment-background: var(--ff-code-bg);
+  --code-background: var(--panel-3);
+  --code-foreground: var(--accent-ink);
+  --fragment-background: var(--code-bg);
   --fragment-foreground: #d7cfe0;
-  --section-code-background: color-mix(in srgb, var(--ff-text) 6%, transparent);
-  --section-code-border: var(--ff-line);
+  --section-code-background: color-mix(in srgb, var(--text) 6%, transparent);
+  --section-code-border: var(--line);
 
   /* syntax highlighting (readable on the dark code surface) */
   --fragment-keyword: #f2b7ce;
@@ -241,299 +93,98 @@ html:not(.dark-mode):not(.light-mode) {
   --fragment-link: #8fd0ff;
   --fragment-preprocessor: #f0b86e;
   --fragment-linenumber-color: #6f6275;
-  --fragment-linenumber-background: var(--ff-code-bg);
-  --fragment-linenumber-border: var(--ff-line);
+  --fragment-linenumber-background: var(--code-bg);
+  --fragment-linenumber-border: var(--line);
 
   /* blockquote + tables */
-  --blockquote-background: var(--ff-panel-2);
-  --blockquote-foreground: var(--ff-text-soft);
-  --tablehead-background: var(--ff-panel-2);
-  --tablehead-foreground: var(--ff-text);
+  --blockquote-background: var(--panel-2);
+  --blockquote-foreground: var(--text-soft);
+  --tablehead-background: var(--panel-2);
+  --tablehead-foreground: var(--text);
 
   /* callout boxes (@note/@warning/...) tinted onto the palette */
-  --note-color: color-mix(in srgb, var(--ff-accent) 12%, var(--ff-panel));
-  --note-color-dark: var(--ff-accent);
-  --note-color-darker: var(--ff-accent-ink);
-  --warning-color: color-mix(in srgb, var(--ff-hue-beta) 14%, var(--ff-panel));
-  --warning-color-dark: var(--ff-hue-beta);
+  --note-color: color-mix(in srgb, var(--accent) 12%, var(--panel));
+  --note-color-dark: var(--accent);
+  --note-color-darker: var(--accent-ink);
+  --warning-color: color-mix(in srgb, var(--hue-beta) 14%, var(--panel));
+  --warning-color-dark: var(--hue-beta);
   --warning-color-darker: #f0c879;
-  --bug-color: color-mix(in srgb, var(--ff-hue-alpha) 14%, var(--ff-panel));
-  --bug-color-dark: var(--ff-hue-alpha);
+  --bug-color: color-mix(in srgb, var(--hue-alpha) 14%, var(--panel));
+  --bug-color-dark: var(--hue-alpha);
   --bug-color-darker: #ff9a9d;
-  --invariant-color: color-mix(in srgb, var(--ff-hue-released) 14%, var(--ff-panel));
-  --invariant-color-dark: var(--ff-hue-released);
+  --invariant-color: color-mix(in srgb, var(--hue-released) 14%, var(--panel));
+  --invariant-color-dark: var(--hue-released);
   --invariant-color-darker: #79d3a6;
 
   scroll-behavior: smooth;
 }
 
 /* ----------------------------------------------------------------------------
- * 3. Base typography + page backdrop
+ * 2. Reconcile doxygen-awesome's app-shell layout with the fairyfox sticky chrome.
+ *    doxygen-awesome wants a fixed-height #doc-content with its own scrollbar + a fixed
+ *    sidebar (an app shell); the chrome wants ONE normal document scroll under a sticky
+ *    top bar. This block reconciles them (ported from the prior adoption): hide the
+ *    redundant doxygen title/menu, make the page scroll once, and pin the treeview below
+ *    the chrome on API pages only (prose pages go full width, no sidebar).
+ *    main.css owns the body layout (display:flex column) for the site shell; here Doxygen
+ *    builds its own page, so hand the body back to block flow but keep main.css's fixed
+ *    decorative backdrop (body::before/::after — the fairyfox gradient/grain).
  * ------------------------------------------------------------------------- */
-body {
-  font-family: var(--ff-sans);
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-  /* Flat surface, like the hub / the reference site — no gradient washes. */
-  background: var(--ff-bg);
-}
+/* Sticky footer: the below-chrome area is a flex column so the footer + doxygen nav-path sit
+   flush at the bottom of the viewport on short pages (no stranded "Generated by" line floating
+   mid-screen), and #doc-content grows to fill. #side-nav is position:fixed (out of flow), so it
+   is unaffected. */
+body { display: flex !important; flex-direction: column; min-height: 100vh; }
 
-h1, h2, h3, h4, h5,
-.title, div.title,
-#projectname,
-.memtitle, .groupheader {
-  font-family: var(--ff-display);
-  letter-spacing: -.02em;
-}
-h1, h2, h3, .title, div.title { font-weight: 700; line-height: 1.14; }
-
-a { color: var(--ff-link); }
-a:hover { color: var(--ff-link-hover); }
-
-/* inline code + fragments shaped per the tokens */
-code, tt, .fragment, pre.fragment, div.fragment {
-  font-family: var(--ff-mono);
-}
-.contents code, code.JavaDocCode, span.code, p code {
-  background: var(--ff-panel-3);
-  color: var(--ff-accent-ink);
-  border-radius: 6px;
-  padding: .12em .42em;
-}
-div.fragment, pre.fragment {
-  border-radius: var(--ff-radius-sm);
-  border: 1px solid var(--ff-line);
-  background: var(--ff-code-bg);
-}
-
-blockquote {
-  border-left: 3px solid var(--ff-accent);
-  border-radius: 0 var(--ff-radius-sm) var(--ff-radius-sm) 0;
-  background: var(--ff-panel-2);
-  color: var(--ff-text-soft);
-}
-
-/* accessible focus ring everywhere */
-a:focus-visible, button:focus-visible,
-input:focus-visible,
-#main-menu a:focus-visible {
-  outline: 2px solid var(--ff-accent);
-  outline-offset: 2px;
-  border-radius: 5px;
-}
-
-/* ----------------------------------------------------------------------------
- * 4. The Fairy Fox chrome — a copy of the fairyfox.io header + this project's
- *    subnav, in one sticky .ff-top stack. Static markup in header.html; the
- *    reader ("Aa") button lives in the header wrap, its panel injected by
- *    ff-docs.js. Mirrors the hub docs-site standard reference/chrome.html.
- * ------------------------------------------------------------------------- */
-.ff-skip {
-  position: fixed;
-  top: -3rem;
-  left: .6rem;
-  z-index: 400;
-  padding: .55rem .9rem;
-  border-radius: 999px;
-  background: var(--ff-accent);
-  color: var(--ff-on-accent);
-  font-family: var(--ff-sans);
-  font-weight: 700;
-  text-decoration: none;
-  transition: top .16s var(--ff-ease);
-}
-.ff-skip:focus { top: .6rem; color: var(--ff-on-accent); }
-
-.ff-top {
-  position: sticky;
-  top: 0;
-  z-index: 200;
-}
-.ff-top .wrap {
-  width: 100%;
-  max-width: var(--ff-maxw);
-  margin-inline: auto;
-  padding-inline: 2.4rem;   /* exact hub value (39.6px @ 16.5px root), not a clamp */
-}
-.site-header {
-  background: color-mix(in srgb, var(--ff-bg) 80%, transparent);
-  backdrop-filter: saturate(160%) blur(14px);
-  -webkit-backdrop-filter: saturate(160%) blur(14px);
-  border-bottom: 1px solid var(--ff-line);
-}
-.site-header > .wrap {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  height: 64px;
-}
-.ff-top .brand {
-  display: flex;
-  align-items: center;
-  gap: .6rem;
-  color: var(--ff-text);
-  font-weight: 700;
-  font-family: var(--ff-display);
-  text-decoration: none;
-}
-.ff-top .brand:hover { text-decoration: none; color: var(--ff-text); }
-.ff-top .brand-logo {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  object-fit: cover;
-  flex: none;
-  display: block;
-  box-shadow: 0 4px 14px -4px var(--ff-glow);
-  border: 1px solid var(--ff-line-2);
-}
-.ff-top .brand-name { font-size: 1.08rem; letter-spacing: -.01em; }
-
-.site-header .nav {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  gap: .12rem;
-}
-.site-header .nav > a {
-  display: inline-flex;
-  align-items: center;
-  color: var(--ff-text-soft);
-  padding: .45rem .72rem;
-  border-radius: 999px;
-  font-size: .93rem;
-  font-weight: 600;
-  white-space: nowrap;
-  font-family: var(--ff-sans);
-  text-decoration: none;
-}
-.site-header .nav > a:hover { color: var(--ff-text); background: var(--ff-panel-2); text-decoration: none; }
-.site-header .nav > a.active,
-.site-header .nav > a[aria-current] {
-  color: var(--ff-text);
-  background: color-mix(in srgb, var(--ff-accent) 16%, transparent);
-}
-
-.subnav {
-  border-bottom: 1px solid var(--ff-line);
-  background: color-mix(in srgb, var(--ff-bg) 88%, transparent);
-  backdrop-filter: saturate(160%) blur(14px);
-  -webkit-backdrop-filter: saturate(160%) blur(14px);
-}
-.subnav > .wrap {
-  display: flex;
-  align-items: center;
-  gap: .1rem;
-  flex-wrap: wrap;
-  padding-block: .5rem;
-}
-.subnav .sub-brand {
-  font-family: var(--ff-display);
-  font-weight: 700;
-  font-size: .95rem;
-  color: var(--ff-text);
-  margin-right: .35rem;
-  padding: .2rem .3rem;
-  white-space: nowrap;
-  letter-spacing: -.01em;
-  text-decoration: none;
-}
-.subnav .sub-brand:hover { text-decoration: none; color: var(--ff-accent-ink); }
-.subnav .sep {
-  width: 1px;
-  height: 1.1rem;
-  background: var(--ff-line-2);
-  margin: 0 .35rem;
-  flex: none;
-}
-.subnav a:not(.sub-brand) {
-  color: var(--ff-text-soft);
-  font-size: .86rem;
-  font-weight: 600;
-  padding: .32rem .62rem;
-  border-radius: 999px;
-  white-space: nowrap;
-  font-family: var(--ff-sans);
-  text-decoration: none;
-}
-.subnav a:not(.sub-brand):hover { color: var(--ff-text); background: var(--ff-panel-2); text-decoration: none; }
-.subnav a.active,
-.subnav a[aria-current] {
-  color: var(--ff-text);
-  background: color-mix(in srgb, var(--ff-accent) 16%, transparent);
-}
-.subnav .ext { color: var(--ff-accent-ink); }
-
-/* doxygen-awesome forces EVERY <a> to --link-color with !important, which turns
-   the whole nav/subnav/footer the accent colour. The chrome links must read as
-   neutral off-white (only the current item + ext links take the accent), so
-   re-assert them with !important. This is the fix for "links are the wrong colour". */
-.ff-top .brand,
-.ff-top .brand:hover { color: var(--ff-text) !important; }
-.site-header .nav > a { color: var(--ff-text-soft) !important; }
-.site-header .nav > a:hover,
-.site-header .nav > a.active,
-.site-header .nav > a[aria-current] { color: var(--ff-text) !important; }
-.ff-reader-btn { color: var(--ff-text) !important; }
-.subnav .sub-brand { color: var(--ff-text) !important; }
-.subnav .sub-brand:hover { color: var(--ff-accent-ink) !important; }
-.subnav a:not(.sub-brand):not(.ext) { color: var(--ff-text-soft) !important; }
-.subnav a:not(.sub-brand):not(.ext):hover,
-.subnav a.active,
-.subnav a[aria-current] { color: var(--ff-text) !important; }
-.subnav .ext { color: var(--ff-accent-ink) !important; }
-.ff-foot .brand,
-.ff-foot .brand:hover { color: var(--ff-text) !important; }
-.ff-foot .ff-foot-col a { color: var(--ff-text-soft) !important; }
-.ff-foot .ff-foot-col a:hover { color: var(--ff-text) !important; }
-.ff-foot-bar,
-.ff-foot-bar a { color: var(--ff-text-faint) !important; }
-.ff-foot-bar a:hover { color: var(--ff-text) !important; }
-
-/* ----------------------------------------------------------------------------
- * 4b. Layout integration with doxygen-awesome.
- *   Our chrome (header + subnav) replaces doxygen-awesome's own title bar and menu,
- *   and we want ONE page scroll (like the hub / the sibling), not doxygen-awesome's
- *   app-style inner #doc-content scroll pane. Without this the page showed a
- *   duplicated nav row and two scrollbars.
- * ------------------------------------------------------------------------- */
-
-/* Hide doxygen-awesome's redundant title area + top menu (Main Page / Related
-   Pages / Namespaces / Classes / Files). Our subnav + the treeview cover navigation. */
+/* Hide doxygen-awesome's redundant title area + top menu (Main Page / Related Pages /
+   Namespaces / Classes / Files) — the chrome header + fairyfox subnav + the treeview cover
+   identity and navigation. */
 #titlearea { display: none !important; }
 #main-menu { display: none !important; }
-/* With #titlearea + #main-menu hidden, doxygen-awesome's #top is an empty strip
-   that still carries a bottom border -- it showed as a second faint line ~11px
-   below the subnav (the "double line"). Collapse it and drop its border. */
+/* With those hidden, #top is an empty strip that still carries a bottom border (a faint
+   second line under the subnav) — collapse it. */
 #top { border-bottom: 0 !important; padding: 0 !important; }
 
-/* Single-page scroll: content flows and the whole page scrolls once, instead of a
-   fixed-height #doc-content with its own scrollbar (which fought the sticky chrome). */
+/* Hide Doxygen's own generated footer bar ("Generated by doxygen …" + breadcrumbs). It sat
+   above the fairyfox footer on every page; the chrome footer + subnav + treeview cover
+   attribution and navigation. */
+#nav-path { display: none !important; }
+
+/* --ff-header-h: live height of the sticky chrome stack (.site-header + .subnav), set by
+   the footer glue and updated on resize / text-size change. --ff-side-w: treeview width. */
+:root { --ff-header-h: 116px; --ff-side-w: 260px; }
+
+/* Single-page scroll: the whole page scrolls once under the sticky chrome, instead of
+   doxygen-awesome's fixed-height #doc-content with its own scrollbar (which fought the
+   sticky chrome and produced a second scrollbar). */
 html, body { height: auto !important; overflow: visible !important; }
 #doc-content {
   height: auto !important;
-  min-height: calc(100vh - var(--ff-header-h)) !important;
+  flex: 1 0 auto;                    /* grow to push the footer to the viewport bottom */
   overflow: visible !important;
+  position: relative; z-index: 1;
 }
 
-/* API pages keep the treeview as a FIXED column pinned below the sticky chrome
-   (always visible while the page scrolls). Prose pages have no sidebar (below). */
+/* API pages keep the treeview as a FIXED column pinned below the sticky chrome (always
+   visible while the page scrolls). Prose pages (Overview / Notes / markdown / Screenshots)
+   drop the sidebar and go full width — the footer glue adds html.ff-no-sidebar there. */
 html:not(.ff-no-sidebar) #side-nav {
   position: fixed !important;
   top: var(--ff-header-h) !important;
+  left: 0 !important;
+  width: var(--ff-side-w) !important;   /* deterministic — doxygen's JS resize left it collapsed */
   height: calc(100vh - var(--ff-header-h)) !important;
+  overflow-y: auto;
 }
-
-@media (max-width: 820px) {
-  .site-header .nav { display: none; }
-  .ff-reader-btn { margin-left: auto; }
-  .subnav > .wrap { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
-  .subnav > .wrap::-webkit-scrollbar { display: none; }
+/* Match the content offset to the fixed treeview width (doxygen sets this inline via JS). */
+html:not(.ff-no-sidebar) #doc-content {
+  margin-left: var(--ff-side-w) !important;
+  width: calc(100% - var(--ff-side-w)) !important;
+  max-width: calc(100% - var(--ff-side-w)) !important;
 }
-
-/* Sidebar on API pages only (like the sibling docs). ff-docs.js adds
-   html.ff-no-sidebar on Overview / Notes / markdown pages; the treeview shows
-   only on the class/file/namespace API pages, and prose goes full width. */
+/* Hide doxygen's drag handle (the fixed width isn't user-resizable) + its splitbar. */
+html:not(.ff-no-sidebar) #side-nav .ui-resizable-handle,
+html:not(.ff-no-sidebar) .ui-resizable-e { display: none !important; }
 html.ff-no-sidebar #side-nav { display: none; }
 html.ff-no-sidebar #doc-content {
   margin-left: 0 !important;
@@ -541,548 +192,160 @@ html.ff-no-sidebar #doc-content {
   max-width: 100% !important;
 }
 html.ff-no-sidebar #top { border-right: none; }
+/* No right-hand in-page table-of-contents on prose / note pages — the reader wants a clean,
+   linear reading column, not a doxygen page-outline rail. Covers the full-width landings
+   (ff-no-sidebar) and the two-pane note reader (data-story). API pages keep it. */
+html.ff-no-sidebar #page-nav,
+html[data-story] #page-nav { display: none !important; }
+
+/* Treeview surface themed to the palette. */
+#nav-tree, #side-nav { background: var(--panel); }
+#nav-tree a, #nav-tree a:visited, #nav-tree .label a, #nav-tree .label a:visited { color: var(--text-soft); }
+#nav-tree .label a:hover { color: var(--link-hover); }
+#nav-tree .selected { background: color-mix(in srgb, var(--accent) 14%, transparent); background-image: none; }
+#nav-tree .selected .label a, #nav-tree a.selected { color: var(--accent-ink); font-weight: 650; }
 
 /* ----------------------------------------------------------------------------
- * 5. The Fairy Fox footer  (brand · Explore · This project + bottom bar)
+ * 2b. Reading controls on ACTUAL note pages (html[data-story], set by the header glue on
+ *     rendered markdown notes + the README — NOT on index/list pages). The reader's
+ *     line-spacing + width controls then drive the real reading experience: prose gets
+ *     --reading-lh line-height and its column caps at --reading-width, while wide elements
+ *     (tables, code fragments, images, rules) break out to full width so they're never
+ *     cramped — the comfortable-prose-column-with-wide-tables pattern for technical docs.
  * ------------------------------------------------------------------------- */
-.ff-foot {
-  border-top: 1px solid var(--ff-line);
-  background: var(--ff-panel);
-  font-family: var(--ff-sans);
-  margin-top: 2rem;
+html[data-story] div.textblock { line-height: var(--reading-lh); }
+html[data-story] div.textblock > p,
+html[data-story] div.textblock > ul,
+html[data-story] div.textblock > ol,
+html[data-story] div.textblock > dl,
+html[data-story] div.textblock > h1,
+html[data-story] div.textblock > h2,
+html[data-story] div.textblock > h3,
+html[data-story] div.textblock > h4,
+html[data-story] div.textblock > blockquote:not(.doxtable) {
+  max-width: var(--reading-width);
 }
-.ff-foot .ff-foot-wrap {
-  max-width: var(--ff-maxw);
-  margin-inline: auto;
-  padding: 2.4rem var(--ff-gutter) 1.4rem;
-  display: grid;
-  grid-template-columns: 1.5fr 1fr 1fr;
-  gap: 2rem;
-}
-.ff-foot .brand {
-  display: inline-flex;
-  align-items: center;
-  gap: .55rem;
-  color: var(--ff-text);
-  font-family: var(--ff-display);
-  font-weight: 700;
-  font-size: 1.12rem;
-  text-decoration: none;
-  margin-bottom: .7rem;
-}
-.ff-foot .brand-logo {
-  width: 26px; height: 26px; border-radius: 50%;
-  border: 1px solid var(--ff-line-2);
-}
-.ff-foot .ff-foot-brand p {
-  color: var(--ff-text-faint);
-  font-size: .86rem;
-  max-width: 24rem;
-  margin: 0;
-}
-.ff-foot h2 {
-  font-size: .72rem;
-  text-transform: uppercase;
-  letter-spacing: .1em;
-  color: var(--ff-text-faint);
-  font-family: var(--ff-sans);
-  font-weight: 700;
-  margin: 0 0 .7rem;
-}
-.ff-foot .ff-foot-col a {
-  display: block;
-  color: var(--ff-text-soft);
-  font-size: .9rem;
-  font-weight: 600;
-  padding: .22rem 0;
-  text-decoration: none;
-}
-.ff-foot .ff-foot-col a:hover { color: var(--ff-link-hover); }
-.ff-foot-bar { border-top: 1px solid var(--ff-line); }
-.ff-foot-bar .ff-foot-wrap {
-  display: flex;
-  flex-wrap: wrap;
-  gap: .5rem 1.2rem;
-  align-items: center;
-  color: var(--ff-text-faint);
-  font-size: .82rem;
-  padding-block: 1rem;
-}
-.ff-foot-bar a { color: var(--ff-text-soft); text-decoration: none; }
-.ff-foot-bar a:hover { color: var(--ff-link-hover); }
-.ff-foot-bar .spacer { margin-left: auto; }
-@media (max-width: 720px) { .ff-foot .ff-foot-wrap { grid-template-columns: 1fr 1fr; } }
-@media (max-width: 460px) { .ff-foot .ff-foot-wrap { grid-template-columns: 1fr; } }
 
 /* ----------------------------------------------------------------------------
- * 5b. Treeview sidebar + top menu -- keep links on the fairyfox palette
+ * 3. Small integration fixes.
  * ------------------------------------------------------------------------- */
-#nav-tree, #side-nav { background: var(--ff-panel); }
-#nav-tree a,
-#nav-tree a:visited,
-#nav-tree .label a,
-#nav-tree .label a:visited { color: var(--ff-text-soft) !important; }
-#nav-tree .label a:hover { color: var(--ff-link-hover) !important; }
-#nav-tree .item.selected a,
-#nav-tree .selected .label a,
-#nav-tree li.selected > div a,
-#nav-tree a.selected { color: var(--ff-accent-ink) !important; font-weight: 650; }
-#nav-tree .selected { background-image: none; background: color-mix(in srgb, var(--ff-accent) 14%, transparent); }
+/* doxygen-awesome adds `summary::before { content:"▼" }` for its own collapsible doc
+ * sections; that triangle leaks onto the chrome's Farms dropdown <summary>. main.css owns
+ * the nav caret (summary::after), so suppress doxygen-awesome's marker on chrome summaries. */
+.nav summary::before,
+.subnav summary::before { content: none; }
 
-/* top menu bar (Main Page / Namespaces / Classes / Files) */
-#main-menu { background: transparent; }
-#main-menu a { color: var(--ff-text-soft); font-weight: 600; }
-#main-menu a:hover { color: var(--ff-text); }
-#main-menu li.current > a,
-#main-menu a.current { color: var(--ff-text); background: color-mix(in srgb, var(--ff-accent) 16%, transparent); }
-/* the doxygen-awesome top title area sits below the chrome; soften its name */
-#titlearea { border-bottom: 1px solid var(--ff-line); }
-#projectname { color: var(--ff-text); }
-#projectbrief { color: var(--ff-text-faint); }
+/* doxygen-awesome forces `a:link,a:visited,a:hover,a:focus,a:active { color: var(--link-color)
+ * !important }` on EVERY link (its line 327). That bleeds the reference-body accent link colour
+ * onto the chrome, turning the whole nav / subnav / footer / brand coral. Re-assert the chrome's
+ * OWN muted link colours here (the reference BODY keeps the accent link colour). Values mirror
+ * main.css: brand + active + hover = --text; resting nav/subnav/footer links = --text-soft. */
+.site-header .brand,
+.site-header .brand:link,
+.site-header .brand:visited,
+.site-header .nav > a.active,
+.site-header .nav > a.active:link,
+.site-header .nav > a.active:visited,
+.subnav a.active,
+.subnav a.active:link,
+.subnav a.active:visited { color: var(--text) !important; }
+.site-header .nav > a,
+.site-header .nav > a:link,
+.site-header .nav > a:visited,
+.subnav a,
+.subnav a:link,
+.subnav a:visited,
+.dd-panel .dd-links a,
+.dd-panel .dd-links a:link,
+.dd-panel .dd-links a:visited,
+.site-footer a,
+.site-footer a:link,
+.site-footer a:visited { color: var(--text-soft) !important; }
+.site-header .nav > a:hover,
+.site-header .nav > a:focus,
+.subnav a:hover,
+.subnav a:focus,
+.dd-panel .dd-links a:hover,
+.site-footer a:hover { color: var(--text) !important; }
+.site-footer .footer-brand .brand,
+.site-footer .footer-brand .brand:link,
+.site-footer .footer-brand .brand:visited { color: var(--text) !important; }
+
+/* Accessible focus ring on reference content controls, matching the chrome. */
+#doc-content a:focus-visible,
+#nav-tree a:focus-visible,
+#MSearchField:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 5px;
+}
+
+/* Fairy Fox skip link (WCAG 2.4.1) — visually hidden until focused. */
+.ff-skip {
+  position: fixed; top: -3rem; left: .6rem; z-index: 100;
+  padding: .5rem .9rem; border-radius: var(--radius-xs);
+  background: var(--accent); color: var(--on-accent);
+  font: 600 .95rem/1 var(--sans); text-decoration: none;
+  transition: top .15s ease;
+}
+.ff-skip:focus { top: .6rem; }
 
 /* ----------------------------------------------------------------------------
- * 6. The reader ("Aa") menu — theme · accent · size · spacing · width, modelled
- *    on Apple Books / Kindle. Button is static in the header; panel injected by
- *    ff-docs.js and appended to <body>. Mirrors the hub reader (fairyfox:reader:b).
+ * 4. The themed /screenshots/ gallery (scripts/build_gallery.py wears this chrome).
+ *    Ported from the prior adoption; tokens repointed to main.css.
  * ------------------------------------------------------------------------- */
-.ff-reader-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: .15rem;
-  margin-left: .5rem;
-  flex: none;
-  height: 40px;
-  min-width: 46px;
-  padding: 0 .7rem;
-  cursor: pointer;
-  border-radius: 999px;
-  font-family: var(--ff-display);
-  font-weight: 700;
-  line-height: 1;
-  color: var(--ff-text);
-  background: var(--ff-panel-2);
-  border: 1px solid var(--ff-line-2);
-  transition: transform .16s var(--ff-ease), background .16s var(--ff-ease), color .16s var(--ff-ease);
-}
-.ff-reader-btn .aa-lg { font-size: 1.15rem; }
-.ff-reader-btn .aa-sm { font-size: .82rem; }
-.ff-reader-btn:hover { color: var(--ff-text); background: color-mix(in srgb, var(--ff-accent) 16%, var(--ff-panel-2)); }
-.ff-reader-btn[aria-expanded="true"] { background: color-mix(in srgb, var(--ff-accent) 18%, var(--ff-panel-2)); color: var(--ff-text); }
-
-.ff-reader-panel {
-  position: fixed;
-  z-index: 1300;
-  top: calc(var(--ff-header-h) + .4rem);
-  right: clamp(.7rem, 3vw, 1.4rem);
-  width: min(21rem, calc(100vw - 1.4rem));
-  max-height: calc(100vh - var(--ff-header-h) - 1rem);
-  overflow-y: auto;
-  background: var(--ff-panel);
-  border: 1px solid var(--ff-line-2);
-  border-radius: 16px;
-  box-shadow: var(--ff-shadow-lg);
-  font-family: var(--ff-sans);
-  color: var(--ff-text);
-  transform-origin: top right;
-  opacity: 0;
-  transform: translateY(-8px) scale(.98);
-  pointer-events: none;
-  transition: opacity .16s var(--ff-ease), transform .16s var(--ff-ease);
-}
-.ff-reader-panel.open { opacity: 1; transform: none; pointer-events: auto; }
-
-.ff-rp-head {
-  position: sticky;
-  top: 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: .8rem 1rem;
-  background: var(--ff-panel);
-  border-bottom: 1px solid var(--ff-line);
-}
-.ff-rp-title { font-family: var(--ff-display); font-weight: 700; font-size: 1rem; line-height: 1; }
-.ff-rp-close {
-  width: 28px; height: 28px; flex: none;
-  display: grid; place-items: center;
-  border-radius: 8px; border: none; cursor: pointer;
-  background: transparent; color: var(--ff-text-faint);
-  font-size: 1.15rem; line-height: 1;
-}
-.ff-rp-close:hover { background: var(--ff-panel-2); color: var(--ff-text); }
-
-.ff-rp-sec { padding: .85rem 1rem; }
-.ff-rp-sec + .ff-rp-sec { border-top: 1px solid var(--ff-line); }
-.ff-rp-label {
-  display: block;
-  margin: 0 0 .62rem;
-  font-size: .65rem;
-  font-weight: 700;
-  letter-spacing: .09em;
-  text-transform: uppercase;
-  color: var(--ff-text-faint);
-}
-
-.ff-rp-schead { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin: 0 0 .62rem; }
-.ff-rp-schead .ff-rp-label { margin: 0; }
-.ff-auto {
-  display: inline-flex;
-  align-items: center;
-  gap: .36rem;
-  padding: .24rem .62rem;
-  border-radius: 999px;
-  cursor: pointer;
-  font: inherit;
-  font-size: .72rem;
-  font-weight: 650;
-  letter-spacing: .02em;
-  color: var(--ff-text-soft);
-  background: var(--ff-panel-2);
-  border: 1px solid var(--ff-line-2);
-  transition: background .14s var(--ff-ease), color .14s var(--ff-ease), border-color .14s var(--ff-ease);
-}
-.ff-auto .dot { width: .46rem; height: .46rem; border-radius: 50%; background: currentcolor; opacity: .45; }
-.ff-auto:hover { color: var(--ff-text); }
-.ff-auto[aria-pressed="true"] {
-  background: color-mix(in srgb, var(--ff-accent) 20%, var(--ff-panel-2));
-  color: var(--ff-accent-ink);
-  border-color: transparent;
-}
-.ff-auto[aria-pressed="true"] .dot { opacity: 1; background: var(--ff-accent); }
-.ff-theme-seg { display: flex; gap: .42rem; }
-.ff-theme-ic {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: .34rem;
-  padding: .62rem .3rem;
-  cursor: pointer;
-  border-radius: 12px;
-  border: 1px solid var(--ff-line);
-  background: var(--ff-panel-3);
-  color: var(--ff-text-soft);
-  transition: background .14s var(--ff-ease), color .14s var(--ff-ease), border-color .14s var(--ff-ease), transform .14s var(--ff-ease);
-}
-.ff-theme-ic svg { width: 22px; height: 22px; }
-.ff-theme-ic .cap { font-size: .68rem; font-weight: 600; }
-.ff-theme-ic:hover { color: var(--ff-text); transform: translateY(-1px); }
-.ff-theme-ic[aria-pressed="true"] {
-  color: var(--ff-accent-ink);
-  background: color-mix(in srgb, var(--ff-accent) 15%, var(--ff-panel));
-  border-color: color-mix(in srgb, var(--ff-accent) 45%, var(--ff-line-2));
-}
-
-.ff-swatches { display: flex; flex-wrap: wrap; gap: .5rem; }
-.ff-swatch {
-  width: 27px; height: 27px; flex: none;
-  border-radius: 50%; cursor: pointer; padding: 0; border: none;
-  background: var(--sw, var(--ff-panel-3));
-  box-shadow: inset 0 0 0 1px rgba(0,0,0,.16);
-  transition: transform .14s var(--ff-ease), box-shadow .14s var(--ff-ease);
-}
-.ff-swatch:hover { transform: scale(1.15); }
-.ff-swatch[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--ff-panel), 0 0 0 4px var(--ff-text); }
-.ff-swatch-default {
-  display: grid; place-items: center;
-  color: var(--ff-text-faint);
-  background: var(--ff-panel-2);
-  box-shadow: inset 0 0 0 1px var(--ff-line-2);
-}
-.ff-swatch-default svg { width: 15px; height: 15px; }
-.ff-swatch-default[aria-pressed="true"] { color: var(--ff-text); }
-
-.ff-size-row { display: flex; align-items: center; gap: .75rem; }
-.ff-size-row .a-end { font-family: var(--ff-display); font-weight: 700; color: var(--ff-text-soft); line-height: 1; flex: none; }
-.ff-size-row .a-min { font-size: .85rem; }
-.ff-size-row .a-max { font-size: 1.45rem; }
-.ff-range {
-  flex: 1;
-  -webkit-appearance: none;
-  appearance: none;
-  height: 6px;
-  border-radius: 999px;
-  margin: 0;
-  background: var(--ff-panel-3);
-  border: 1px solid var(--ff-line);
-  cursor: pointer;
-}
-.ff-range:focus-visible { outline: 2px solid var(--ff-accent); outline-offset: 3px; }
-.ff-range::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 20px; height: 20px; border-radius: 50%;
-  background: var(--ff-accent); border: 2px solid var(--ff-panel);
-  box-shadow: var(--ff-shadow); cursor: pointer;
-}
-.ff-range::-moz-range-thumb {
-  width: 20px; height: 20px; border-radius: 50%;
-  background: var(--ff-accent); border: 2px solid var(--ff-panel);
-  box-shadow: var(--ff-shadow); cursor: pointer;
-}
-
-.ff-seg {
-  display: flex;
-  gap: .28rem;
-  background: var(--ff-panel-3);
-  border: 1px solid var(--ff-line);
-  border-radius: 11px;
-  padding: .26rem;
-}
-.ff-seg button {
-  flex: 1;
-  padding: .44rem .3rem;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font: inherit;
-  font-size: .82rem;
-  font-weight: 600;
-  color: var(--ff-text-soft);
-  background: transparent;
-  transition: background .14s var(--ff-ease), color .14s var(--ff-ease);
-}
-.ff-seg button:hover { color: var(--ff-text); }
-.ff-seg button[aria-pressed="true"] {
-  background: var(--ff-panel);
-  color: var(--ff-text);
-  box-shadow: var(--ff-shadow);
-  border: 1px solid var(--ff-line-2);
-}
-
-.ff-rp-foot {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: .7rem 1rem;
-  border-top: 1px solid var(--ff-line);
-  background: var(--ff-panel-2);
-}
-.ff-rp-hint { margin: 0; font-size: .7rem; color: var(--ff-text-faint); line-height: 1.4; }
-.ff-rp-reset {
-  flex: none; border: none; background: none; cursor: pointer;
-  font: inherit; font-size: .75rem; font-weight: 650; color: var(--ff-accent-ink);
-}
-.ff-rp-reset:hover { text-decoration: underline; }
-
-/* ----------------------------------------------------------------------------
- * 6b. Flat, reference-matched content surfaces (no gradient washes / banding).
- *   The reference site uses flat dark panels and clean cards; doxygen-awesome's
- *   member summary rows fill each type/name cell with the dark code background +
- *   borders, which reads as heavy horizontal banding. Flatten it, and turn the
- *   DETAILED member docs into clean cards with a left accent bar (like the ref).
- * ------------------------------------------------------------------------- */
-
-/* Member SUMMARY list: flat rows, one hairline separator — no dark cell fills. */
-.memberdecls .memItemLeft,
-.memberdecls .memItemRight,
-.memberdecls .memTemplItemLeft,
-.memberdecls .memTemplItemRight,
-.memberdecls .memTemplParams,
-.memberdecls .mdescLeft,
-.memberdecls .mdescRight {
-  background: transparent !important;
-  background-image: none !important;
-  border: 0 !important;
-  border-bottom: 1px solid var(--ff-line) !important;
-}
-.memberdecls .memSeparator { border: 0 !important; height: 0 !important; line-height: 0 !important; }
-.memberdecls .heading td { border: 0 !important; }
-
-/* DETAILED member docs -> a flat card with a left accent bar. */
-.memitem {
-  background: var(--ff-panel) !important;
-  background-image: none !important;
-  border: 1px solid var(--ff-line) !important;
-  border-left: 3px solid var(--ff-accent) !important;
-  border-radius: var(--ff-radius-sm) !important;
-  box-shadow: none !important;
-  margin: 1.1rem 0 !important;
-  overflow: hidden;
-}
-.memproto,
-.memproto table.mlabels,
-.memproto .memname,
-.memproto td {
-  background: transparent !important;
-  background-image: none !important;
-  border: 0 !important;
-  box-shadow: none !important;
-  color: var(--ff-text) !important;
-}
-.memdoc {
-  background: transparent !important;
-  background-image: none !important;
-  border: 0 !important;
-  box-shadow: none !important;
-}
-
-/* Kill leftover gradient washes / heavy shadows on common doxygen-awesome panels. */
-div.contents .memproto,
-table.doxtable th,
-.directory td.entry,
-.fieldtable th,
-.tabsproto,
-.levelstable {
-  background-image: none !important;
-}
-.contents table.doxtable,
-.contents .fieldtable { box-shadow: none !important; }
-
-/* Body copy = the softer warm grey (headings stay bright), matching the reference. */
-#doc-content .contents,
-#doc-content p,
-#doc-content li,
-.memdoc,
-.textblock {
-  color: var(--ff-text-soft);
-}
-
-/* Prose pages: a narrower, CENTERED content column (~900px) like the reference,
-   instead of a full-width article. API pages keep the wide column for tables. */
-/* Content column: the exact hub overview measures -- a ~751px text column
-   (reference #main is 825px incl. 2.25rem padding), left-aligned, centered on the
-   page. Not a narrow centered hero. */
-html.ff-no-sidebar #doc-content .header,
-html.ff-no-sidebar #doc-content .contents {
-  max-width: 760px !important;
-  margin-inline: auto !important;
-  padding-inline: 0 !important;
-  text-align: left !important;
-}
-
-/* ~24px gap below the subnav before the title (matches the hub), then the title
-   at the hub's exact size, then a tight badge/screenshot rhythm. */
-html.ff-no-sidebar #doc-content { padding-top: 1.4rem !important; }
-html.ff-no-sidebar #doc-content .header { margin-block: 0 !important; padding-block: 0 !important; }
-html.ff-no-sidebar #doc-content .headertitle,
-html.ff-no-sidebar #doc-content div.title {
-  font-family: var(--ff-display) !important;
-  font-size: 2.7rem !important;   /* 44.55px @ 16.5px root -- the hub title size */
-  font-weight: 700 !important;
-  line-height: 1.1 !important;
-  letter-spacing: -.02em !important;
-  margin: 0 0 1.6rem !important;
-  padding-top: 0 !important;
-  text-align: left !important;
-}
-/* The badge cluster is the first paragraph of the content — pack the rows tight. */
-html.ff-no-sidebar #doc-content .contents > p:first-child {
-  margin: .1rem 0 .3rem !important;
-  line-height: 2.1;
-}
-
-/* Screenshot preview: a compact, CENTERED image sitting INSIDE a dark charcoal
-   rounded frame (with padding), like the reference — not a raw full-bleed image
-   that dominates the page. */
-.ff-shot {
-  display: block;
-  max-width: 100%;                   /* fills the shared column, flush-left with title/badges */
-  margin: .4rem 0 2.4rem;
-  padding: 8px;                      /* light -- a clean embedded preview, not a thick box */
-  background: var(--ff-code-bg);
-  border: 1px solid var(--ff-line);
-  border-radius: 14px;
-  box-shadow: 0 14px 36px -28px rgba(0, 0, 0, .75);
-}
-.ff-shot img {
-  display: block !important;
-  width: 100% !important;
-  max-width: 100% !important;
-  height: auto !important;
-  margin: 0 !important;
-  border: 0 !important;
-  border-radius: 8px !important;
-  box-shadow: none !important;
-}
-/* Any other prose image (not a badge, not already framed): contained + centered. */
-html.ff-no-sidebar #doc-content .contents p > img:not([src*="shields.io"]):not([src*="badge"]) {
-  display: block;
-  max-width: min(100%, 640px);
-  height: auto;
-  margin: 1.4rem auto;
-  border: 1px solid var(--ff-line-2);
-  border-radius: var(--ff-radius);
-  box-shadow: var(--ff-shadow-lg);
-}
-/* shields.io status badges: small, inline, in wrapping rows — never framed. */
-#doc-content .contents img[src*="shields.io"] {
-  display: inline-block;
-  vertical-align: middle;
-  margin: 2px 3px;
-  border: 0;
-  border-radius: 4px;
-  box-shadow: none;
-  max-width: none;
-}
-#doc-content .contents a:has(> img[src*="shields.io"]) { border: 0; background: none; }
-
-/* Fewer / lighter horizontal dividers (the reference barely uses them). */
-.contents hr,
-hr.footer,
-div.header {
-  border: 0 !important;
-  background: none !important;
-}
-.contents hr { border-top: 1px solid var(--ff-line) !important; opacity: .5; }
-
-/* ----------------------------------------------------------------------------
- * 6c. Screenshots gallery (the /screenshots/ page). A standalone themed page
- *   that reuses this stylesheet + the chrome, so it's seamless with the docs.
- * ------------------------------------------------------------------------- */
-.ff-gallery {
-  max-width: 1180px;
-  margin: 0 auto;
-  padding: 1.6rem var(--ff-gutter) 3.5rem;
-}
+.ff-gallery { max-width: var(--maxw); margin: 0 auto; padding: 1.6rem var(--gutter) 3.5rem; }
 .ff-gallery-title {
-  font-family: var(--ff-display);
-  font-weight: 700;
-  font-size: 2.4rem;
-  letter-spacing: -.02em;
-  color: var(--ff-text);
-  margin: .3rem 0 .35rem;
+  font-family: var(--display); font-weight: 700; font-size: 2.4rem;
+  letter-spacing: -.02em; color: var(--text); margin: .3rem 0 .35rem;
 }
-.ff-gallery-lead { color: var(--ff-text-faint); margin: 0 0 1.8rem; font-size: .95rem; }
-.ff-gallery-lead a { color: var(--ff-accent-ink); }
+.ff-gallery-lead { color: var(--text-faint); margin: 0 0 1.8rem; font-size: .95rem; }
+.ff-gallery-lead a { color: var(--accent-ink); }
 .ff-gallery h2 {
-  font-family: var(--ff-display);
-  font-weight: 700;
-  font-size: 1.45rem;
-  color: var(--ff-text);
-  letter-spacing: -.01em;
-  margin: 2.1rem 0 1rem;
+  font-family: var(--display); font-weight: 700; font-size: 1.45rem;
+  color: var(--text); letter-spacing: -.01em; margin: 2.1rem 0 1rem;
 }
-.ff-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 1.15rem;
-}
+.ff-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.15rem; }
 .ff-card {
-  margin: 0;
-  background: var(--ff-panel);
-  border: 1px solid var(--ff-line);
-  border-radius: var(--ff-radius-sm);
-  overflow: hidden;
-  transition: transform .16s var(--ff-ease), border-color .16s var(--ff-ease), box-shadow .16s var(--ff-ease);
+  margin: 0; background: var(--panel); border: 1px solid var(--line);
+  border-radius: var(--radius-sm); overflow: hidden;
+  transition: transform .16s var(--ease), border-color .16s var(--ease), box-shadow .16s var(--ease);
 }
-.ff-card:hover { transform: translateY(-3px); border-color: var(--ff-line-2); box-shadow: var(--ff-shadow-lg); }
-.ff-card > a { display: block; background: var(--ff-code-bg); line-height: 0; }
+.ff-card:hover { transform: translateY(-3px); border-color: var(--line-2); box-shadow: var(--shadow-lg); }
+.ff-card > a { display: block; background: var(--code-bg); line-height: 0; }
 .ff-card img { display: block; width: 100%; height: auto; }
 .ff-card figcaption {
-  padding: .6rem .85rem;
-  font-family: var(--ff-sans);
-  font-size: .85rem;
-  font-weight: 600;
-  color: var(--ff-text-soft);
+  padding: .6rem .85rem; font-family: var(--sans);
+  font-size: .85rem; font-weight: 600; color: var(--text-soft);
 }
 
+/* Notes landing — category card grid on the pse_notes hub (title + description, clickable).
+   The \subpage list that builds the nav tree is kept but hidden (.ff-subpage-index). */
+.ff-subpage-index { display: none; }
+.ff-note-cards {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 1rem; margin: 1.8rem 0 .5rem;
+}
+a.ff-note-card {
+  display: flex; flex-direction: column; gap: .3rem; padding: 1rem 1.15rem;
+  background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius-sm);
+  transition: transform .14s var(--ease), border-color .14s var(--ease), box-shadow .14s var(--ease);
+}
+a.ff-note-card:hover {
+  text-decoration: none; transform: translateY(-2px);
+  border-color: var(--line-2); box-shadow: var(--shadow);
+}
+a.ff-note-card .nc-title {
+  font-family: var(--display); font-weight: 700; font-size: 1.1rem;
+  letter-spacing: -.01em; color: var(--text) !important;
+}
+a.ff-note-card .nc-desc { color: var(--text-soft) !important; font-size: .9rem; line-height: 1.5; }
+
 /* ----------------------------------------------------------------------------
- * 7. Reduced motion
+ * 5. Reduced motion.
  * ------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
-  * { animation-duration: .001ms !important; animation-iteration-count: 1 !important;
-      transition-duration: .001ms !important; scroll-behavior: auto !important; }
+  * { scroll-behavior: auto !important; }
+  .ff-card { transition: none; }
+  .ff-card:hover { transform: none; }
 }

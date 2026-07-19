@@ -23,10 +23,23 @@
 \page pse_notes Project Notes
 \brief Living documentation for the codebase — start with Status, then explore by section.
 
-The full project-notes system, organized. Read **Status** for the current state, then the section
-that fits what you need: the day-by-day **Session Logs**, the per-commit **Changelog**, the **Context**
-background, the **System Map**, the **Reference** lookups, the **Decisions**, and the **Plans**.
+Read **Status** for the current state, then open the section that fits what you need. The left panel
+lists every note; the cards below are the starting points for each section.
 
+<div class="ff-note-cards">
+<a class="ff-note-card" href="md_notes_2status.html"><span class="nc-title">Status</span><span class="nc-desc">Current build and runtime health, open issues, and the immediate next actions. Start here.</span></a>
+<a class="ff-note-card" href="pse_sessions.html"><span class="nc-title">Session Logs</span><span class="nc-desc">The day-by-day history — one file per working day, grouped by month, newest first.</span></a>
+<a class="ff-note-card" href="pse_changelog.html"><span class="nc-title">Changelog</span><span class="nc-desc">Plain-language history of the project, one entry per commit, grouped by month.</span></a>
+<a class="ff-note-card" href="pse_context.html"><span class="nc-title">Context</span><span class="nc-desc">Background that changes rarely — what the project is, its principles, and how it began.</span></a>
+<a class="ff-note-card" href="pse_systems.html"><span class="nc-title">System Map</span><span class="nc-desc">How the software is built — a macro overview plus per-layer deep dives.</span></a>
+<a class="ff-note-card" href="pse_reference.html"><span class="nc-title">Reference</span><span class="nc-desc">Lookups and domain knowledge — Qt and UI patterns, and the Gen 1 save format.</span></a>
+<a class="ff-note-card" href="pse_decisions.html"><span class="nc-title">Decisions</span><span class="nc-desc">Why the structural choices were made, and what was tried and set aside.</span></a>
+<a class="ff-note-card" href="pse_plans.html"><span class="nc-title">Plans</span><span class="nc-desc">What comes next — ordered tasks, the testing picture, and longer-term goals.</span></a>
+<a class="ff-note-card" href="pse_notes_system.html"><span class="nc-title">Notes System</span><span class="nc-desc">How this documentation is organized and kept up to date.</span></a>
+<a class="ff-note-card" href="pse_fairyfox_reports.html"><span class="nc-title">Fairyfox Reports</span><span class="nc-desc">Process reports, one per run of a fairyfox system procedure.</span></a>
+</div>
+
+<div class="ff-subpage-index">
 \subpage pse_notes_system <br>
 \subpage md_notes_2status <br>
 \subpage pse_sessions <br>
@@ -37,6 +50,7 @@ background, the **System Map**, the **Reference** lookups, the **Decisions**, an
 \subpage pse_decisions <br>
 \subpage pse_plans <br>
 \subpage pse_fairyfox_reports
+</div>
 */
 
 /**
@@ -48,8 +62,16 @@ check-for-updates). The hub reads these on request to improve the shared standar
 `notes/reference/cross-project-sync.md` → "Process reports".
 
 \subpage pse_fairyfox_reports_about <br>
+\subpage md_notes_2fairyfox-reports_22026-07-19-adopting-updates <br>
 \subpage md_notes_2fairyfox-reports_22026-07-06-adopting-updates <br>
-\subpage md_notes_2fairyfox-reports_22026-06-26-adopting-updates
+\subpage md_notes_2fairyfox-reports_22026-07-02-check-for-updates <br>
+\subpage md_notes_2fairyfox-reports_22026-07-01-check-for-updates <br>
+\subpage md_notes_2fairyfox-reports_22026-06-30-check-for-updates <br>
+\subpage md_notes_2fairyfox-reports_22026-06-29-check-for-updates <br>
+\subpage md_notes_2fairyfox-reports_22026-06-28-check-for-updates <br>
+\subpage md_notes_2fairyfox-reports_22026-06-26-adopting-updates <br>
+\subpage md_notes_2fairyfox-reports_22026-06-26-adopting-updates-express-auth <br>
+\subpage md_notes_2fairyfox-reports_22026-06-26-check-for-updates
 */
 
 /**

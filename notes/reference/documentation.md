@@ -44,42 +44,44 @@ Requirements on the machine running it:
   defaults. Upgrade across Doxygen versions with `doxygen -u Doxyfile`.
 - `docs/doxygen-awesome/doxygen-awesome.css` — vendored theme (MIT). See that folder's README.
 - `docs/fairyfox/` — the **fairyfox.io hub theme** layered on doxygen-awesome (the docs-site is part
-  of the fairyfox mesh; see [`cross-project-sync.md`](cross-project-sync.md)). Adopted the hub's
-  updated **chrome + reader** standard on 2026-07-06 (hub `docs-site` ≥ 0.14; process report
-  `../fairyfox-reports/2026-07-06-adopting-updates.md`). Pieces:
-    - `fairyfox-doxygen.css` re-points doxygen-awesome's CSS variables at the hub design tokens. The
-      mapping is scoped to `html.dark-mode, html.light-mode, html:not(.dark-mode):not(.light-mode)`
-      so it wins over doxygen-awesome's own dark rules in every state. Adds the `data-theme`
-      light/sepia palettes, the injected-chrome styling (`.ff-top` header + subnav, `.ff-foot`
-      footer), the reader-panel styling, and the **API-only sidebar** rule
-      (`html.ff-no-sidebar #side-nav{display:none}`). Per-project accent = the registry pink
-      `#e6488f`, kept across all three themes (readers can recolour it live).
-    - **Layout integration** (section 4b) — our chrome replaces doxygen-awesome's own header, so we
-      hide `#titlearea` + `#main-menu` (they duplicated the nav; **this also hides Doxygen's built-in
-      search box**, which lives in `#main-menu` — matching the reference site's chrome) and switch to a
-      single-page scroll: `#doc-content` flows (`height:auto; overflow:visible`) instead of its own
-      inner scroll pane (which produced a second scrollbar), and on API pages the treeview is a
-      `position:fixed` column pinned below the sticky chrome. Prose pages are full-width, no sidebar.
-    - `header.html`/`footer.html` — customised Doxygen templates carrying the static chrome: the
-      fixed mesh-wide primary nav (Home · Projects · Games · Docs · Updates · About — **Projects**
-      active for a project's docs), the project subnav (Overview · Notes · Classes · Files ·
-      Screenshots · Repository · Notes), the reader "Aa" button, and the footer. The brand mark is
-      the **hub fox logo** (`https://fairyfox.io/assets/icons/fox.png`) linking home — there is no
-      separate "Back to Fairy Fox" button. They also load the self-hosted fonts + `ff-docs.js` and
-      set the `theme-color` metas.
-    - `ff-docs.js` — the **reader menu** (theme · accent · size · line-spacing · width, key
-      `fairyfox:reader:b`, shared across every same-origin fairyfox.io site) plus chrome behaviour:
-      it drives doxygen-awesome's `light-mode`/`dark-mode` class (the reader is the single theme
-      authority), measures the header height into `--ff-header-h`, marks the active subnav item, and
-      adds `ff-no-sidebar` on prose pages (Overview / Notes / markdown) — freezing `doxygen_width` on
-      those pages so the hidden sidebar can't corrupt the API-page width.
-    - `fonts/` — self-hosted Fraunces / Inter / JetBrains Mono woff2 + `fonts.css` (no Google Fonts;
-      removes the third-party IP exposure, per the hub legal-docs standard). `pse-logo.png` is kept
-      as the favicon/project logo.
-  All wired in the Doxyfile (`HTML_HEADER`/`HTML_FOOTER`/`HTML_EXTRA_STYLESHEET`, the fonts + JS in
-  `HTML_EXTRA_FILES`, `HTML_COLORSTYLE = LIGHT` so Doxygen stops running its own competing dark
-  script). `pages.yml` no longer injects DoxygenLayout user-tabs — the subnav carries those links.
-  The hub standard + checklist live in the read-only clone at
+  of the fairyfox mesh; see [`cross-project-sync.md`](cross-project-sync.md)). As of **2026-07-19** the
+  chrome is the hub's **vendored shared-chrome bundle** (chrome **VERSION 2.0.0**), not a
+  hand-reimplementation — the hub's own standard now says chrome adoption *is a file copy*
+  (`12-shared-chrome.md`), wired for Doxygen via its `adapters/doxygen.md`. Process report:
+  `../fairyfox-reports/2026-07-19-adopting-updates.md`; decision + deviation:
+  `../decisions/architecture.md`. Pieces:
+    - `main.css`, `reader.js`, `nav.js` — the **master assets, vendored verbatim** from the hub
+      (`assets/css/main.css` + `assets/js/{reader,nav}.js`). `main.css` is the palette + every chrome
+      component (header/nav/subnav/reader/footer); `reader.js` injects the "Aa" reading menu (theme ·
+      accent · size · story-only line-spacing/width, key `fairyfox:reader:b`); `nav.js` drives the
+      hamburger + the Farms dropdown. Never edited — pulled and re-diffed on refresh.
+    - `CHROME_VERSION` — the adopted bundle version (`2.0.0`), pinned so a later refresh is a clean diff.
+    - `fairyfox-doxygen.css` — the thin **bridge** (all that's left of the old ~1000-line chrome CSS).
+      Two jobs: (1) map doxygen-awesome's variables onto `main.css`'s live theme tokens (scoped to
+      `html.dark-mode, html.light-mode, html:not(.dark-mode):not(.light-mode)` so it wins in every
+      state) so the generated API body tracks the reader theme; (2) the **generated-reference boundary**
+      — hide `#titlearea` + `#main-menu` (redundant with the chrome; this also hides Doxygen's built-in
+      search box), single-page scroll (`#doc-content` flows, no inner scrollbar), the treeview pinned
+      `position:fixed` below the sticky chrome **on API pages only** at a deterministic width, prose
+      pages full-width. Also carries the screenshots-gallery styles + the skip link.
+    - `header.html`/`footer.html` — Doxygen templates wrapping the **bundle** `head`/`header`/`subnav`/
+      `footer` markup: the fixed mesh-wide primary nav (Home · Projects · Farms [Stories · Games] ·
+      Docs · Updates · About — **Projects** active), the project subnav (Overview · Notes · API
+      Reference · Screenshots · Repository → `1fairyfox`), the bundle footer, the pre-paint theme
+      script, and the `theme-color` metas. Brand = the **hub fox logo** linking home (no separate
+      "Back" button). Small **project glue** kept separate from the vendored bundle: a footer `<script>`
+      mirrors the reader `data-theme` onto doxygen-awesome's `light-mode`/`dark-mode` class, measures
+      the chrome height into `--ff-header-h`, and marks the active subnav pill; a pre-paint header
+      `<script>` adds `html.ff-no-sidebar` on prose pages.
+    - `fonts/` — self-hosted Fraunces / Inter / JetBrains Mono woff2 + `fonts.css`. **DOCUMENTED
+      DEVIATION** from the bundle (whose `head.html` uses Google Fonts): same families/weights, no
+      third-party IP exposure, per the hub legal-docs standard (a recommendation to self-host in the
+      bundle itself was filed back to the hub). `pse-logo.png` is the favicon/project logo. `ff-docs.js`
+      (the old hand-built reader) was **retired** in the 2.0.0 adoption.
+  All wired in the Doxyfile (`HTML_HEADER`/`HTML_FOOTER`; `HTML_EXTRA_STYLESHEET` = doxygen-awesome +
+  `main.css` + the bridge; `reader.js`/`nav.js`/fonts in `HTML_EXTRA_FILES`; `HTML_COLORSTYLE = LIGHT`
+  so Doxygen stops running its own competing dark script). `scripts/build_gallery.py` wears the same
+  bundle. The hub standard + adapter live in the read-only clone at
   `assets/references/fairyfox.io/hub/standards/docs-site/`.
 - `docs/html/` — generated output. **git-ignored**, never committed.
 

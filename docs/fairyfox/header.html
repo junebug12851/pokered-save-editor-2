@@ -1,4 +1,19 @@
-<!-- HTML header for doxygen 1.17.0-->
+<!-- HTML header for doxygen 1.17.0 -->
+<!--
+  Fairy Fox docs chrome — the shared docs-site "chrome bundle" (hub chrome VERSION 2.0.0),
+  wired for Doxygen per hub/standards/docs-site/chrome/adapters/doxygen.md.
+
+  This is a VENDORED copy of the bundle, not a hand-reimplementation: the header/subnav/
+  footer markup is copied verbatim from the bundle's head.html/header.html/subnav.html,
+  and the behaviour + palette come from the pulled master assets main.css + reader.js +
+  nav.js (all under docs/fairyfox/). Only the {{FF_*}} slots and the per-page .active
+  marker differ from the bundle.
+
+  DOCUMENTED DEVIATION (see notes/decisions/architecture.md): the bundle's head.html
+  loads the type families from Google Fonts; this project instead loads the SELF-HOSTED
+  woff2 copies (docs/fairyfox/fonts/fonts.css) to keep the no-third-party-IP posture the
+  hub legal-docs standard asks for. Same families/weights — only the source differs.
+-->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="$langISO">
 <head>
@@ -6,16 +21,52 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen $doxygenversion"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<!-- Fairy Fox: browser-chrome colour matches the hub (light + dark) -->
+
+<!-- bundle head.html · 1 — browser-chrome colour, per scheme (identical mesh-wide) -->
 <meta name="theme-color" content="#ef6149" media="(prefers-color-scheme: light)"/>
 <meta name="theme-color" content="#191116" media="(prefers-color-scheme: dark)"/>
-<!-- Fairy Fox: self-hosted type families (Fraunces / Inter / JetBrains Mono) — no
-     Google Fonts (removes third-party IP exposure; see the hub legal-docs standard). -->
+
+<!-- Project glue (NOT the bundle): classify the page BEFORE the pre-paint reader script + first
+     paint. (a) ff-no-sidebar on prose / list pages → full width, no treeview (API pages keep the
+     treeview); (b) data-story on ACTUAL rendered note content (the README + the markdown notes) so
+     the reader's line-spacing + width controls UNLOCK when you're reading a note — but NOT on the
+     index / "list of notes to click on" pages. Must run before the pre-paint script (it reads
+     data-story). -->
+<script>
+(function(){try{var p=location.pathname,f=p.substring(p.lastIndexOf("/")+1)||"index.html",r=document.documentElement,
+md=/_8md\.html$/.test(f)||/_8dox\.html$/.test(f)||/^md_/.test(f),
+fullwidth=(f==="index.html"||p.indexOf("/screenshots/")!==-1),  // Overview + gallery only
+story=(f==="index.html"||md);                                    // actual readable content
+if(fullwidth)r.classList.add("ff-no-sidebar");   // no left pane on the two landings
+if(story)r.setAttribute("data-story","");         // reading controls on the content pane
+}catch(e){}})();
+</script>
+
+<!-- bundle head.html · 2 — reader pre-paint: apply the saved theme/accent/text vars BEFORE
+     first paint (from the origin-wide fairyfox:reader:b key) so there's no flash and the
+     choice carries across every fairyfox.io site. Copied verbatim from the bundle; kept in
+     sync with reader.js. Loaded before <body> so it runs before the page renders. -->
+<script>
+(function(){try{var p=JSON.parse(localStorage.getItem("fairyfox:reader:b")||"{}"),r=document.documentElement,
+S=[15,16.5,18,20,22],L={tight:1.5,normal:1.65,relaxed:1.9},W={narrow:"38rem",normal:"46rem",wide:"58rem"};
+if(p.theme&&p.theme!=="system")r.setAttribute("data-theme",p.theme);
+if(p.size!=null)r.style.fontSize=S[Math.max(0,Math.min(S.length-1,p.size|0))]+"px";
+var story=r.hasAttribute("data-story");
+if(story&&p.lh)r.style.setProperty("--reading-lh",String(L[p.lh]||L.normal));
+if(story&&p.width)r.style.setProperty("--reading-width",W[p.width]||W.normal);
+if(p.accent){var h=p.accent,ink="color-mix(in srgb, "+h+", var(--text) 42%)";
+r.style.setProperty("--accent",h);r.style.setProperty("--violet",h);
+r.style.setProperty("--violet-deep","color-mix(in srgb, "+h+", #000 12%)");
+r.style.setProperty("--accent-ink",ink);r.style.setProperty("--link",ink);
+r.style.setProperty("--link-hover","color-mix(in srgb, "+h+", var(--text) 26%)");
+r.style.setProperty("--glow","color-mix(in srgb, "+h+" 40%, transparent)");}}catch(e){}})();
+</script>
+
+<!-- bundle head.html · 3 — fonts. DEVIATION: self-hosted woff2 (Fraunces / Inter /
+     JetBrains Mono), NOT Google Fonts — same families/weights, no third-party IP
+     exposure. See notes/decisions/architecture.md. -->
 <link href="$relpath^fonts.css" rel="stylesheet" type="text/css"/>
-<!-- Fairy Fox docs behaviour: applies the shared reading prefs (theme / accent / size /
-     spacing / width) BEFORE paint to avoid a flash, then wires the reader menu + subnav.
-     Loaded in <head> (not deferred) so loadAndApply() runs before the body renders. -->
-<script type="text/javascript" src="$relpath^ff-docs.js"></script>
+
 <!--BEGIN PROJECT_NAME--><title>$projectname: $title</title><!--END PROJECT_NAME-->
 <!--BEGIN !PROJECT_NAME--><title>$title</title><!--END !PROJECT_NAME-->
 <!--BEGIN PROJECT_ICON-->
@@ -45,44 +96,58 @@ $extrastylesheet
 <body>
 <!-- Fairy Fox skip link (WCAG 2.4.1) -->
 <a class="ff-skip" href="#top">Skip to content</a>
-<!-- Fairy Fox chrome: a copy of the fairyfox.io header (fixed mesh-wide primary nav)
-     + this project's subnav, in one fixed .ff-top stack. The brand mark and the Home
-     item ARE the way home (no separate "Back" button). See the hub docs-site standard
-     05-navigation-and-cross-linking.md. Reader ("Aa") button sits just after the nav;
-     its panel is appended to <body> by ff-docs.js. -->
-<div class="ff-top">
-  <header class="site-header ff-header" role="banner">
-    <div class="wrap">
-      <a class="brand" href="https://fairyfox.io/">
-        <img class="brand-logo" src="https://fairyfox.io/assets/icons/fox.png" alt="" aria-hidden="true"/>
-        <span class="brand-name">Fairy&nbsp;Fox</span>
-      </a>
-      <nav class="nav" aria-label="Fairy Fox">
-        <a href="https://fairyfox.io/">Home</a>
-        <a href="https://fairyfox.io/projects/">Projects</a>
-        <a href="https://fairyfox.io/games/">Games</a>
-        <a href="https://fairyfox.io/docs/" class="active" aria-current="page">Docs</a>
-        <a href="https://fairyfox.io/blog/">Updates</a>
-        <a href="https://fairyfox.io/about/">About</a>
-      </nav>
-      <button class="ff-reader-btn" type="button" aria-label="Reading settings"
-        aria-haspopup="dialog" aria-expanded="false" aria-controls="ff-reader-panel" title="Reading settings">
-        <span class="aa-lg">A</span><span class="aa-sm">a</span>
-      </button>
-    </div>
-  </header>
-  <nav class="subnav ff-subnav" aria-label="Pokered Save Editor 2 sections">
-    <div class="wrap">
-      <a class="sub-brand" href="$relpath^index.html">Pokered Save Editor&nbsp;2</a>
-      <a href="$relpath^index.html" data-ff-page="index.html">Overview</a>
-      <a href="$relpath^pages.html" data-ff-page="pages.html">Notes</a>
-      <a href="$relpath^annotated.html" data-ff-page="api">API</a>
-      <a href="$relpath^screenshots/index.html" data-ff-page="screenshots">Screenshots</a>
-      <span class="sep" aria-hidden="true"></span>
-      <a class="ext" href="https://github.com/junebug12851/pokered-save-editor-2">Repository&nbsp;↗</a>
-    </div>
-  </nav>
-</div>
+
+<!-- ===== bundle header.html — the shared fairyfox masthead (copied verbatim; primary
+     nav is the FIXED mesh-wide set/order; Stories + Games under the Farms dropdown, driven
+     by nav.js). The current section is marked .active (Projects — this project's docs live
+     under the hub's Projects section, matching the prior adoption's owner decision). The
+     "Aa" reader button is NOT hard-coded: reader.js injects it into .wrap. ===== -->
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="https://fairyfox.io/">
+      <img class="brand-logo" src="https://fairyfox.io/assets/icons/fox.png" alt="" aria-hidden="true"/>
+      <span class="brand-name">Fairy&nbsp;Fox</span>
+    </a>
+
+    <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+
+    <nav class="nav" aria-label="Primary">
+      <a href="https://fairyfox.io/">Home</a>
+      <a href="https://fairyfox.io/projects/" class="active" aria-current="page">Projects</a>
+      <details class="dd">
+        <summary>Farms</summary>
+        <div class="dd-panel">
+          <div class="dd-group">
+            <div class="dd-links">
+              <a href="https://fairyfox.io/stories/">Stories</a>
+              <a href="https://fairyfox.io/games/">Games</a>
+            </div>
+          </div>
+        </div>
+      </details>
+      <a href="https://fairyfox.io/docs/">Docs</a>
+      <a href="https://fairyfox.io/blog/">Updates</a>
+      <a href="https://fairyfox.io/about/">About</a>
+    </nav>
+    <!-- reader.js injects the "Aa" button here (a direct child of .wrap, after .nav). -->
+  </div>
+</header>
+
+<!-- ===== bundle subnav.html — the section row; wrapper + pill style fixed, links are this
+     project's own pages ({{FF_SUBNAV_ITEMS}}). The active page is marked at runtime by the
+     ff-subnav-active glue in footer.html (data-ff-page → .active). ===== -->
+<nav class="subnav" aria-label="Section">
+  <div class="wrap">
+    <a href="$relpath^index.html" data-ff-page="index.html">Overview</a>
+    <a href="$relpath^pse_notes.html" data-ff-page="notes">Notes</a>
+    <a href="$relpath^annotated.html" data-ff-page="api">API Reference</a>
+    <a href="$relpath^screenshots/index.html" data-ff-page="screenshots">Screenshots</a>
+    <a class="ext" href="https://github.com/1fairyfox/pokered-save-editor-2">Repository&nbsp;↗</a>
+  </div>
+</nav>
+
 <!--BEGIN FULL_SIDEBAR-->
 <div id="side-nav" class="ui-resizable side-nav-resizable"><!-- do not remove this div, it is closed by doxygen! -->
 <!--END FULL_SIDEBAR-->
