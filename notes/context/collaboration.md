@@ -120,15 +120,10 @@ and a state-summary there is indistinguishable from a claim of authorship.
 
 ## Content & spelling rules
 
-- **Write all notes and docs in a professional, plain tone (2026-07-19).** These notes render on the
-  public docs site for a web audience, so keep the writing straightforward and matter-of-fact. No puns,
-  gags, jokey framing, or "cutesy"/cartoony phrasing; no decorative or silly emoji — use an emoji only
-  where it genuinely aids a professional document, and even then sparingly. **Never use gun or other
-  violence/weapon imagery, references, or metaphors** (e.g. "loaded gun", "smoking gun") anywhere — this
-  is a firm rule; pick a neutral term instead (a "landmine" or "trap" for a dangerous value, "unused" for
-  dead code, etc.). Applies to everything authored here: session logs, changelog, reference notes,
-  process reports, commit messages. (Existing notes still contain older informal phrasing and weapon
-  metaphors; revise them toward this standard when editing a file, and offer to scrub them when asked.)
+- **Write all notes and docs in a professional, plain tone.** They render on the public docs site, so
+  keep the writing straightforward and matter-of-fact — no puns, gags, or cutesy phrasing, and no
+  decorative emoji (plain status marks only, used sparingly). Avoid violent or weapon imagery; use a
+  neutral term instead. Applies everywhere, commit messages included.
 - **Always write "Poké" / "Pokémon" with the accented é** everywhere user-visible — app UI, GitHub
   release titles/descriptions, README, notes, commit messages (Poké Ball, Pokédex, Poké Mart, etc.).
   Plain "Poke"/"Pokemon" is a typo. **Display text only** — never change internal identifiers (uppercase
