@@ -17,7 +17,7 @@ that list is **32 entries of 4 bytes**, sitting right there in the save. Around 
 state bytes** that describe a warp *in flight*: whether you're falling down a hole, whether you
 Flew, where Dig will drop you, which door you came in by. v1 shipped all twelve with **invented
 names** and no explanation, and three of them are **wrong**, two are **dead**, two more are
-**loaded guns**, and two of the most useful ones **aren't on the warps screen at all**.
+**hazards**, and two of the most useful ones **aren't on the warps screen at all**.
 
 **The address maths for everything below:** the save's Main Data block starts at file offset
 `0x25A3` and maps to `wMainDataStart` = `$D2F7`, so
@@ -158,9 +158,9 @@ already modelled elsewhere and not warp business.)*
 | Save | WRAM | v1/v2 name | **Real name** | What it is |
 |---|---|---|---|---|
 | **`0x26DB`** | `$D42F` | `warpDest` — *"To Warp"* | **`wDestinationWarpID`** | **Which arrival point you land on** in the map you're entering. **`$FF` = "don't move the player"** — every special warp sets `$FF`, because it has already written the coordinates itself. |
-| **`0x29C6`** | `$D71A` | `specialWarpDestMap` — *"Special Warp Where"* | **`wDestinationMap`** | **Where Fly / the Hall of Fame / the Cable Club sends you.** ⚠️ **A LOADED GUN — see §5.** |
-| **`0x29C9`** | `$D71D` | `dungeonWarpDestMap` — *"Dungeon Warp Where"* | **`wDungeonWarpDestinationMap`** | **Which floor a hole drops you onto.** Written by exactly six map scripts. ⚠️ **A LOADED GUN — see §5.** |
-| **`0x29CA`** | `$D71E` | `whichDungeonWarp` — *"From Dungeon Warp"* | **`wWhichDungeonWarp`** | **Which hole on the floor above you fell through** — **1-based**, and it must *pair* with the map above. `IsPlayerOnDungeonWarp` sets it from `wCoordIndex`. ⚠️ **Half of the same loaded gun.** |
+| **`0x29C6`** | `$D71A` | `specialWarpDestMap` — *"Special Warp Where"* | **`wDestinationMap`** | **Where Fly / the Hall of Fame / the Cable Club sends you.** ⚠️ **A HAZARD — see §5.** |
+| **`0x29C9`** | `$D71D` | `dungeonWarpDestMap` — *"Dungeon Warp Where"* | **`wDungeonWarpDestinationMap`** | **Which floor a hole drops you onto.** Written by exactly six map scripts. ⚠️ **A HAZARD — see §5.** |
+| **`0x29CA`** | `$D71E` | `whichDungeonWarp` — *"From Dungeon Warp"* | **`wWhichDungeonWarp`** | **Which hole on the floor above you fell through** — **1-based**, and it must *pair* with the map above. `IsPlayerOnDungeonWarp` sets it from `wCoordIndex`. ⚠️ **Half of the same hazard.** |
 
 ### Group C — *"a script wants a warp"* (`wStatusFlags3`, save `0x29D9`, WRAM `$D72D`)
 
@@ -259,12 +259,12 @@ Both survive the load untouched (console-verified).
 
 ---
 
-## 5. 🔫 Two loaded guns — the destination tables have no bounds check
+## 5. Two hazards — the destination tables have no bounds check
 
 Same class as the **music bank** ([`glitch-music.md`](glitch-music.md)): a value the save holds
 that the console will happily use to read arbitrary ROM.
 
-### Gun 1 — `wDestinationMap` (`specialWarpDestMap`): **only 13 legal values**
+### Hazard 1 — `wDestinationMap` (`specialWarpDestMap`): **only 13 legal values**
 
 `PrepareForSpecialWarp` looks the map up in `FlyWarpDataPtr`:
 
@@ -293,7 +293,7 @@ as a **pointer**, and copies six bytes from wherever that lands into `wCurrentTi
 (The last two are the Mt. Moon and Rock Tunnel Poké Center routes — the game Flies you to a *route*,
 not a town.)
 
-### Gun 2 — `wDungeonWarpDestinationMap` + `wWhichDungeonWarp`: **12 legal PAIRS**
+### Hazard 2 — `wDungeonWarpDestinationMap` + `wWhichDungeonWarp`: **12 legal PAIRS**
 
 Same shape, in `DungeonWarpList` — which *does* have a `db -1` terminator that the loop **doesn't
 check for**. The **pair** must be one of these twelve:
@@ -391,7 +391,7 @@ Exactly the shape of the sprite pass: the model is a straight port of v1, and it
 
 ## 7b. 🐺 The cry-wolf trap — and it nearly shipped
 
-The gun's warning has **two** conditions, not one, and the screenshot review is what found it.
+The hazard's warning has **two** conditions, not one, and the screenshot review is what found it.
 
 The fixture save — an entirely ordinary file — holds `dungeonWarpDestMap = 194` (Victory Road 2F) and
 `whichDungeonWarp = 0`. That **pair is not in `DungeonWarpList`**, so the first cut lit a red `!` on

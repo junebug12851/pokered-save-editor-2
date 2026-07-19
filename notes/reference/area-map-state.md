@@ -12,7 +12,7 @@ is [`../plans/map-screen.md`](../plans/map-screen.md) → **Phase 8 (Area State)
 > `cardKeyDoorX/Y` (behind the "Reloaded values" switch, amber `!`). Each setter writes exactly its
 > byte(s); `areamap.{h,cpp}` docs corrected (truth-in-labelling — the member names were kept). Pinned
 > by **`tst_area_state`** (keystone `setAreaField_writesExactlyItsBytes` + the view-box sync doctrine).
-> ⏳ Owed: on-canvas **dragging** of a broken-loose view box (the panel-side break-sync + raw entry are
+> Owed: on-canvas **dragging** of a broken-loose view box (the panel-side break-sync + raw entry are
 > done; the drag is a canvas interaction, Phase 8 continuation).
 
 > **Read first:** [`gen1-knowledge.md`](gen1-knowledge.md) (the save format),
@@ -86,7 +86,7 @@ per-map variable.** So:
   writes each time a map script runs. Edited alone, a scripted map overwrites it on the next tick
   from its per-map variable — so on its own it's near-scratch.
 
-> 🔗 **The pair.** `ExecuteCurMapScriptInTable` opens with `bit BIT_USE_CUR_MAP_SCRIPT / res …`,
+> **The pair.** `ExecuteCurMapScriptInTable` opens with `bit BIT_USE_CUR_MAP_SCRIPT / res …`,
 > and **if that bit is set it uses `wCurMapScript` as the index instead of the map's default.**
 > So **"Current Script" (`wCurMapScript`) and "Run cur map script instead"
 > (`BIT_USE_CUR_MAP_SCRIPT`, §"Run cur map script instead") are one feature in two bytes:** set
@@ -263,7 +263,7 @@ The `wCurrentTileBlockMapViewPointer` result is confirmed by the garbage framebu
 
 `AreaMap::save()` writes the correct bits to the correct addresses — there is **no
 save-corruption bug** here (unlike the tileset `collPtr` or the sprite-mobility inversion), and
-`setTo()`/`randomize()` only reconfigure the map, so **no loaded gun** like `AreaWarps::setTo()`.
+`setTo()`/`randomize()` only reconfigure the map, so **no hazard** like `AreaWarps::setTo()`.
 It is a naming/organisation problem plus one derived-value discipline.
 
 ---
