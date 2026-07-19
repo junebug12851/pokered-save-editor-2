@@ -102,7 +102,7 @@ Importer: `scripts/import_hidden_items.py` (additive-only, `--check`-idempotent)
 as `items.json` spells it ("GREAT BALL"), so it is both readable and a valid ItemsDB key — the
 importer **fails** rather than inventing a name that does not resolve.
 
-### 2b. 🐞 …and the items DB had never loaded. Not once.
+### 2b. …and the items DB had never loaded. Not once.
 
 **The reason this data looked "already brought over" but showed nothing.** Two real bugs, both found
 while wiring the import, both fixed + pinned (`tst_db_integrity`, 13/13):
@@ -128,7 +128,7 @@ while wiring the import, both fixed + pinned (`tst_db_integrity`, 13/13):
   `everyHiddenPickupResolvesItsMapAndItem` **also passed while the bug was live**, because it iterated
   nothing. It now asserts the store is non-empty *first*. This is the same shape as the
   `emu-venv` gate lesson in [`../status.md`](../status.md): **the check must be able to fail.**
-- 📝 `tst_db_coverage_fill.cpp` had **recorded the symptom** — *"the HiddenItems store is empty in the
+- `tst_db_coverage_fill.cpp` had **recorded the symptom** — *"the HiddenItems store is empty in the
   test data"* — and filed it as a quirk of the fixtures. It was the bug, in writing, unread.
 
 ### 2c. Items and coins are SEPARATE arrays — don't merge the lists
@@ -271,7 +271,7 @@ each one says what you can *do* with a thing before you touch it.
 | **Solid + filled = movable** | *"stuff draggable, deletable, insertable, etc.... should have a solid fill and box"* | Warps, signs, people. |
 | **Dashed + unfilled = fixed** | *"stuff that allows editing things from fixed locations like scripts and stuff should have a dashed outline and not be filled"* | A script trigger sits where the cartridge tests coords; a hidden pickup's tile **is** its save bit's identity. You edit what they do, never where they are. |
 | **One movable makes the CELL solid** | *"if there are multiple tabs fill and use solid line only if any of the tabs contain one thing that matches the rules above"* | The box is the handle for the **cell**. If anything in it can be picked up, the cell can. A dashed box beside a solid one inside one cell would say two things about one target. |
-| **Only movable tabs drag** | *"tabs can be dragged out directly and dragged in snapping in… "* + *"i mean tabs that can be moved not fixed ones"* | ⏳ Not built — the movable kinds aren't spots yet. |
+| **Only movable tabs drag** | *"tabs can be dragged out directly and dragged in snapping in… "* + *"i mean tabs that can be moved not fixed ones"* | Not built — the movable kinds aren't spots yet. |
 
 ⚠️ **This RETIRES the old solid-vs-dashed meaning** (solid = shown, dashed = hidden), which spent
 the same ink on a different question. A switched-off object now says so with the **⚑** and a fainter
@@ -368,7 +368,7 @@ half that's wrong matters — **so this got checked rather than agreed with.**
   (the +4 sprite bias, same grid), `bg_event` emits `db \2, \1, \3`, `warp_event` emits
   `db \2, \1, \4 - 1, \3`.
 
-⭐ **So NOTHING we box is block-scoped, and a block-sized box would be a lie:** it spans 2×2 walk
+**So NOTHING we box is block-scoped, and a block-sized box would be a lie:** it spans 2×2 walk
 squares and therefore cannot tell two adjacent warps apart. **The 16×16 boxes already shipping are
 correct — the word was wrong, not the size.** 16×16 is a **half-block**; it is not a tile (8×8) and
 not a block (32×32). ⚠️ This file and `tiles.md` have both been calling the walk grid "tile level"

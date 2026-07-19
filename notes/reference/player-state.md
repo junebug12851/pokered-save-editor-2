@@ -89,7 +89,7 @@ that lives outside the Main Data block and isn't in the save — it doesn't touc
 ## 2. The complete table — every player byte, one row each
 
 Legend: **`!`** = **rewritten/zeroed on load** (gets the yellow-exclamation treatment).
-**`💀`** = written by the game, **never read** by it. **`~`** = kept at load but **recomputed as
+**`❌`** = written by the game, **never read** by it. **`~`** = kept at load but **recomputed as
 soon as the player moves** (transient step state; editing it is momentary). No mark = durable
 state a person can edit and keep.
 
@@ -104,11 +104,11 @@ state a person can edit and keep.
 | **!** | `0x27D6` | — | `wPlayerDirection` | `playerCurDir` | **Current direction** | **forced to DOWN** |
 | | `0x29AC` | — | `wWalkBikeSurfState` | `walkBikeSurf` | **Walk / Bike / Surf** (0/1/2) | kept (some maps force it) |
 | **!** | `0x29C0` | — | `wPlayerJumpingYScreenCoordsIndex` | `playerJumpingYScrnCoords` | **Jumping Y** (ledge-hop animation index) | **zeroed** |
-| 💀 | `0x278E` | — | `wYOffsetSinceLastSpecialWarp` | `yOffsetSinceLastSpecialWarp` | **Y offset since special warp** | kept — but nothing reads it |
-| 💀 | `0x278F` | — | `wXOffsetSinceLastSpecialWarp` | `xOffsetSinceLastSpecialWarp` | **X offset since special warp** | kept — but nothing reads it |
+| ❌ | `0x278E` | — | `wYOffsetSinceLastSpecialWarp` | `yOffsetSinceLastSpecialWarp` | **Y offset since special warp** | kept — but nothing reads it |
+| ❌ | `0x278F` | — | `wXOffsetSinceLastSpecialWarp` | `xOffsetSinceLastSpecialWarp` | **X offset since special warp** | kept — but nothing reads it |
 | **!** | `0x29D4` | 0 | `BIT_STRENGTH_ACTIVE` (`wStatusFlags1`) | `strengthOutsideBattle` | **Using Strength** | **reset** (unless battle-over set) |
 | `~` | `0x29D4` | 1 | `BIT_SURF_ALLOWED` | `surfingAllowed` | **Surfing allowed here** | kept (recomputed near water) |
-| 💀 | `0x29D4` | 7 | `BIT_UNUSED_CARD_KEY` | `usedCardKey` | **Used Card Key** | kept — **`; never checked`** in source |
+| ❌ | `0x29D4` | 7 | `BIT_UNUSED_CARD_KEY` | `usedCardKey` | **Used Card Key** | kept — **`; never checked`** in source |
 | **!** | `0x29D9` | 6 | `BIT_TALKED_TO_TRAINER` (`wStatusFlags3`) | `isBattle` | **Battle ongoing** *(misnamed)* | **zeroed** (whole byte) |
 | **!** | `0x29D9` | 7 | `BIT_PRINT_END_BATTLE_TEXT` | `isTrainerBattle` | **Trainer battle** *(misnamed)* | **zeroed** (whole byte) |
 | | `0x29DA` | 4 | `BIT_NO_BATTLES` (`wStatusFlags4`) | `noBattles` | **Prevent battles** | kept |
@@ -156,7 +156,7 @@ inversion) — `AreaPlayer::save()` writes the correct bits to the correct addre
 **truth-in-labelling** problem: the fields lie about what they are and never say what the game
 keeps. The fix is a rename + doc pass in a phase of its own, before the panel is built on them —
 exactly the warp/sprite precedent. `setTo()`/`randomize()` only touch coords + directions, so
-unlike `AreaWarps::setTo()` there's **no loaded gun here** to defuse.
+unlike `AreaWarps::setTo()` there's **no hazard here** to guard against.
 
 ---
 
@@ -172,9 +172,9 @@ doctrine as the warp panel (`[ ⚠ Show N fields the game rewrites on load ]`).
   **Battle ended** (⚠).
 - **Warp-adjacent** — Standing on warp (`~`), **Standing on door** (⚠), **Walking through door**
   (⚠); these three are the trio [`warps.md`](warps.md) already points at from the door panel.
-- **The `!` group, collapsed** — everything marked `!` or `💀` above, each with the yellow `!`
-  (rewritten) or the `💀` line (dead: "the game writes this and never reads it"). Ten `!` fields,
-  three `💀`. A wiped byte and an unread byte are **different facts** and the panel says which.
+- **The `!` group, collapsed** — everything marked `!` or `❌` above, each with the yellow `!`
+  (rewritten) or the `❌` line (dead: "the game writes this and never reads it"). Ten `!` fields,
+  three `❌`. A wiped byte and an unread byte are **different facts** and the panel says which.
 
 Every value stays **full-range and editable, hack values included** — the project rule. The panel
 never refuses a value and never silently rewrites one; it only *tells the truth* about what the

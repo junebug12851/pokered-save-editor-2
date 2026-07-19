@@ -83,7 +83,7 @@ So, for a save editor, the two bytes have **different powers** and it matters wh
   remaining reader is `LoadFossilItemAndMonName` → `GetItemName`, which fills the *text*. Editing it
   changes what the scientist **says**, not what you get.
 
-> ⭐ **So "fossil item given → resulting Pokémon" is not a derived pair in the save.** It looks like a
+> **So "fossil item given → resulting Pokémon" is not a derived pair in the save.** It looks like a
 > cause and its effect, and after the moment of handover it is two independent bytes that merely
 > agree. **They are not kept in sync by the game and must not be silently synced by us** — a
 > mismatched pair (Dome Fossil → Mewtwo) is a legal, working, interesting save, and the derived-value
@@ -123,7 +123,7 @@ Scientist**1**'s label and Scientist**2**'s trade — filing SAILOR at **(5,2)**
 **Nine trades still resolved and every total still looked right.** It was caught only by diffing the
 importer's output against a hand-read of the source.
 
-> ⭐ **The lesson, and it is this file's most portable one:** *a lazy gap in a regex is not a fence.*
+> **The lesson, and it is this file's most portable one:** *a lazy gap in a regex is not a fence.*
 > `(?:.*\n)*?` will happily reach into the next block to satisfy the match, and the result is a parse
 > that succeeds with the wrong data — the worst failure mode this project has. The gap is now
 > `(?!^\w+:)`-guarded. **Two objects of the same sprite class in one room is exactly the shape that
@@ -149,12 +149,12 @@ strong argument and it is still only an argument; the bytes were asked directly.
 | **C** `DOME_FOSSIL` / **`MEWTWO`** — the mismatched pair | **both intact — `wFossilMon` still MEWTWO** |
 | **D** both zeroed | **stay zero** — the loader writes neither |
 
-⭐ **C settles the doctrine, and that is why it was worth running.** Had the console re-derived the
+**C settles the doctrine, and that is why it was worth running.** Had the console re-derived the
 mon from the item, C would have come back `KABUTO`. It came back `MEWTWO`. **The two bytes are
 independent; there is no derivation to preserve; the sync doctrine does not apply.** Show both, edit
 both, sync neither.
 
-### 🐺 …and the baseline caught a cry-wolf before it could ship
+### …and the baseline caught a cry-wolf before it could ship
 
 **BaseSAV — an ordinary save that has never touched the fossil quest — reads
 `wFossilItem = 0x2A (HELIX_FOSSIL)` and `wFossilMon = 0x62`.** That is a *mismatched* pair (Helix

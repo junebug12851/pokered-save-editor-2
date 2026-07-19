@@ -102,7 +102,7 @@ cartridge (§4).
 
 ## 3. What this means for OUR model
 
-- **No save-corruption bug, no loaded gun.** `AreaPokemon::load()/save()` read and write `0x29D8` bit 0
+- **No save-corruption bug, no hazard.** `AreaPokemon::load()/save()` read and write `0x29D8` bit 0
   correctly (`getBit/setBit(0x29D8, 1, 0)`), preserving the rest of the byte (the audio-fade bit
   included). `randomize()`/`reset()` clear it; `setTo()` doesn't touch it. All correct.
 - **It is a truth-in-labelling matter only.** The name `pauseMons3Steps` and the doc "Suppress

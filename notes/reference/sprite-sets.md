@@ -38,7 +38,7 @@ names a **dividing line** (`EAST_WEST` or `NORTH_SOUTH`, and a coordinate) and t
 either side of it. `GetSplitMapSpriteSetID` compares the player's `wXCoord`/`wYCoord` to the line and
 returns **one of the ten real ids**.
 
-🔴 **So `wSpriteSetID` can only ever hold 0–10.** A split id is resolved *before* anything is stored.
+**So `wSpriteSetID` can only ever hold 0–10.** A split id is resolved *before* anything is stored.
 Our own `AreaLoadedSprites::loadSpriteSet` got this wrong until 2026-07-13 — it stored `entry->ind`,
 so "place the player on Route 2" wrote **`$F1`** into a byte a console never writes anything but
 `1`–`10` into. Fixed via `SpriteSetDBEntry::getResolvedSet(x, y)`; pinned by `tst_sprite_set`.
@@ -57,7 +57,7 @@ wSpriteSetID:: db                       ; save 0x2654
 Twelve bytes, inside the saved region — which is why v1 had a screen for them, and why we have a
 panel.
 
-## 🔴 …and the game throws them away
+## …and the game throws them away
 
 `InitOutsideMapSprites` (`engine/overworld/map_sprites.asm`) uses `wSpriteSetID` as a **cache key**:
 
@@ -86,7 +86,7 @@ save are **recomputed from the map you are standing on before the game ever read
 they are hers, and they are editable — but nothing you put there changes a thing in-game. The panel
 says exactly that, at the top, rather than implying an edit that does nothing.
 
-## 🔴 INDOORS THERE IS NO SPRITE SET (2026-07-13)
+## INDOORS THERE IS NO SPRITE SET (2026-07-13)
 
 This is the biggest thing on the page and I missed it for a day. `InitOutsideMapSprites` returns
 immediately for an **indoor** map (`cp FIRST_INDOOR_MAP; ret nc` — `FIRST_INDOOR_MAP` = **`$25`**),
@@ -125,7 +125,7 @@ The save's eleven cached bytes are simply the last *outdoor* map's, carried in, 
 (`LoadMapData` zeroed it and nothing wrote it back). **The game ignores them completely indoors.**
 That is not save corruption; it is what a console holds too.
 
-## 🔴 …and outdoors, an out-of-set picture is UNDEFINED, not merely wrong
+## …and outdoors, an out-of-set picture is UNDEFINED, not merely wrong
 
 The other half nobody writes down. `.storeVRAMSlotsLoop` finds an NPC's VRAM slot by searching the
 sprite set for its picture id:

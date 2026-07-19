@@ -26,7 +26,7 @@ opposite of what it says (§4).
 | `obtainedLapras` | `0x29DA` b0 | `BIT_GOT_LAPRAS` | Silph Co 7F (212) | same map | ✅ **(1, 5)** |
 | `everHealedPokemon` | `0x29DA` b2 | `BIT_USED_POKECENTER` | the **Poké Center engine** | same routine | ⚠️ **every nurse** (§5) |
 | `obtainedStarterPokemon` | `0x29DA` b3 | `BIT_GOT_STARTER` | Oak's Lab (40) | Oak's Lab **+ Red's House 1F (37)** | ✅ **2 maps** (§3) |
-| `defeatedLorelei` 🐞 | `0x29E0` b1 | **`BIT_STARTED_ELITE_4`** | **Lorelei's Room, on MAP LOAD** | Indigo Plateau Lobby | ⚠️ **no x/y** (§4) |
+| `defeatedLorelei` | `0x29E0` b1 | **`BIT_STARTED_ELITE_4`** | **Lorelei's Room, on MAP LOAD** | Indigo Plateau Lobby | ⚠️ **no x/y** (§4) |
 
 **The bytes** (`wram = sav + 0xAD54`), each cross-checked against an already-verified neighbour:
 
@@ -87,11 +87,11 @@ own map — **the same bit, five places**.
 **`BIT_GOT_STARTER`** — **one bit, two maps**: set + read in `OaksLab.asm`, and read in
 `RedsHouse1F.asm` (line 12 — Mum's "you should go see Prof. Oak" gate). One bit, two pages.
 
-> ⭐ **Leadership called this in advance** — *"these may be called from multiple maps and liekly need
+> **Leadership called this in advance** — *"these may be called from multiple maps and liekly need
 > grouping too group alike"*. The instinct was right; the group kind is **shared**. Which is a good
 > sign for the two-kind model: the cases really do split that way in the data.
 
-## 4. 🐞 `defeatedLorelei` IS NOT "defeated Lorelei" — and the mistake has teeth
+## 4. `defeatedLorelei` IS NOT "defeated Lorelei" — and the mistake has teeth
 
 **`wElite4Flags` bit 1 is `BIT_STARTED_ELITE_4`.** It is not about beating anybody.
 
@@ -144,11 +144,11 @@ anywhere. It belongs to **Lorelei's Room (245)** and **Indigo Plateau Lobby (174
 with **no canvas box** — per the standing rule, *a spot whose location cannot be established gets no
 box, never a guessed one*.
 
-### 💀 And the bit actually named "beat the Elite 4" is dead
+### ❌ And the bit actually named "beat the Elite 4" is dead
 
 **`wElite4Flags` bit 0 = `BIT_UNUSED_BEAT_ELITE_4`.** `HallOfFame.asm` sets it — and pret's own
 comment on that very line says `; unused`. **Nothing reads it, ever.** It is not modelled today, and
-that is correct; if it is ever shown it must wear the grey **💀** and say so, because its name is the
+that is correct; if it is ever shown it must wear the grey **❌** and say so, because its name is the
 single most misleading string in this byte.
 
 **So `wElite4Flags` is two bits and both are traps:** bit 0 is named for a thing it doesn't do and is
@@ -186,13 +186,13 @@ first-visit marker rather than progress.
 "Ever *healed*" is therefore a slight overclaim: the real meaning is **"ever talked to a Poké Center
 nurse."** Our name is inherited from v1 and is subtly wrong; the fix is words, not bits.
 
-📝 **`BIT_UNKNOWN_4_1` (bit 1) is set on the same two lines** and pret has no name for it. Nothing in
+**`BIT_UNKNOWN_4_1` (bit 1) is set on the same two lines** and pret has no name for it. Nothing in
 the disassembly reads it. Noted, not modelled — a genuine unknown, and the honest thing is to say so
 rather than invent a meaning.
 
 **Location:** its writer is an engine routine, so its "where" is **every Poké Center's nurse** — a
 real `object_event` on each of them. That is many maps, one bit → the **shared** group again, and the
-biggest one. ⏳ **Not yet decided:** whether it earns a box on all ~10+ Poké Centers or belongs on
+biggest one. **Not yet decided:** whether it earns a box on all ~10+ Poké Centers or belongs on
 **General**. Leadership's call; both are defensible and the note refuses to guess.
 
 ## 6. Are they scratch? No — and here is why that needed asking
@@ -217,7 +217,7 @@ The prediction held: the rewrites are **per-bit, not whole-byte**.
 | **C** all eight cleared → Continue | **stay clear** — the loader sets none of them (the control) |
 | **D** the three bytes handed `0xFF` | `wStatusFlags1` → **`0xFF` unchanged** · `wStatusFlags4` → **`0x9F`** · `wElite4Flags` → **`0xFF` unchanged** |
 
-⭐ **D is the one that earned the probe**, and it reported two things nobody had to take on trust:
+**D is the one that earned the probe**, and it reported two things nobody had to take on trust:
 
 1. **Only bits 5 and 6 of `wStatusFlags4` were cleared** — `BIT_BATTLE_OVER_OR_BLACKOUT` and
    `BIT_LINK_CONNECTED`, i.e. **exactly the two bits `AreaPlayer` already documents as cleared on

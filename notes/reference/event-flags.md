@@ -9,7 +9,7 @@ one of the 2,560** a proper name, description, owning map, flag-group membership
 Plan of record: [`../plans/event-flags.md`](../plans/event-flags.md). This is a **living** note —
 it fills in as Phases 2–5 author the dossiers.
 
-## 🧭 WHAT AN EVENT FLAG *IS* — and why it has no place on the map (Fairy Fox's model, source-verified 2026-07-17)
+## WHAT AN EVENT FLAG *IS* — and why it has no place on the map (Fairy Fox's model, source-verified 2026-07-17)
 
 > *"i think event flags are by scripts for scripts, i think filter flags are different. Filter flags are
 > meant for maps, event flags are for the code and maps use them in general i think mainly around
@@ -401,7 +401,7 @@ set. Result: **all three reach a healthy Pallet Town overworld** and stay health
 the finding — **the crash is NOT on the load path**: mass-set flags load fine; the bad `jp hl` only fires
 **when the player is on the offending map / triggers the battle** (BaseSAV starts in Pallet, away from the
 break). This is consistent with the mechanism and with leadership's report (the crash is seen *in play*).
-⏳ **Owed:** an input-driven probe that walks the player onto Route 22 and triggers the rival to capture
+**Owed:** an input-driven probe that walks the player onto Route 22 and triggers the rival to capture
 the crash live (a bigger automation task).
 
 **Contradiction candidates (`scripts/analyze_flag_contradictions.py` → `contradictions.json`).** The
@@ -550,13 +550,13 @@ pret's event index, and the offsets agree exactly with the cartridge-verified an
 Lab` ind 0 → byte 10739 = `0x29F3` bit 0; `Beat Articuno` ind 2522 → byte 11054 = `0x2B2E` bit 2). Contrast
 the tileset `collPtr` disaster: **there is no wrong-byte bug here.**
 
-📝 The header comment (*"these bits have to be gotten all over the place"* / *"scattered all over the
+The header comment (*"these bits have to be gotten all over the place"* / *"scattered all over the
 save"*) is **misleading legacy wording** — they are one **contiguous 320-byte array**; the DB merely stores
 each bit's absolute address. (Leadership 2026-07-16: the v1 event data *"was always a mess to me… but I
 never disputed it was contiguous bytes"* — so this is confused wording, not a disputed model.) Fix the
 comment.
 
-### 🐞 The bug: 14 mislabelled + 14 phantom entries, all in the POKÉMON TOWER block
+### The bug: 14 mislabelled + 14 phantom entries, all in the POKÉMON TOWER block
 
 Comparing all 508 v1 names against pret's names **at the same index**: **480 match, 14 are MISLABELLED,
 and 14 more sit on indices pret does not name at all.** They cluster in one place — Pokémon Tower

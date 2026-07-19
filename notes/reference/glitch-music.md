@@ -9,7 +9,7 @@ The answer turns out to be one of the nicest findings in this project:
 > Most "glitch" ids are a real song's **inner voices** — one channel of it, playing alone.
 > There are **105 of them**, they are perfectly deterministic, and they are *music*.
 >
-> The **bank**, on the other hand, is a loaded gun: an invalid bank **hangs the console**.
+> The **bank**, on the other hand, is a hazard: an invalid bank **hangs the console**.
 
 Everything below is **verified against the real cartridge** — statically with
 `scripts/emu/analyze_music_ids.py` (which parses all 256 ids × 3 banks out of the ROM and
@@ -67,7 +67,7 @@ before the table is ever read. Our `music.json` already calls it `None`.)
 
 Full machine-generated table: run the analyser (it writes `tmp/music_ids.json`).
 
-> 🐞 **Two disassembler bugs were in the first pass of these numbers** (found 2026-07-12 by the
+> **Two disassembler bugs were in the first pass of these numbers** (found 2026-07-12 by the
 > cartridge cross-check in `scripts/import_music.py`, and now fixed in both tools). They inflated the
 > **note counts** — the structure above (which ids are inner voices, and of what) was never affected:
 >

@@ -159,7 +159,7 @@ The v1 limits fell the same day. All of it **console-verified** (the probe batte
 - **Elevators** — planner edges car → every floor with a warp into it; ridden by re-aiming the
   car's own door warps in live WRAM (the floor menu's own technique) and stepping out. Verified:
   Celadon Mart 1F → car → 5F.
-- **Surf** — ⭐ research finding: **poking `wWalkBikeSurfState` (`0xD700`) = 2 right before
+- **Surf** — research finding: **poking `wWalkBikeSurfState` (`0xD700`) = 2 right before
   stepping onto water WORKS** — the console walks onto the water surfing, keeps state 2, and the
   autopilot dismounts ashore. `surf='auto'` plans dry first and opens water only when no dry
   route exists (reported). Verified: Pallet → Route 21, a water-only connection crossing.
@@ -216,7 +216,7 @@ import); Flash is cosmetic (WRAM navigation doesn't need light).
   research pass:** pret's list-menu engine (`DisplayListMenuID`/`HandleMenuInput`) for the
   true "menu awaiting input" signal. Traps already banked: `wCurrentMenuItem` goes STALE
   between menus (verify liveness by probe-tap, never trust a matching value); a
-  `wMaxMenuItem` sentinel poke is a LOADED GUN (read while active — unclamps the cursor into
+  `wMaxMenuItem` sentinel poke is a hazard (read while active — unclamps the cursor into
   garbage dispatch); the mon list RE-SHOWS after a PC commit (dismiss with B only — an A
   withdrew a whole box once); the qty prompt wraps 1 → ×99 on a DOWN.
 - Menu WRAM banked: `wCurrentMenuItem 0xCC26`, `wMaxMenuItem 0xCC28`, `wListScrollOffset

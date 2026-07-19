@@ -1,6 +1,6 @@
 # UI Patterns
 
-## 🔴 The two that keep coming back (read these first) — 2026-07-13
+## The two that keep coming back (read these first) — 2026-07-13
 
 Twilight has reported both of these on **three separate passes**. Each time I fixed the one instance
 she pointed at and left the rest. So they are now rules, at the top of the page.
@@ -1391,21 +1391,21 @@ MapRailButton`.
 
 Twilight's live pass on the map screen produced five rules that are **not map-specific**:
 
-- 🔴 **RED MEANS BROKEN. Nothing else.** ("You have red text everywhere, even to indicate
+- **RED MEANS BROKEN. Nothing else.** ("You have red text everywhere, even to indicate
   information, which is bad.") A save that legitimately holds an unusual value — blocks from one
   tileset and tiles from another, an id that is an unfinished copy, a stored size from another map —
   is **information**, and information is `textColorMid`. A *notice* that offers an action gets muted
   amber (`#8a6d00`). `errorColor` is reserved for *this is broken / this will not work*.
-- 🔴 **A tooltip must not need a preference.** The shared `MainToolTip` is gated on the header's "?"
+- **A tooltip must not need a preference.** The shared `MainToolTip` is gated on the header's "?"
   toggle (`brg.settings.infoBtnPressed`), so tooltips written with it are invisible to anyone who
   never found that button. For a control whose tooltip IS the explanation, use a plain hover tooltip
   (`map/MapToolTip.qml`): **dark, rounded, 11px, `x` centred on the parent and `y = parent.height + 6`**
   so it explains *that* control and not the general area.
-- 🔴 **In a tree, a child's control must sit RIGHT of its parent's.** A group row that starts with a
+- **In a tree, a child's control must sit RIGHT of its parent's.** A group row that starts with a
   fold chevron and *then* its eye needs its children indented by **chevron + spacing** (26px), not by
   a guessed 14 — otherwise the child's eye lands LEFT of the parent's and the hierarchy reads upside
   down. Caught by Twilight, not by us: *"a manual screenshot would have detected this."*
-- 🔴 **Outline colours must be distinguishable, and not all warm.** Three theme colours (error red,
+- **Outline colours must be distinguishable, and not all warm.** Three theme colours (error red,
   primary pink, accent blue) over a grey map read as one alarm. The map's boxes now use **Okabe-Ito**
   — the colour-blind-safe set: `#0072b2` blue (map bounds), `#009e73` green (draw area), `#e69f00`
   orange (the screen), `#cc79a7` purple (the selection). Muted enough for four shades of grey, and
@@ -1424,7 +1424,7 @@ Twilight's live pass on the map screen produced five rules that are **not map-sp
 - **A tree, flattened into a list model** (`layerIsGroup` + a stable `layerKey` role). A QML
   `TreeView` is not worth its weight for a fixed three-group tree, and a flat model is far easier to
   test.
-- 🔴 **State is computed from ALL the layers, never from the rows that happen to be VISIBLE.** Fold a
+- **State is computed from ALL the layers, never from the rows that happen to be VISIBLE.** Fold a
   group and its children leave the list — so a group whose eye is computed from the *shown* rows will
   cheerfully report "none on" for a group that is fully on. Keep `allRows` (everything) separate from
   `rows` (what is shown). This bug was written and caught by

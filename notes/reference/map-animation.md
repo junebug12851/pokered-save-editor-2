@@ -135,7 +135,7 @@ that every water step is a **pure rotation** of the tile (never a second tile), 
 the console's, that the flower runs `1,1,2,3`, and that a **hack** animation byte behaves the way the
 cartridge behaves.
 
-⏳ **Owed: VRAM parity.** `tst_emu_parity` does not yet dump VRAM tiles `$14`/`$03` from the running
+**Owed: VRAM parity.** `tst_emu_parity` does not yet dump VRAM tiles `$14`/`$03` from the running
 cartridge frame by frame. The tables above are read from the disassembly and pinned — but the
 project's standard is that **the console judges**, and until that dump exists this one organ is
 verified against the source rather than against the silicon.

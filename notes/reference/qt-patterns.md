@@ -1,6 +1,6 @@
 # Qt / QML Patterns
 
-## 🐺 "HOVER CAN'T BE TESTED" — wrong, and wrong the SAME WAY as the aqtinstall "ceiling" — 2026-07-17
+## "HOVER CAN'T BE TESTED" — wrong, and wrong the SAME WAY as the aqtinstall "ceiling" — 2026-07-17
 
 I told Twilight that hover could not be driven synthetically — *"only your cursor can confirm the
 strip appearing, the tabs lighting their own boxes"* — and handed her the verification. She didn't
@@ -34,7 +34,7 @@ by hand.
 > **smell, not a finding**. Go and look before you tell someone a thing is impossible — especially
 > before you make it their job.
 
-## 🖱️ A MouseArea CANNOT beat a TapHandler underneath it — 2026-07-17 (the third time)
+## A MouseArea CANNOT beat a TapHandler underneath it — 2026-07-17 (the third time)
 
 **Handlers all fire before any item sees a press.** Qt delivers a press to **every pointer handler
 on every item under the point, front to back, BEFORE any item gets a mouse event.** A `TapHandler`
@@ -60,7 +60,7 @@ no grab policy can defeat.
 > area covers the whole map; it is `acceptedButtons: Qt.NoButton`, `z: -1`, **hover only**. A grid
 > that accepted clicks would have broken dragging everywhere on the canvas.
 
-## 💥 "X is not a type" takes the WHOLE component down, silently — 2026-07-17
+## "X is not a type" takes the WHOLE component down, silently — 2026-07-17
 
 **One unresolved type does not fail politely. It fails totally.**
 
@@ -89,7 +89,7 @@ instantiation would be a test that lies.
 **Before reaching for a control in a QML file, check what that file's neighbours actually use.**
 `MapStoragePanel` speaks `MapSwitch`; `FlatToggle` lives elsewhere in the tree and is not in scope.
 
-## 🖱️ `parent` inside a Repeater delegate is NOT the enclosing item — 2026-07-17
+## `parent` inside a Repeater delegate is NOT the enclosing item — 2026-07-17
 
 ```qml
 Repeater { delegate: Item {
@@ -109,7 +109,7 @@ Inside a delegate, `parent` walks out to the **delegate's root**, not to the `Ca
 line worked verbatim in `MapFlagBox.qml`, which was **not** inside a Repeater. **Use an explicit
 `id`.** Caught by `tst_qml_screens` — the only test in the suite that instantiates QML at all.
 
-## 🪟 WINDOWS + Qt ≥ 6.11: aqtinstall needs a git pin (and there IS one) — 2026-07-17
+## WINDOWS + Qt ≥ 6.11: aqtinstall needs a git pin (and there IS one) — 2026-07-17
 
 **Read this before proposing any Qt version bump.** ⚠️ **An earlier draft of this section called it a
 hard ceiling — "Windows CI can have at most 6.10.x". That was WRONG**, and it is kept as a heading
@@ -195,7 +195,7 @@ the API floor is now the kit's own, and local green means what it looks like it 
 The `QT_VERSION_CHECK(6, 9, 0)` guard in `mapengine.cpp` **stays** — it costs four lines, it is proven
 on both paths, and it keeps 6.8 buildable from source for anyone who wants that. Don't tidy it away.
 
-⏳ **One thing still owed:** the branch CI run proving aqt serves `6.11.0` for `win64_llvm_mingw`.
+**One thing still owed:** the branch CI run proving aqt serves `6.11.0` for `win64_llvm_mingw`.
 Linux `6.11.0` is proven (the container installs exactly that via aqt and passes 91/91) and
 `tools_llvm_mingw1706` is confirmed present; the Windows arch query flaked on a `download.qt.io`
 mirror checksum, which is **inconclusive, not a "no"** — and the local `C:\Qt\6.11.0\llvm-mingw_64`
@@ -203,7 +203,7 @@ proves Qt ships the arch. If aqt turns out not to serve it, that — and only th
 
 ---
 
-## 🔴 THE LOCAL KIT IS Qt 6.11. **EVERYTHING THAT BUILDS FOR REAL IS Qt 6.8.3.** — 2026-07-16 *(historical — resolved above)*
+## THE LOCAL KIT IS Qt 6.11. **EVERYTHING THAT BUILDS FOR REAL IS Qt 6.8.3.** — 2026-07-16 *(historical — resolved above)*
 
 **Read this before using any Qt API you are not sure of the age of.** It is the only landmine in this
 file that a local build *cannot* catch, by construction.
@@ -260,7 +260,7 @@ idea of holding my program back because online is doing it."* The installer/AppI
 the app bundles its own Qt on both platforms, so no user is forced onto a version by this. See the
 RESOLVED block at the top of this file.
 
-## 🔴 A `TapHandler` does NOT stop the event. It fires *through* your floating panel. — 2026-07-13
+## A `TapHandler` does NOT stop the event. It fires *through* your floating panel. — 2026-07-13
 
 **The bug:** open the picture picker in the Details panel and the map underneath *also* got the
 click, and its ground tap cleared the sprite selection — so opening the picker dropped you straight
@@ -297,7 +297,7 @@ over* the canvas, so a point on a panel is geometrically also on the map — and
 tests the icon strip. (This silently broke drag-to-delete too: the "drop zone" was the rail.) Ask the
 dock: `panelContainsGlobal()`.
 
-## 🔴 Never size a `Popup` from its own `contentItem` — 2026-07-13
+## Never size a `Popup` from its own `contentItem` — 2026-07-13
 
 ```qml
 popup.height: Math.min(300, popup.contentItem.implicitHeight + 2)   // ❌ BINDING LOOP

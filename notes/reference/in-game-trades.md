@@ -25,7 +25,7 @@ Everything below is read from `pret/pokered`, and the save behaviour is
 | **Has a location?** | **9 of 10** — the trading NPC's own tile. The 10th is unused (§7) |
 | **What the flag DOES** | Gates the *whole* trade: set = the NPC only ever says their after-trade line again |
 
-⭐ **The bit does one job and does it completely.** `DoInGameTradeDialogue` `FLAG_TEST`s it first; if
+**The bit does one job and does it completely.** `DoInGameTradeDialogue` `FLAG_TEST`s it first; if
 set, it prints `TRADETEXT_AFTER_TRADE` and returns. **Nothing else gates a trade** — not an event
 flag, not a script step. So clearing the bit **genuinely re-arms the trade**: the NPC will offer, and
 take, the swap again. That is a real, clean save-editing effect and the reason this feature is worth
@@ -108,7 +108,7 @@ you traded to me went and evolved!"* — about a Pokémon that **cannot evolve**
 localisation scar, it is in the shipped English cartridge, and the UI should say so rather than
 tidying it away.
 
-## 2c. 💀 The trade-evolution check is DEAD in English Red/Blue
+## 2c. The trade-evolution check is DEAD in English Red/Blue
 
 `InGameTrade_CheckForTradeEvo` fires only if the **received** mon's name starts `G` (GRAVELER) or
 `SP` (HAUNTER's early English name "SPECTRE"):
@@ -161,7 +161,7 @@ So the link is **(map id, text id) → trade index**, mechanically, from the sou
 And `maps.json` already carries both halves: each `sprites[]` entry has its `text` (1-based), and
 `textEntries[]` has the matching `id`.
 
-⭐ **The join has a beautiful tell.** A trade NPC's `textEntries` row has **`string: null`** — because
+**The join has a beautiful tell.** A trade NPC's `textEntries` row has **`string: null`** — because
 its text is `text_asm`, *code*, not words. Every one of the nine trade NPCs is a null string in our
 own data today. **The trades are the missing words**, and filling them in is what this feature is.
 
@@ -208,7 +208,7 @@ breaks this project's first rule. It doesn't.
 **What is missing is everything above the bits:** there is no trade DB, no names, no species, no
 coordinates, no UI. `WorldTrades` is ten anonymous booleans.
 
-📝 **Why a grep for `InGameTrade` / `TRADE_FOR_` / `tradeFlags` found nothing:** the model carries
+**Why a grep for `InGameTrade` / `TRADE_FOR_` / `tradeFlags` found nothing:** the model carries
 none of those tokens. The file is `worldtrades.cpp` and the field is `completedTrades`. **Search the
 concept, not the upstream spelling** — a near-miss here would have meant re-modelling a field that
 was already right.
@@ -229,7 +229,7 @@ the console will read it if anything ever asks. It is exactly the "placeless sav
 > **Ruling (leadership, 2026-07-17):** *"there was supposed to be a general page left in for exactly
 > this reason please re-create it"*.
 
-📝 **Recorded honestly:** no General page has ever existed — `git log -S` across `MapStoragePanel.qml`
+**Recorded honestly:** no General page has ever existed — `git log -S` across `MapStoragePanel.qml`
 and `storagePages` finds none, and the plan never specified one. It was **intent that never landed**,
 not a regression. It is created now, as the first page of the Map Storage combo, and it is the home
 for every future piece of save data that belongs to no map.

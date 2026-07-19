@@ -103,7 +103,7 @@ LUT that does both: `lut[colourIndex] = outputPalette[ (rBGP >> 2·i) & 3 ]`.
 
 - **Grey** — the neutral default (`255/170/85/0`). The identity fast-path still applies here.
 - **Game Boy** — the iconic DMG green (`#9BBC0F … #0F380F`).
-- **Super Game Boy** — 🔴 **the game's OWN colourisation, per map.** `SetPal_Overworld`
+- **Super Game Boy** — **the game's OWN colourisation, per map.** `SetPal_Overworld`
   (`engine/gfx/palettes.asm`) transliterated: a cave's tileset → `PAL_CAVE`, the Pokémon Tower's →
   `PAL_GRAYMON`, a town → its own (`PAL_PALLET + mapId`), a route → `PAL_ROUTE`. So Pallet is pale
   green, Vermilion orange, Cinnabar red — straight from `data/sgb/sgb_palettes.asm`. (An **indoor**

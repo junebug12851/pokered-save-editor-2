@@ -124,7 +124,7 @@ indexed by software channel.
 | `$C0F1` | `wFrequencyModifier` | 1 |
 | `$C0F2` | `wTempoModifier` | 1 |
 
-> 🎯 **This table is the verification oracle.** Our C++ port keeps exactly this state; PyBoy can dump
+> **This table is the verification oracle.** Our C++ port keeps exactly this state; PyBoy can dump
 > `$C000–$C0FF` from the real ROM every frame; a byte-for-byte, frame-by-frame match means our engine is
 > *thinking the same thoughts* as the console. See [`emulator-verification.md`](emulator-verification.md)
 > and [`gameboy-apu.md`](gameboy-apu.md) §7. **(Addresses derived arithmetically from `wram.asm`;
@@ -270,7 +270,7 @@ why the escort/rival music follows you across map boundaries — and explicitly 
 
 **We already read and write all four correctly** (`savefile/…/expanded/area/areaaudio.cpp`).
 
-> 🐞 **Bug found (2026-07-12), not yet fixed:** `AreaAudio::setTo(MapDBEntry*)` says
+> **Bug found (2026-07-12), not yet fixed:** `AreaAudio::setTo(MapDBEntry*)` says
 > `musicBank = musicID = musicEntry->bank;` — it **clobbers `musicID` with the bank**, so setting a map's
 > default music writes the wrong track id. (`load()`/`save()`/`randomize()` are fine.) Fix in the Phase 1
 > work of [`../plans/music.md`](../plans/music.md), with a test.
@@ -280,7 +280,7 @@ why the escort/rival music follows you across map boundaries — and explicitly 
 Short version: **most "glitch" music ids aren't garbage — they're a song's inner voices** (a header is 3
 bytes per channel, so a 3-channel song eats 3 ids, and the spare ids are its channel 2 / channel 3 read as
 one-channel headers). **105 of them**, all deterministic, all playable from the data we already import.
-The **bank** byte, by contrast, is a loaded gun: an invalid bank makes the game *execute arbitrary
+The **bank** byte, by contrast, is a hazard: an invalid bank makes the game *execute arbitrary
 cartridge bytes as code* — **verified: the console hangs.** All of it, with the cartridge's own testimony:
 [`glitch-music.md`](glitch-music.md).
 

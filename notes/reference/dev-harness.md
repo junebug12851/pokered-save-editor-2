@@ -1,6 +1,6 @@
 # Debug Automation Harness & Fast-Dev Loop
 
-## 🖱️ `hover` — the pointer, no button (added 2026-07-17)
+## `hover` — the pointer, no button (added 2026-07-17)
 
 ```json
 {"cmd":"hover","x":400,"y":300}      // or {"cmd":"hover","obj":"someItem"}
@@ -13,7 +13,7 @@ lighting its own box, a tooltip) is driven by this and nothing else, so without 
 be checked without a human sitting there. Verified live: one `hover` updates the status bar's
 `tile 11, 15 · block 5, 7` and pops a warp's tooltip.
 
-🐺 **It exists because I claimed hover was untestable and Twilight refused to accept it** — *"i find
+**It exists because I claimed hover was untestable and Twilight refused to accept it** — *"i find
 it hard to beleive theres no solution for testing hover you cannot tell me the community has no
 solution for this"*. She was right; it took two lines. Same failure as the aqtinstall "hard ceiling"
 the same day: I hit the edge of what I had **already built** (`tap` sends press+release), and
@@ -78,7 +78,7 @@ object per line, get one reply per line. Verbs:
 - `{"cmd":"tap","x":152,"y":294}` / `{"cmd":"tap","obj":"<objectName>"}` — a **REAL mouse
   press+release**, through Qt's actual delivery path.
 
-  🔴 **`click` and `tap` are not the same thing, and the difference is a whole class of bug.**
+  ⚠️ **`click` and `tap` are not the same thing, and the difference is a whole class of bug.**
   `click` emits the signal directly and therefore exercises **none** of the delivery machinery — no
   grabs, no pointer handlers, no propagation. If a bug is about *which item gets the event* (who
   grabs it, who consumes it, what it falls through to), `click` **cannot see it** and `tap` can.
@@ -89,7 +89,7 @@ object per line, get one reply per line. Verbs:
   "what happens when the user actually clicks *there*".**
 - `{"cmd":"reload"}` — force a QML reload. `{"cmd":"list","arg":"<substr>"}` — matching `objectName`s.
 
-> 🟢 **Everything named is reachable — including `Repeater`/model-built controls (fixed 2026-07-15).**
+> ✅ **Everything named is reachable — including `Repeater`/model-built controls (fixed 2026-07-15).**
 > `list`/`get`/`set`/`click`/`tap`-by-object resolve names over the **full** tree: the QObject
 > parent-child tree **and** the Qt Quick visual tree (`QQuickItem::childItems()`). This matters because
 > a `Repeater` or model delegate — every **dock rail button** (`dockBtn_<id>`), every list row, anything
@@ -125,7 +125,7 @@ via the framebuffer/widget ratio, so it's correct under a device-pixel-ratio.)
 Drive it from PowerShell with a `TcpClient` (write a line, read a line). Great for scripted checks:
 navigate, `set` a field, `shot`, then eyeball.
 
-### 🤝 The dev MCP server drives all of this now (2026-07-16)
+### The dev MCP server drives all of this now (2026-07-16)
 
 For AI sessions, the standard way to drive the harness (and builds, tests, PyBoy) is the
 **dev MCP server** — [`dev-mcp.md`](dev-mcp.md). It encodes every trap below (fresh connection

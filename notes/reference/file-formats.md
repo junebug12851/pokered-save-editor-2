@@ -33,7 +33,7 @@ Three reasons, and the third is the one that matters:
 |---|---|---|
 | **Map blocks** | `.blk` — raw block bytes, exactly as `pret/pokered` stores them | ✅ **done.** Byte-identical. Imported by `scripts/import_map_blocks.ps1`, which re-reads the cartridge and demands a match. |
 | **Sprites** | one loose `.png` per sprite | ✅ **done** (2026-07-13). Not an atlas: you can open one and look at it. |
-| **Music** | ⚠️ **the game's own `.asm` sheet music, parsed LINE BY LINE** | ⏳ **owed.** We currently import a compiled byte blob. That was the wrong call: the source is `Music_PalletTown_Ch1: ... note C_, 8`, and a line parser reads it directly. Their macro names become our command names. |
+| **Music** | ⚠️ **the game's own `.asm` sheet music, parsed LINE BY LINE** | **owed.** We currently import a compiled byte blob. That was the wrong call: the source is `Music_PalletTown_Ch1: ... note C_, 8`, and a line parser reads it directly. Their macro names become our command names. |
 | Tile traits / collision | derived from the ROM's own lists | ✅ done (`scripts/import_tile_traits.py`, verified against the cartridge). |
 | **Anything new** | **whatever `pret/pokered` uses** | The default. |
 

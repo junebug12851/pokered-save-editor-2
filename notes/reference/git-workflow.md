@@ -119,7 +119,7 @@ git branch -d hotfix/X.Y.Z
 git push origin dev
 ```
 
-### Windows gotcha: checking out pre-`dab0a1d` history collides with `VERSION`
+### Windows pitfall: checking out pre-`dab0a1d` history collides with `VERSION`
 
 Before commit `dab0a1d` (2026-06-13) the version file was `VERSION.txt` and the changelog folder
 was `version/`. That commit renamed them to `VERSION` and `version-notes/` (the changelog was

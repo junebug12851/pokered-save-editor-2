@@ -182,7 +182,7 @@ in the save:
 | `text_id` | `wMapSpriteData` byte 1 | **OR'd** in ROM with `TRAINER ($40)` / `ITEM ($80)` — but the loader does `and $3f`, so **the save holds a 6-bit id and no flags** |
 | `item_id` *or* `class`,`set` | `wMapSpriteExtraData` | item → byte 0, byte 1 zeroed; trainer → class, set |
 
-**🔑 `movement1` and `movement2` are two different bytes in two different tables**, and `movement2` is
+**`movement1` and `movement2` are two different bytes in two different tables**, and `movement2` is
 neither a facing nor a range — it is one byte that means *"how is this sprite allowed to move, or which way
 does it stare"*. `maps.json` splits it into **`range`** (for `WALK` sprites: `0`/`1`/`2`) and **`face`** (for
 `STAY` sprites: `"None"`/`"Down"`/`"Up"`/`"Left"`/`"Right"`). That split is a fine *curation* — but they are

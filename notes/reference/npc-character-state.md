@@ -108,7 +108,7 @@ numbers were all correct**; the **names and the two `wd730` source-comments were
 | 7 | every field implied durable | **Four are rewritten on load** (console-verified). The panel must mark each. | — |
 
 This is **not** a save-corruption bug — `AreaNPC::save()` wrote the right bits to the right addresses,
-and (unlike `AreaWarps::setTo()`) there is **no loaded gun**: `randomize()`/`setTo()` are no-ops here.
+and (unlike `AreaWarps::setTo()`) there is **no hazard**: `randomize()`/`setTo()` are no-ops here.
 It was a **truth-in-labelling + persistence-honesty** fix; the rename + persistence-doc landed in
 Phase 9b, offsets/bits unchanged, save output **byte-identical**.
 

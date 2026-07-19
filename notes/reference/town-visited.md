@@ -93,7 +93,7 @@ LoadMapHeader::
 	ret nz                                            ; <- line 2017. THE LINCHPIN BAILS HERE.
 ```
 
-⭐ **The linchpin does not protect this flag, because the flag is written before it.** Every other
+**The linchpin does not protect this flag, because the flag is written before it.** Every other
 per-map thing we have researched — warps, signs, wild tables — survives a Continue *because*
 `LoadMainData` sets `BIT_NO_PREVIOUS_MAP` and `LoadMapHeader` returns before touching them
 ([`warps.md`](warps.md)). `MarkTownVisited` sits **above** that return. It always runs.
@@ -125,7 +125,7 @@ three questions:
 
 Findings land here.
 
-## 4. 🐞 `fly.json` IS WRONG — 6 of the 11 towns, and v1 shipped it
+## 4. `fly.json` IS WRONG — 6 of the 11 towns, and v1 shipped it
 
 **Found while looking for a name to put on a checkbox.** `projects/db/assets/data/fly.json` is the
 list the town bits have always been drawn through, and its order matches **neither** the map ids
@@ -165,7 +165,7 @@ Six of eleven checkboxes did the wrong thing, quietly, correctly-looking.
 right and therefore unaffected. It is only `FlyDBEntry::ind` — the field a bit-index consumer would
 reach for — that is wrong. **We were about to build exactly that consumer.**
 
-> ⭐ **The lesson, and it is the v1-carryover lesson wearing new clothes:** *v1 is a data-rich
+> **The lesson, and it is the v1-carryover lesson wearing new clothes:** *v1 is a data-rich
 > reference, not an oracle.* Its data files came over wholesale, and this one has been wrong since
 > 2018 without a single test noticing — because **nothing in the suite ever asserted `fly.json`'s
 > `ind` against the game.** A list of the right eleven names in the wrong order is the hardest kind
@@ -190,7 +190,7 @@ instead*), **`fly.json` is untouched.** Two honest routes, and they are not equi
 question the console asks (`wCurMap`). Route 1 is still owed as a **data decision**, because a wrong
 `ind` sitting in a shipped DB is a landmine for the next consumer.
 
-📝 Also spotted, and **not** fixed (it is not this feature, and it is hers to rule on):
+Also spotted, and **not** fixed (it is not this feature, and it is hers to rule on):
 **`WorldTowns::randomize()`'s comments contradict its code.** It says *"except for Indigo and
 Saffron"*, then `for(i = 1; i < 10; i++)` — which **includes Indigo (9)** — and skips `i == 7`
 labelled *"Not saffron"*, but **7 is Fuchsia**; Saffron is 10, excluded only by the loop bound. So
@@ -218,7 +218,7 @@ A **second kind of group**, orthogonal to the one already shipped:
 - **Check all / uncheck all** — which is the actual job: "unlock Fly everywhere" is one gesture, not
   eleven.
 
-📝 **v1 had this half-built and it corroborates her memory** — `world-towns.component.ts` carries a
+**v1 had this half-built and it corroborates her memory** — `world-towns.component.ts` carries a
 `toggleAllTowns()` (mirroring town 0's state onto all of them). The idea is not new; the *group* is.
 
 **Placement:** the per-town **Visited** checkbox goes **near the top** of that town's Map Storage

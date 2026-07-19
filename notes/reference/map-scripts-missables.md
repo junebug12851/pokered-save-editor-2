@@ -20,7 +20,7 @@ the owning map, with unused/glitch/known-issue flags and the missable↔event-fl
   `missables_writeExactlyTheirBit` (bit 0 → `0x2852` b0, bit 227 → `0x286E` b3).
 - ⚠️ **Polarity:** a missable bit **SET = HIDDEN** (pret: *"bit set = toggled off"*). The panel's
   switch shows the intuitive direction — checked = on the map.
-- 📝 **Corrects an old note:** the sprites research (2026-07-13) placed `wToggleableObjectFlags` at
+- **Corrects an old note:** the sprites research (2026-07-13) placed `wToggleableObjectFlags` at
   `0x28A0` — that byte is actually **Viridian City's script-progress byte**. The flags are at
   `0x2852` (v1 concurs; pinned by the bit-exact test).
 
@@ -40,7 +40,7 @@ the owning map, with unused/glitch/known-issue flags and the missable↔event-fl
   places. Relationship: on map entry the game copies the map's `w<Map>CurScript` into the dispatch
   path; editing the per-map byte sets where the story *will* resume, the `0x2CE5` byte is where it
   *is* right now.
-- ⚠️ **The out-of-range gun:** script steps dispatch through a per-map pointer table ending in
+- ⚠️ **The out-of-range hazard:** script steps dispatch through a per-map pointer table ending in
   `jp hl`, with **no bounds check** — a value past the map's own table reads garbage as a pointer
   and jumps to it (the same mechanism as the event-flag crash research). The panel's custom path
   accepts the full byte range (never refused) and **warns in words** beyond the named steps.

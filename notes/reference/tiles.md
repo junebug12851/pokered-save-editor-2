@@ -58,7 +58,7 @@ ENDM
 `LoadTilesetHeader` copies the first **11** bytes to `wTilesetBank`… and the **12th** byte goes to
 `hTileAnimations` — a different place entirely. That is why the save keeps it somewhere else too.
 
-### 2.1 🔑 There is no "Indoor / Cave / Outdoor" byte. There is an ANIMATION byte.
+### 2.1 There is no "Indoor / Cave / Outdoor" byte. There is an ANIMATION byte.
 
 `AreaTileset::type` reads save offset **`0x3522`**. That is **not** in `sMainData` — it is
 **`sTileAnimations`**, the single byte sitting immediately before the checksum at `0x3523`
@@ -88,7 +88,7 @@ Overworld/Dojo/Gym = Outdoor. Forest/Ship/ShipPort/Cavern/Facility/Plateau = Cav
 Indoor. **The data was right all along; only the name was friendly.** No JSON change needed, and the
 UI can now say both — the name Twilight gave it *and* what it does.
 
-> 🐞 **This is also a live rendering bug.** `Settings::previewOutdoor` is a **bool**, so it collapses
+> **This is also a live rendering bug.** `Settings::previewOutdoor` is a **bool**, so it collapses
 > Cave into Indoor: a cave tileset renders with **no animated water**, when the console animates it.
 > The tri-state is a fidelity fix, not a relabel.
 

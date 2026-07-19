@@ -17,7 +17,7 @@ list says *which tile* is a sign and *which line of the map's text* it prints. I
 max** (`MAX_BG_EVENTS`), and it sits in the save right beside the warp list, in the **same ROM
 block, loaded by the same routine, under the same linchpin** — so an edited sign is live on
 Continue exactly as an edited warp is. Unlike warps and sprites, **our model of it is already
-correct** (no wrong names, no dead bytes, no loaded guns). What was missing is the *text*: the
+correct** (no wrong names, no dead bytes, no hazards). What was missing is the *text*: the
 save holds a **text id**, and until now our data held only the id — not the words. Those words live
 in `pret/pokered`, one text table per map, and this is the note that says how to get them.
 
@@ -84,7 +84,7 @@ that saves the warps ([`warps.md`](warps.md) §1):
 and `LoadMainData` sets `BIT_NO_PREVIOUS_MAP` on the saved tileset byte as it reads the save. **One
 guard protects warps, signs and sprites together** — they are loaded by one routine.
 
-> ### 🔴 The rule, stated the way the panel must state it
+> ### The rule, stated the way the panel must state it
 >
 > **An edited sign is really there.** Load the save and the placard is where you put it, saying what
 > you aimed it at.
@@ -161,7 +161,7 @@ its real words where a plain string exists, and a `(scripted text)` marker where
 one **> N**, points at nothing the map defines — `DisplayTextID` runs off the end of the table into
 whatever follows. Per the project rule: **shown, editable, never refused, never rewritten** — the
 picker states plainly "this map has 7 text entries; id 9 points past them," the same way the warp
-guns say what they say.
+hazards say what they say.
 
 ---
 
