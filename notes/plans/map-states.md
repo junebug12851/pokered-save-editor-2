@@ -127,7 +127,7 @@ Semantics that keep it honest:
   row when nothing matches) + **◀ ▶ roll buttons** + the stage's story description. MapPicker:
   **"Construct the map on change"** switch, ON by default (seamless — leadership's call); OFF =
   the old one-byte power path with the stale-header notice. Screenshot-reviewed (panel, picker
-  popup, storage heading). ⏳ Twilight's live pass owed.
+  popup, storage heading). Twilight's live pass owed.
 - ✅ **Phase MS-4b — best-effort matching; "Custom" retired (2026-07-19, `0.43.5-alpha`).**
   Leadership: *"remove … the not recognized custom thing, just have the app do its best to
   determine the map progression via dead giveaway flags and/or current map script. If a state
@@ -139,6 +139,27 @@ Semantics that keep it honest:
   ("Step 6 — Noop", italic, byte-only apply). Both pickers' Custom rows removed; the raw
   step controls stay as the power path. **Supersedes MS-2/MS-4's "honest custom" answer.**
   Pinned by `tst_map_states::bestEffort_neverCustom_andRawStepsResolve`.
+- ✅ **Phase MS-8 — the map-change PREVIEW (2026-07-19).** Leadership retired MS-4's "Construct on
+  change" switch: picking a map no longer commits — it PREVIEWS. **The preview** (design of record):
+  - **`MapModel::beginMapPreview(id)`** snapshots the whole 32 KB save (the app's own
+    `flattenData()` → copy `saveFile->data`), then runs `changeMapConstructed(id)` so the canvas
+    shows *exactly* what committing "Normal" gives — full construction, nothing faked. Nothing is
+    written: the snapshot makes the two "no" exits byte-exact. `SaveFile*` is now a `MapModel` ctor
+    arg (from the bridge). Restore = `memcpy` the snapshot back + `expandData()` (reloads every
+    fragment IN PLACE — `Area::load` refills the same objects, so every model pointer stays valid).
+  - **The Preview card** (top-right of the canvas well, `MapCanvas.qml` — a *somewhat-translucent
+    white vector overlay*, compact): stage 0 asks **keep?** (✗ Discard / ✓ Keep); ✓ advances to
+    stage 1, **Normal or Manual** (with ‹ Back). ✗ = `cancelMapPreview()`; **Normal** =
+    `confirmMapPreviewNormal()` (keep the construction); **Manual** = `confirmMapPreviewManual()`
+    (restore the snapshot, then write ONLY `wCurMap`). Esc = ✗.
+  - **The player is not drawn while stage 0 is up** (leadership: *"give the illusion that this is a
+    temporary reconstruction — the player is only on the real map"*). He reappears once ✓ is
+    pressed. Gated in `MapCanvas` via `previewShowsPlayer` (the player sprite AND his storage tab).
+    Selection is cleared when a preview begins.
+  - **Scope: the Map combo only** (leadership). Tileset + blockset stay immediate byte edits — and
+    are now themselves collapsed behind an **"Override tileset & blocks ▸"** disclosure link in the
+    picker (the wording says *manual control*, not "more options"; a quiet amber dot on the link
+    still surfaces a graphics/blocks mismatch). `changeMapConstructed` is unchanged, still MS-2-pinned.
 - **Phase MS-5 — Randomizer hook (NOT BUILT).** State-aware map randomization: pick a random
   resting stage per map from the blueprints instead of raw bytes (wire into the world/area
   randomize paths).
