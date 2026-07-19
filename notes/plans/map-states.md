@@ -133,7 +133,17 @@ Semantics that keep it honest:
   randomize paths).
 - **Phase MS-6 — Console verification (NOT RUN).** Forge saves at constructed states
   (`emu_make_map_save` + blueprint) and prove on the cartridge that each story-map stage boots
-  healthy and behaves as the stage says (the probe idiom).
+  healthy and behaves as the stage says (the probe idiom). The global-progression dive
+  ([`reference/game-progression.md`](../reference/game-progression.md) §6) adds three probe
+  targets: the Route 23 re-arm on a Continue starting there, the Saffron gym-door rocket, and
+  one forged save per spine milestone to pin the per-stage flag table.
+- **Phase MS-7 candidate — re-arm annotations (RECORDED 2026-07-19, not briefed/built).** The
+  2026-07-19 global dive found that Victory Road 1F/2F/3F + the Seafoam floors' auto-derived
+  blueprints present boulder-switch states as durable progress, but those flags are **re-armed
+  from outside on every approach** (Route 23 / Indigo Lobby / Route 20 — see
+  [`reference/game-progression.md`](../reference/game-progression.md) §1a). Blueprints (and the
+  state matcher) should mark such states "re-armed on approach; not durable" instead of offering
+  them as resting stages. Needs its own brief before any build.
 
 ## Twilight's answers (2026-07-17) — the build's ground rules
 

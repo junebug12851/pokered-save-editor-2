@@ -11,6 +11,27 @@ release: `0.16.6-alpha`, shipped 2026-07-11.) Single source of truth: repo-root 
 `tst_db_integrity` now 15 (two new pins: `everyFlyDestinationSitsAtItsMapId`,
 `everyTradeResolvesAndSitsAtItsBit`).
 
+### 🌍 GLOBAL PROGRESSION — the cross-map deep dive: 70 resets, 5 classes, the spine (2026-07-19)
+
+Fairy Fox's brief — order the per-map timelines globally; her bet: later maps unset flags the
+per-map view thought durable. **Confirmed, and bigger.** Full story:
+[`sessions/2026-07/2026-07-19.md`](sessions/2026-07/2026-07-19.md); the graph:
+[`reference/game-progression.md`](reference/game-progression.md).
+
+- ⭐ Only **70 of 2,560** flags are ever reset — progress is monotone except for **5 enumerated
+  classes**, headlined by **per-entry re-arm scripts**: Route 23 resets ALL Victory Road boulder
+  switches every load, Indigo Lobby resets VR1F's, Route 20 reconciles Seafoam, Pewter resets
+  the museum ticket per entry, Celadon zeroes 3 unnamed scratch bits per entry.
+- ⭐ **The Silph liberation** = 34 objects hidden across 11 maps + 6 shown, in `db TOGGLE_*`
+  tables (the mining trap: `ld`-only regexes see none of it).
+- ⭐ **All 8 badges hard-required** (R22 gate + R23's seven badge-checking guards → durable
+  `EVENT_PASSED_*` flags); the **spine M0–M20** + free windows + per-stage expected-flag table
+  + the **always-expected-zero list** now written down.
+- **Tool:** `scripts/analyze_cross_map_writes.py`. **Recorded follow-up (not built):** VR +
+  Seafoam blueprints mark re-armed states as durable — MS-7 candidate in
+  [`plans/map-states.md`](plans/map-states.md). Probes owed: R23 re-arm on Continue; Saffron
+  gym-door rocket; a forged save per milestone (rides MS-6). Notes-only change — suite untouched.
+
 ### 🧹 ROUND 4 — the CONSISTENCY round: World, ONE gate, the ghost fixed (2026-07-18, `0.43.4-alpha`)
 
 Full story: [`sessions/2026-07/2026-07-18.md`](sessions/2026-07/2026-07-18.md). The standing calls:

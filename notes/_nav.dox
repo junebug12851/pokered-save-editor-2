@@ -66,6 +66,7 @@ check-for-updates). The hub reads these on request to improve the shared standar
 \page pse_sessions_2026_07 July 2026
 \brief Daily session logs for July 2026 (`notes/sessions/2026-07/`).
 
+\subpage md_notes_2sessions_22026-07_22026-07-19 <br>
 \subpage md_notes_2sessions_22026-07_22026-07-18 <br>
 \subpage md_notes_2sessions_22026-07_22026-07-17 <br>
 \subpage md_notes_2sessions_22026-07_22026-07-16 <br>
@@ -161,6 +162,7 @@ check-for-updates). The hub reads these on request to improve the shared standar
 \subpage md_notes_2reference_2wild-encounters <br>
 \subpage md_notes_2reference_2event-flags <br>
 \subpage md_notes_2reference_2map-states <br>
+\subpage md_notes_2reference_2game-progression <br>
 \subpage md_notes_2reference_2map-storage-locations <br>
 \subpage md_notes_2reference_2in-game-trades <br>
 \subpage md_notes_2reference_2town-visited <br>
