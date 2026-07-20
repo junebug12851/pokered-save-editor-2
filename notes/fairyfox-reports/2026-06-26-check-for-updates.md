@@ -88,5 +88,5 @@ change. The 0.9.3/0.9.4 hub movement is fold-back/blog of this project's own wor
 
 **no-change.** Check-only; nothing applied, no commits, no pushes, no `VERSION`
 movement. Hub at 0.9.4 is fully reconciled with this node's adopted standards. Awaiting
-no action from Twilight. (This report file was written but, per the scheduled-run
-no-commit guardrail, left **uncommitted** for Twilight to review and commit.)
+no action from project leadership. (This report file was written but, per the scheduled-run
+no-commit guardrail, left **uncommitted** for project leadership to review and commit.)

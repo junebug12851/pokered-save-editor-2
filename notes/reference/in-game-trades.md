@@ -7,7 +7,7 @@ The research behind [`../plans/map-screen.md`](../plans/map-screen.md) → **Pha
 > coordinates, im fine with including unused ones if they have map coordinates but if its unused and
 > truly has no coordinates it has to go in general."*
 
-Her count is exact: **10 trades**, `NUM_NPC_TRADES`. **9 are located** on a real NPC's tile; **1 is
+Their count is exact: **10 trades**, `NUM_NPC_TRADES`. **9 are located** on a real NPC's tile; **1 is
 unused and has no coordinates at all** → the **General** page (§7).
 
 Everything below is read from `pret/pokered`, and the save behaviour is

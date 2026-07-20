@@ -120,7 +120,7 @@ less. PyBoy was never the problem.
 
 ## The ROM — read this first
 
-`assets/references/backup.gb` is a dump of a cartridge **Twilight owns**, kept locally for verification.
+`assets/references/backup.gb` is a dump of a cartridge **project leadership owns**, kept locally for verification.
 
 - It is **git-ignored** (`/assets/references/` plus explicit `*.gb` / `*.gbc` / `*.gba` / `*.rom` rules, so
   it cannot be added by accident even if it moves). It has **never** been committed — verified against the
@@ -208,7 +208,7 @@ expectation *must* be deleted — so the gap cannot be quietly forgotten.
 
 ## Save files: you may invent them
 
-Twilight has said (2026-07-12) that **creating `.sav` files to experiment with is allowed**. Purpose-built
+Project leadership has said (2026-07-12) that **creating `.sav` files to experiment with is allowed**. Purpose-built
 saves are how this harness gets interesting: put the player on a map edge, in a cave, in a copy/glitch map,
 next to a connection — and check the console still agrees. Keep experiments in `tmp/` (git-ignored) unless a
 fixture earns a permanent place in `assets/saves/`, and never modify the natural saves in place.

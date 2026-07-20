@@ -4,7 +4,7 @@ How the project's UI **still screenshots** are generated — automatically, head
 ever touching save data. Built 2026-06-15.
 
 > **No automated GIFs.** This pipeline captures still PNGs only. Animated GIFs are added **manually,
-> one at a time** (Twilight's call, 2026-06-15): the headless tool's frame-sequence capture routines
+> one at a time** (project leadership's call, 2026-06-15): the headless tool's frame-sequence capture routines
 > were removed, and the scripts/CI no longer auto-assemble GIFs. `scripts/make_gifs.py` (the Pillow
 > assembler) is **kept for manual use** — run it by hand to turn your own captured frames into a GIF.
 
@@ -12,7 +12,7 @@ ever touching save data. Built 2026-06-15.
 > screen / layout change, after capturing you must **open the PNG and scrutinise it yourself** (crop/zoom
 > the changed area): hunt for overlaps (a field over the trainer art), misalignment, uneven spacing,
 > clipping past a card/panel border, and overall polish — then fix what's wrong before calling the work
-> done or telling Twilight it's ready. A glance is not a review; the trainer-card clock overlapped the
+> done or telling project leadership it's ready. A glance is not a review; the trainer-card clock overlapped the
 > artwork and shipped precisely because this step was skipped. Enforced in `CLAUDE.md` → Default Workflow
 > step 1; see also `ui-patterns.md`.
 
@@ -126,7 +126,7 @@ The tool **only ever reads** the save in memory to render the UI. It never calls
 > ```
 >
 > This bit on 2026-07-13: a whole map-screen review was done on shots with no text in them, so the
-> *layout* was checked and the *words* were not. Twilight noticed immediately. A screenshot with no
+> *layout* was checked and the *words* were not. Project leadership noticed immediately. A screenshot with no
 > text in it is not a review — if the picture has boxes where the labels should be, **stop and fix the
 > capture before you look at anything else.**
 >

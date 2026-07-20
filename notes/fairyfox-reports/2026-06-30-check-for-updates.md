@@ -101,7 +101,7 @@ No `VERSION` movement, no app behavior change, no save-file surface involved.
   recurring false signal.
 - The two carry-overs have now sat across three checks. `cross-project-sync.md` is
   ledger-pre-authorized; worth a single go-ahead to clear both (plus the optional
-  `git-workflow.md` framing) in one small commit when Twilight is available.
+  `git-workflow.md` framing) in one small commit when project leadership is available.
 
 ## Outcome
 
@@ -109,6 +109,6 @@ No `VERSION` movement, no app behavior change, no save-file surface involved.
 authorization ledger changed since the last check (0.9.9 → 0.9.14 was hub
 site/registry + a new games node + a sibling reconcile). The two prior carry-overs
 (`cross-project-sync.md` sync fix, pre-authorized; `git-workflow.md` framing) remain
-un-adopted. Nothing applied per the scheduled-run guardrails; awaiting Twilight's
+un-adopted. Nothing applied per the scheduled-run guardrails; awaiting project leadership's
 go-ahead. (This report was written but, per the scheduled-run no-commit guardrail, left
 **uncommitted** for review.)

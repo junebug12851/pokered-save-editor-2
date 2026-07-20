@@ -6,7 +6,7 @@ The research behind [`../plans/map-screen.md`](../plans/map-screen.md) → **Pha
 > talking specifically about the persistent storage that says you have visited the town … have a
 > visited checkbox near the top of persistent storage for places that take a visited one."*
 
-**Her count is exact: `NUM_CITY_MAPS` = 11.**
+**Their count is exact: `NUM_CITY_MAPS` = 11.**
 
 This note carries **two findings that outrank the feature**: the flag is **re-set on load** for the
 town you are standing in (§3), and **`fly.json` — the name list this data has always been drawn
@@ -190,7 +190,7 @@ instead*), **`fly.json` is untouched.** Two honest routes, and they are not equi
 question the console asks (`wCurMap`). Route 1 is still owed as a **data decision**, because a wrong
 `ind` sitting in a shipped DB is a landmine for the next consumer.
 
-Also spotted, and **not** fixed (it is not this feature, and it is hers to rule on):
+Also spotted, and **not** fixed (it is not this feature, and it is theirs to rule on):
 **`WorldTowns::randomize()`'s comments contradict its code.** It says *"except for Indigo and
 Saffron"*, then `for(i = 1; i < 10; i++)` — which **includes Indigo (9)** — and skips `i == 7`
 labelled *"Not saffron"*, but **7 is Fuchsia**; Saffron is 10, excluded only by the loop bound. So
@@ -218,7 +218,7 @@ A **second kind of group**, orthogonal to the one already shipped:
 - **Check all / uncheck all** — which is the actual job: "unlock Fly everywhere" is one gesture, not
   eleven.
 
-**v1 had this half-built and it corroborates her memory** — `world-towns.component.ts` carries a
+**v1 had this half-built and it corroborates their memory** — `world-towns.component.ts` carries a
 `toggleAllTowns()` (mirroring town 0's state onto all of them). The idea is not new; the *group* is.
 
 **Placement:** the per-town **Visited** checkbox goes **near the top** of that town's Map Storage

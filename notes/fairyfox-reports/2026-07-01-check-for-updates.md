@@ -118,7 +118,7 @@ adopt-without-reprompt`, `expires: null`) covering `cross-project-sync.md`,
 
 No `VERSION` movement, no app behavior change, no save-file surface involved. Adopting
 1–2 (the pre-authorized sync fix + mirror re-clone) is one small, self-contained commit;
-3–4 (planning, deployment) are separate adoption decisions needing Twilight's go-ahead.
+3–4 (planning, deployment) are separate adoption decisions needing project leadership's go-ahead.
 
 ## Verification
 
@@ -159,6 +159,6 @@ refined the adopted `cross-project-sync.md` (further from the node's still-old c
 pre-authorized) and added two net-new shared standards (`planning.md`, `deployment.md`)
 plus a plan-before-execute addition to the `CLAUDE.md` template Default Workflow (not
 pre-authorized). `authorizations.yml` unchanged. Nothing applied per the scheduled-run
-guardrails and the explicit "apply nothing" task instruction; awaiting Twilight's
+guardrails and the explicit "apply nothing" task instruction; awaiting project leadership's
 go-ahead. (This report was written but, per the scheduled-run no-commit guardrail, left
 **uncommitted** for review.)

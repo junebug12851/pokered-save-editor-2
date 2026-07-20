@@ -1,28 +1,28 @@
 # Pokered Save Editor 2
 
-[![Contributors](https://img.shields.io/github/contributors/junebug12851/pokered-save-editor-2?style=flat&logo=github&label=contributors)](https://github.com/junebug12851/pokered-save-editor-2/graphs/contributors)
-[![Stars](https://img.shields.io/github/stars/junebug12851/pokered-save-editor-2?style=flat&logo=github)](https://github.com/junebug12851/pokered-save-editor-2/stargazers)
-[![Forks](https://img.shields.io/github/forks/junebug12851/pokered-save-editor-2?style=flat&logo=github)](https://github.com/junebug12851/pokered-save-editor-2/network/members)
-[![Watchers](https://img.shields.io/github/watchers/junebug12851/pokered-save-editor-2?style=flat&logo=github)](https://github.com/junebug12851/pokered-save-editor-2/watchers)
-[![Last commit](https://img.shields.io/github/last-commit/junebug12851/pokered-save-editor-2?style=flat&logo=git&logoColor=white)](https://github.com/junebug12851/pokered-save-editor-2/commits/main)
-[![Commits](https://img.shields.io/github/commit-activity/t/junebug12851/pokered-save-editor-2?style=flat&logo=git&logoColor=white&label=commits)](https://github.com/junebug12851/pokered-save-editor-2/commits/main)
-[![Activity](https://img.shields.io/github/commit-activity/m/junebug12851/pokered-save-editor-2?style=flat&label=activity)](https://github.com/junebug12851/pokered-save-editor-2/pulse)
-[![Created](https://img.shields.io/github/created-at/junebug12851/pokered-save-editor-2?style=flat&label=created)](https://github.com/junebug12851/pokered-save-editor-2)
-[![CI](https://img.shields.io/github/actions/workflow/status/junebug12851/pokered-save-editor-2/tests.yml?style=flat&logo=githubactions&logoColor=white&label=CI)](https://github.com/junebug12851/pokered-save-editor-2/actions/workflows/tests.yml)
-[![Docs](https://img.shields.io/github/actions/workflow/status/junebug12851/pokered-save-editor-2/pages.yml?style=flat&logo=readthedocs&logoColor=white&label=docs)](https://junebug12851.github.io/pokered-save-editor-2/)
-[![Release](https://img.shields.io/github/actions/workflow/status/junebug12851/pokered-save-editor-2/release.yml?style=flat&logo=githubactions&logoColor=white&label=release)](https://github.com/junebug12851/pokered-save-editor-2/actions/workflows/release.yml)
-[![Version](https://img.shields.io/github/v/tag/junebug12851/pokered-save-editor-2?style=flat&label=version&color=8a3560)](https://github.com/junebug12851/pokered-save-editor-2/tags)
-[![Top language](https://img.shields.io/github/languages/top/junebug12851/pokered-save-editor-2?style=flat)](https://github.com/junebug12851/pokered-save-editor-2)
-[![Languages](https://img.shields.io/github/languages/count/junebug12851/pokered-save-editor-2?style=flat&label=languages)](https://github.com/junebug12851/pokered-save-editor-2)
-[![Code size](https://img.shields.io/github/languages/code-size/junebug12851/pokered-save-editor-2?style=flat)](https://github.com/junebug12851/pokered-save-editor-2)
-[![Repo size](https://img.shields.io/github/repo-size/junebug12851/pokered-save-editor-2?style=flat)](https://github.com/junebug12851/pokered-save-editor-2)
-[![Open issues](https://img.shields.io/github/issues/junebug12851/pokered-save-editor-2?style=flat&logo=github&label=issues)](https://github.com/junebug12851/pokered-save-editor-2/issues)
-[![Closed issues](https://img.shields.io/github/issues-closed/junebug12851/pokered-save-editor-2?style=flat&logo=github&label=closed)](https://github.com/junebug12851/pokered-save-editor-2/issues?q=is%3Aissue+is%3Aclosed)
-[![Open PRs](https://img.shields.io/github/issues-pr/junebug12851/pokered-save-editor-2?style=flat&logo=github&label=PRs)](https://github.com/junebug12851/pokered-save-editor-2/pulls)
-[![Merged PRs](https://img.shields.io/github/issues-pr-closed/junebug12851/pokered-save-editor-2?style=flat&logo=github&label=merged)](https://github.com/junebug12851/pokered-save-editor-2/pulls?q=is%3Apr+is%3Aclosed)
-[![License](https://img.shields.io/github/license/junebug12851/pokered-save-editor-2?style=flat)](LICENSE)
+[![Contributors](https://img.shields.io/github/contributors/1fairyfox/pokered-save-editor-2?style=flat&logo=github&label=contributors)](https://github.com/1fairyfox/pokered-save-editor-2/graphs/contributors)
+[![Stars](https://img.shields.io/github/stars/1fairyfox/pokered-save-editor-2?style=flat&logo=github)](https://github.com/1fairyfox/pokered-save-editor-2/stargazers)
+[![Forks](https://img.shields.io/github/forks/1fairyfox/pokered-save-editor-2?style=flat&logo=github)](https://github.com/1fairyfox/pokered-save-editor-2/network/members)
+[![Watchers](https://img.shields.io/github/watchers/1fairyfox/pokered-save-editor-2?style=flat&logo=github)](https://github.com/1fairyfox/pokered-save-editor-2/watchers)
+[![Last commit](https://img.shields.io/github/last-commit/1fairyfox/pokered-save-editor-2?style=flat&logo=git&logoColor=white)](https://github.com/1fairyfox/pokered-save-editor-2/commits/main)
+[![Commits](https://img.shields.io/github/commit-activity/t/1fairyfox/pokered-save-editor-2?style=flat&logo=git&logoColor=white&label=commits)](https://github.com/1fairyfox/pokered-save-editor-2/commits/main)
+[![Activity](https://img.shields.io/github/commit-activity/m/1fairyfox/pokered-save-editor-2?style=flat&label=activity)](https://github.com/1fairyfox/pokered-save-editor-2/pulse)
+[![Created](https://img.shields.io/github/created-at/1fairyfox/pokered-save-editor-2?style=flat&label=created)](https://github.com/1fairyfox/pokered-save-editor-2)
+[![CI](https://img.shields.io/github/actions/workflow/status/1fairyfox/pokered-save-editor-2/tests.yml?style=flat&logo=githubactions&logoColor=white&label=CI)](https://github.com/1fairyfox/pokered-save-editor-2/actions/workflows/tests.yml)
+[![Docs](https://img.shields.io/github/actions/workflow/status/1fairyfox/pokered-save-editor-2/pages.yml?style=flat&logo=readthedocs&logoColor=white&label=docs)](https://1fairyfox.github.io/pokered-save-editor-2/)
+[![Release](https://img.shields.io/github/actions/workflow/status/1fairyfox/pokered-save-editor-2/release.yml?style=flat&logo=githubactions&logoColor=white&label=release)](https://github.com/1fairyfox/pokered-save-editor-2/actions/workflows/release.yml)
+[![Version](https://img.shields.io/github/v/tag/1fairyfox/pokered-save-editor-2?style=flat&label=version&color=8a3560)](https://github.com/1fairyfox/pokered-save-editor-2/tags)
+[![Top language](https://img.shields.io/github/languages/top/1fairyfox/pokered-save-editor-2?style=flat)](https://github.com/1fairyfox/pokered-save-editor-2)
+[![Languages](https://img.shields.io/github/languages/count/1fairyfox/pokered-save-editor-2?style=flat&label=languages)](https://github.com/1fairyfox/pokered-save-editor-2)
+[![Code size](https://img.shields.io/github/languages/code-size/1fairyfox/pokered-save-editor-2?style=flat)](https://github.com/1fairyfox/pokered-save-editor-2)
+[![Repo size](https://img.shields.io/github/repo-size/1fairyfox/pokered-save-editor-2?style=flat)](https://github.com/1fairyfox/pokered-save-editor-2)
+[![Open issues](https://img.shields.io/github/issues/1fairyfox/pokered-save-editor-2?style=flat&logo=github&label=issues)](https://github.com/1fairyfox/pokered-save-editor-2/issues)
+[![Closed issues](https://img.shields.io/github/issues-closed/1fairyfox/pokered-save-editor-2?style=flat&logo=github&label=closed)](https://github.com/1fairyfox/pokered-save-editor-2/issues?q=is%3Aissue+is%3Aclosed)
+[![Open PRs](https://img.shields.io/github/issues-pr/1fairyfox/pokered-save-editor-2?style=flat&logo=github&label=PRs)](https://github.com/1fairyfox/pokered-save-editor-2/pulls)
+[![Merged PRs](https://img.shields.io/github/issues-pr-closed/1fairyfox/pokered-save-editor-2?style=flat&logo=github&label=merged)](https://github.com/1fairyfox/pokered-save-editor-2/pulls?q=is%3Apr+is%3Aclosed)
+[![License](https://img.shields.io/github/license/1fairyfox/pokered-save-editor-2?style=flat)](LICENSE)
 
-<div class="ff-shot"><img src="https://junebug12851.github.io/pokered-save-editor-2/screenshots/home.png" alt="UI/UX progress"/></div>
+<div class="ff-shot"><img src="https://1fairyfox.github.io/pokered-save-editor-2/screenshots/home.png" alt="UI/UX progress"/></div>
 
 ## ⚠️ Status — early alpha, work in progress
 
@@ -32,7 +32,7 @@ file as completely as it can throughout editing — but it is not considered rel
 Current version lives in [`VERSION`](VERSION) (presently in the `0.x-alpha` range).
 
 - 👉 For a **mature, complete** editor today, use the original:
-  **<https://github.com/junebug12851/pokered-save-editor>**. This reboot will supersede it once it
+  **<https://github.com/1fairyfox/pokered-save-editor>**. This reboot will supersede it once it
   leaves WIP.
 - This editor targets the **US English release of Pokémon Red & Blue** — **original `.sav` files only**.
   It is **not** built for other localizations (Japanese, the European languages), Pokémon Bank, Pokémon
@@ -55,7 +55,7 @@ Current version lives in [`VERSION`](VERSION) (presently in the `0.x-alpha` rang
 
 ---
 
-![Pokémon details screen](https://junebug12851.github.io/pokered-save-editor-2/screenshots/pokemon_editor_general.png)
+![Pokémon details screen](https://1fairyfox.github.io/pokered-save-editor-2/screenshots/pokemon_editor_general.png)
 
 ## What it is
 
@@ -89,7 +89,7 @@ A few convictions shape everything:
 - **No longer a web app.** A native `MainWindow` with native menus hosts the Qt Quick UI — this is a
   real desktop application, not a packaged web page.
 
-![New File screen](https://junebug12851.github.io/pokered-save-editor-2/screenshots/modal_newFile.png)
+![New File screen](https://1fairyfox.github.io/pokered-save-editor-2/screenshots/modal_newFile.png)
 
 ## Features
 
@@ -131,7 +131,7 @@ still early. The planned system is built around three modes:
   coverage).
 - A C++ game database of all Gen 1 data (Pokémon, moves, items, maps, …) with cross-linked entries.
 
-![Trainer card screen](https://junebug12851.github.io/pokered-save-editor-2/screenshots/trainerCard.png)
+![Trainer card screen](https://1fairyfox.github.io/pokered-save-editor-2/screenshots/trainerCard.png)
 
 ## Building from source
 
@@ -164,7 +164,7 @@ the About screen, and the Windows executable resource — never hardcode a versi
 **API documentation** (optional): the C++ is Doxygen-commented. Run `doxygen Doxyfile` from the repo
 root to generate HTML docs (QML is intentionally excluded).
 
-![File Tools screen](https://junebug12851.github.io/pokered-save-editor-2/screenshots/modal_fileTools.png)
+![File Tools screen](https://1fairyfox.github.io/pokered-save-editor-2/screenshots/modal_fileTools.png)
 
 ## Running the tests
 
@@ -211,7 +211,7 @@ A few things to keep in mind:
 Full details: [`notes/reference/git-workflow.md`](notes/reference/git-workflow.md) and
 [`notes/plans/testing.md`](notes/plans/testing.md).
 
-![Bag screen](https://junebug12851.github.io/pokered-save-editor-2/screenshots/bag.png)
+![Bag screen](https://1fairyfox.github.io/pokered-save-editor-2/screenshots/bag.png)
 
 ## Why the reboot
 
@@ -246,7 +246,7 @@ and [`notes/context/architecture.md`](notes/context/architecture.md). The save f
 documented in [`assets/saves/structure.md`](assets/saves/structure.md) (with the byte-exact 010 Editor
 template `structure.bt` beside it).
 
-![Market screen](https://junebug12851.github.io/pokered-save-editor-2/screenshots/pokemart.png)
+![Market screen](https://1fairyfox.github.io/pokered-save-editor-2/screenshots/pokemart.png)
 
 ## Project layout
 

@@ -1,6 +1,6 @@
 # Tiles, Blocks and Tilesets — what the map is actually made of
 
-_Verified against `pret/pokered` **and** against Twilight's own cartridge (`assets/references/backup.gb`),
+_Verified against `pret/pokered` **and** against project leadership's own cartridge (`assets/references/backup.gb`),
 2026-07-12. Everything below has a source; nothing here is inferred from a wiki._
 
 This is the reference for the **third layer** of the map emulator. The first two are done:
@@ -86,7 +86,7 @@ cartridge's header table — a perfect match, every one:
 
 Overworld/Dojo/Gym = Outdoor. Forest/Ship/ShipPort/Cavern/Facility/Plateau = Cave. Everything else =
 Indoor. **The data was right all along; only the name was friendly.** No JSON change needed, and the
-UI can now say both — the name Twilight gave it *and* what it does.
+UI can now say both — the name project leadership gave it *and* what it does.
 
 > **This is also a live rendering bug.** `Settings::previewOutdoor` is a **bool**, so it collapses
 > Cave into Indoor: a cave tileset renders with **no animated water**, when the console animates it.
@@ -167,7 +167,7 @@ Three entries in `tileset.json` disagreed, and the cartridge wins:
 
 **This had teeth.** `AreaTileset::loadFromData()` writes `collPtr` into the save, so placing the
 player in a **Poké Mart** wrote **Red's-house collision** into the save — wrong walls, wrong doors,
-wrong counter, in the real game. Fixed 2026-07-12 with Twilight's go-ahead, and pinned by a test that
+wrong counter, in the real game. Fixed 2026-07-12 with project leadership's go-ahead, and pinned by a test that
 re-derives all 24 pointers from the list chain so it can never drift again.
 
 ---
@@ -181,7 +181,7 @@ re-derives all 24 pointers from the list chain so it can never drift again.
 
 These are **runtime scratch from the last Strength push**. They are not tileset configuration, they
 are not map configuration, and editing them configures nothing — the game overwrites them the next
-time you shove a rock. Twilight's own 2020 comment ("*I don't think I've seen them used in a sav
+time you shove a rock. Project leadership's own 2020 comment ("*I don't think I've seen them used in a sav
 file*") was right.
 
 They must **not** be presented as editable map properties.

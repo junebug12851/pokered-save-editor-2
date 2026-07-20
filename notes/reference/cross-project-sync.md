@@ -7,7 +7,7 @@ the source of truth; re-pull and reconcile by hand (see "Checking for updates" b
 
 > This project's identity in the mesh: **key** `pokered-save-editor-2`, **branch**
 > `dev` (work) fast-forwarding to `main` (stable). The hub lives at
-> `github.com/junebug12851/junebug12851.github.io` and is published at fairyfox.io.
+> `github.com/1fairyfox/1fairyfox.github.io` and is published at fairyfox.io.
 
 ## The one rule
 
@@ -44,7 +44,7 @@ tree, committing *that*:
 ```sh
 # first time
 git -C assets/references clone --depth 1 --branch dev \
-    https://github.com/junebug12851/junebug12851.github.io fairyfox.io
+    https://github.com/1fairyfox/1fairyfox.github.io fairyfox.io
 # refresh
 git -C assets/references/fairyfox.io pull --depth 1 --ff-only origin dev
 # refresh aborts? the hub's dev was force-pushed (routine) — reset the mirror, don't fight it:
@@ -61,7 +61,7 @@ and merge changes by hand.
 
 Alongside the standards, this project also reads the hub's **express-authorization
 ledger** (`assets/references/fairyfox.io/hub/authorizations.yml`) out of the same
-read-only clone. It records the go-aheads Twilight makes at the hub; a node adopting a
+read-only clone. It records the go-aheads project leadership makes at the hub; a node adopting a
 change the ledger `covers` treats it as pre-authorized and skips its redundant
 confirmation pause — **but only that pause; every other adoption safety step still
 runs** (copy-not-clobber, divergence re-prompt, process report, reviewable commit).
@@ -78,7 +78,7 @@ report, then wait**:
 2. Diff it against what this project has adopted (this file, `git-workflow.md`,
    `versioning.md`, the `CLAUDE.md` mesh block, the notes skeleton).
 3. **Report what changed and what adopting it would touch — then stop.** Apply nothing
-   until Twilight says go ahead; applying is a separate, confirmed act. Full procedure:
+   until project leadership says go ahead; applying is a separate, confirmed act. Full procedure:
    the hub's `adopting-updates` runbook (`hub/standards/adopting-updates.md`).
 4. **Either way, write a process report** in `notes/fairyfox-reports/` — running this flow
    (applied or check-only) is a fairyfox system interaction, so it ends with an honest report
@@ -112,7 +112,7 @@ here it's on-request, read-only, and changes nothing on disk without a go-ahead.
 - ✅ Adoption is a copy, not a runtime dependency.
 - ✅ The express-authorization ledger is **read-only on the far side** like every
   other artifact — a pre-authorization lets a node skip a prompt, never lets the hub
-  act on the node. The node still adopts only when Twilight invokes the flow.
+  act on the node. The node still adopts only when project leadership invokes the flow.
 
 ## Why `assets/references/`, not submodules
 

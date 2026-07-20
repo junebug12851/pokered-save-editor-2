@@ -171,5 +171,5 @@ The inner voices are the ones that *want* this: a single monophonic line is exac
 | `scripts/emu/analyze_music_ids.py` | Parses all 256 ids × 3 banks straight out of the cartridge the way `PlaySound` does, disassembles every channel's command stream, follows calls/loops, and classifies each id. Writes `tmp/music_ids.json`. | Yes (exits 2 without it) |
 | `scripts/emu/probe_glitch_music.py` | Patches an id/bank into a real save (**fixing the checksum**, or the game rejects it), boots the cartridge, walks onto the map, and reads back `wChannelSoundIDs`, `wAudioROMBank`, NR51/NR52 and the engine's own pitch bytes. | Yes (exits 2 without it) |
 
-Both are local-only and never ship. The ROM (`assets/references/backup.gb`) is Twilight's own cartridge
+Both are local-only and never ship. The ROM (`assets/references/backup.gb`) is project leadership's own cartridge
 backup: git-ignored, never committed, never distributed.

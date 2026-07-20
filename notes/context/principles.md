@@ -54,7 +54,7 @@ The user should be able to open a save file and immediately have fun. The app sh
 
 ## Every Byte, None of Them Raw
 
-_Twilight, 2026-07-12. A top-tier rule, and it has two halves that only work together._
+_project leadership, 2026-07-12. A top-tier rule, and it has two halves that only work together._
 
 **1. Every byte of the save must be editable.** Nothing is withheld because it looks obscure,
 transient, or "not really data the user needs". If the save file holds it, the app lets you change

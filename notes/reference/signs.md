@@ -151,7 +151,7 @@ A map's text table is **shared** by everything on the map that talks:
 
 The console does **not** enforce which category a `wSignTextIDs` byte names — a sign will happily
 print an NPC's dialogue if you point it there. So the picker (Phase 6d) offers **every text id the
-map has**, and — per Twilight (2026-07-14) — **groups them** (Signs · People · Other), each showing
+map has**, and — per project leadership (2026-07-14) — **groups them** (Signs · People · Other), each showing
 its real words where a plain string exists, and a `(scripted text)` marker where the entry is
 `text_asm` and has no single literal.
 

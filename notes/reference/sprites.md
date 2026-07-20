@@ -1,7 +1,7 @@
 # Sprites — the Game Boy's objects, and what Gen 1 builds on top of them
 
-> Twilight: *"Sprites is going to be another deep thing — you need to research the Game Boy and the game
-> code, pokered, and document all understanding in notes."* She's right. This is that document.
+> Project leadership: *"Sprites is going to be another deep thing — you need to research the Game Boy and the game
+> code, pokered, and document all understanding in notes."* They're right. This is that document.
 >
 > Every claim here is either read out of `pret/pokered` or **measured off the real console** (the emulator's
 > OAM and palette registers). Where it was measured, it says so.
@@ -322,7 +322,7 @@ the player walks into.
 
 **The honest statement, then:** an edited sprite is real and on the map when the save is loaded — and it is
 **rebuilt from the ROM the moment the player leaves that map and comes back**. That is not a bug in the
-editor; it is what the cartridge does, and it is exactly what Twilight observed years ago in v1 ("*sprite
+editor; it is what the cartridge does, and it is exactly what project leadership observed years ago in v1 ("*sprite
 edits work; outdoor sprites are glitchy*"). The glitchiness has its own cause: the VRAM slot
 (`IMAGEBASEOFFSET`) is allocated from the map's **sprite set**, and an outdoor sprite that isn't in that
 map's set has no slot to point at. See [`sprite-sets.md`](sprite-sets.md).

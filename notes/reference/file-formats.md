@@ -1,6 +1,6 @@
 # File formats: **use the game's**
 
-> **Twilight, 2026-07-13 (a standing rule):**
+> **Project leadership, 2026-07-13 (a standing rule):**
 > *"Perhaps we should try to match pokered file formats where possible like blk files are raw data just
 > like pokered and music can be assembly the same assembly straight from the project we just wont compile
 > it. We can leverage their macro names and stuff to our advantage because it's much easier to create a

@@ -136,7 +136,7 @@ Details panel and the World panel ("Current state step" + "Something else…").
 
 ## What it means for our code
 
-- **"Map script" should read "Map state"** everywhere on the map screen (Twilight's call in the
+- **"Map script" should read "Map state"** everywhere on the map screen (project leadership's call in the
   brief) — the byte is one field *of* a state, and the UI concept is the state. Phase MS-3.
 - The blueprints are data-only today. The model surface (`MapStatesDB`, `applyState`,
   `rollForward`/`rollBack`, change-map construction landing on `entry`) is **Phase MS-2/MS-4**,

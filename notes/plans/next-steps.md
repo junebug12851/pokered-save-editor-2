@@ -31,7 +31,7 @@ in a **UI-polish phase**. Authoritative open-issues list: `status.md` → "Open 
 **0. THE MAP SCREEN — the complete overhaul (approved 2026-07-12). This is the work.**
 The design of record is [`map-screen.md`](map-screen.md); read it before touching the screen. Thirteen
 phases plus one optional, each a *full* pass (built, screenshot-reviewed, tested, documented) before the
-next begins — Twilight, mandatory: *"put in the long work for each of these components."*
+next begins — project leadership, mandatory: *"put in the long work for each of these components."*
 
 | Phase | | Phase | |
 |---|---|---|---|
@@ -54,19 +54,19 @@ Phase 0 is a hard blocker: **QML cannot read a single one of those fields today.
    area and the 20×18-tile screen, over a real block/tile render. Verified against the view pointer the
    Game Boy left in the save. See `status.md` and `sessions/2026-07/2026-07-12.md`.
 
-   **Ordered next steps for the map** (Twilight said one step at a time). **Every one of these can now be
+   **Ordered next steps for the map** (project leadership said one step at a time). **Every one of these can now be
    verified against the real console** — `tst_emu_parity` boots the ROM and compares us to its RAM and its
    framebuffer (see [`reference/emulator-verification.md`](../reference/emulator-verification.md)):
 
-   1. **Review step 1 in-app** — is the render right, are the boxes where she expects, is the grid too
+   1. **Review step 1 in-app** — is the render right, are the boxes where they expect, is the grid too
       loud/quiet, is the fit-to-window default right?
    2. ~~**Connection strips**~~ — ✅ **DONE 2026-07-12.** The ring now carries the neighbouring maps' edges.
       **78/78 connections verified byte-for-byte against the compiled structs in the real cartridge**, and
       the ring is byte-identical to the console's `wOverworldMap`. Full write-up:
       [`reference/map-connections.md`](../reference/map-connections.md).
-      ⚠️ **Left open for Twilight:** `MapDBEntryConnect::stripSize()` is wrong and `maps.json`'s `flag`
+      ⚠️ **Left open for project leadership:** `MapDBEntryConnect::stripSize()` is wrong and `maps.json`'s `flag`
       field is a patch for it (the real game has no flag). `MapEngine` doesn't use either, so nothing is
-      broken — but the DB carries a wrong formula. Fixing it touches curated data + a public API: her call.
+      broken — but the DB carries a wrong formula. Fixing it touches curated data + a public API: their call.
    3. ~~**Palettes / "contrast"**~~ — ✅ **DONE 2026-07-12.** The 4 levels *and* the 6 glitch palettes, all
       ten verified against the real console's palette registers. See
       [`reference/palettes.md`](../reference/palettes.md).
@@ -104,7 +104,7 @@ Phase 0 is a hard blocker: **QML cannot read a single one of those fields today.
    wrote* and prove the console loads it and agrees with every field. The editor's byte-fidelity promise,
    checked by the machine that actually has to honour it.
 
-   **Two `maps.json` data questions are waiting on Twilight** (glitch-map dimensions; 3 empty tileset
+   **Two `maps.json` data questions are waiting on project leadership** (glitch-map dimensions; 3 empty tileset
    strings) — see `status.md` → Open issues. Nothing was changed in the JSON.
 
 1. **In-app review of the NEW full keyboard** (rebuilt 2026-07-11 as an ASDF deck — see
@@ -116,7 +116,7 @@ Phase 0 is a hard blocker: **QML cannot read a single one of those fields today.
    shared by player/rival/nickname + the keyboard footer — verify all on each rebuild.
 3. **Does the deck want more room at the default 750×480 window?** It scales, so it's comfortable
    resized and tight at the default: caps land around 30px and the longer code labels (`trainer`,
-   `player`) elide. Options if Twilight wants it roomier out of the box: a bigger default window, a
+   `player`) elide. Options if project leadership wants it roomier out of the box: a bigger default window, a
    slimmer header/footer, or a narrower detail pane. (`DetailView` was kept — it's now the only place
    a multi-char/variable code can be rendered large enough to read.)
 3. **End-to-end persistence pass** (edit → save → reopen) across player, rival, money, coins, badges,

@@ -1,6 +1,6 @@
 # The map, ANIMATED — what the console actually does, frame by frame
 
-**Verified against the disassembly** (`pret/pokered`, Twilight's clone at `Documents/projects/pokered`).
+**Verified against the disassembly** (`pret/pokered`, project leadership's clone at `Documents/projects/pokered`).
 The map is not a still picture: the Game Boy re-writes tile graphics **in VRAM every frame**, and it does
 it from **one byte the save holds**. This is the reference for making our map move the way the console's
 does — and it is the spec Phase 3 of [`../plans/map-screen.md`](../plans/map-screen.md) is built from.

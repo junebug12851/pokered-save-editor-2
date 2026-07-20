@@ -2,7 +2,7 @@
 date: 2026-07-19
 procedure: check-for-updates
 node: pokered-save-editor-2
-outcome: completed (check only — Twilight then said "adopt all"; applied in 2026-07-19-adopting-updates-chrome-2.2.1.md)
+outcome: completed (check only — project leadership then said "adopt all"; applied in 2026-07-19-adopting-updates-chrome-2.2.1.md)
 hub_version: 0.20.2
 hub_commit: 697bc5c
 chrome_version_hub: 2.2.1
@@ -19,7 +19,7 @@ chrome_version_adopted: 2.0.0
 Refreshed the hub mirror and diffed it against the project's adopted copies. The hub advanced
 **0.16.1 → 0.20.2** since this morning's adoption run; the one material, adoptable delta is the
 **shared-chrome bundle 2.0.0 → 2.2.1**, which adds a new user-facing **Coins reading-engagement
-counter** (`coins.js`) to the docs-site chrome. Reported and stopped — surfaced for Twilight's call
+counter** (`coins.js`) to the docs-site chrome. Reported and stopped — surfaced for project leadership's call
 because it is a visible UI addition and re-adopting the chrome requires full in-browser verification.
 
 ## What was done
@@ -63,7 +63,7 @@ else shifted).
 Two reasons, both safety-floor, not the authorization:
 
 - **The coins counter is a new user-facing element** (a reading-engagement counter on the docs site).
-  That is a UX addition worth Twilight's explicit nod, not a silent vendor — the same instinct that
+  That is a UX addition worth project leadership's explicit nod, not a silent vendor — the same instinct that
   made the font deviation a "surface and ask" this morning.
 - **Full verification is in-browser and substantial.** A chrome bump is a visual change; verifying it
   properly means re-running the Doxygen + gallery build and reviewing rendered pages across themes.

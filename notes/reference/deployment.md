@@ -45,8 +45,8 @@ Each release attaches:
 screenshots (a repo gets a single Pages site, so they share one deploy):
 
 ```
-https://junebug12851.github.io/pokered-save-editor-2/                   # Doxygen docs home (the ROOT)
-https://junebug12851.github.io/pokered-save-editor-2/screenshots/<name> # UI images + a gallery
+https://1fairyfox.github.io/pokered-save-editor-2/                   # Doxygen docs home (the ROOT)
+https://1fairyfox.github.io/pokered-save-editor-2/screenshots/<name> # UI images + a gallery
 ```
 
 The **Doxygen home is the Pages root** (the docs HTML is copied to the site root). The docs main page
@@ -58,7 +58,7 @@ still PNGs only — no GIFs), runs Doxygen, assembles `site/` (docs at root + `s
 deploys via `actions/configure-pages` → `upload-pages-artifact` → `deploy-pages`.
 
 **Referencing screenshots from the docs:** use the absolute Pages URL
-(`https://junebug12851.github.io/pokered-save-editor-2/screenshots/<name>`) — it resolves the same
+(`https://1fairyfox.github.io/pokered-save-editor-2/screenshots/<name>`) — it resolves the same
 whether the page is viewed as Doxygen-on-Pages, on GitHub (the notes `.md` are also rendered there), or
 in the README. (From a docs page you can also use the relative `screenshots/<name>`.)
 

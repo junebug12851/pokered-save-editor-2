@@ -966,7 +966,7 @@ that somewhat fights the current architecture.)
 a signed/unsigned `char` compare; an int-multiply widening; cheap const-ref loop fixes;
 a missing switch `default`.
 
-**Reviewed with Twilight 2026-06-22:**
+**Reviewed with project leadership 2026-06-22:**
 - **`PokemonMove` ctor `ppUp`** — RESOLVED: confirmed intended; fixed to `this->ppUp = 0;`
   so new move slots start clean (see fix-patterns.md).
 - **`~ItemMarketEntry()` pure-virtual-call (UB)** — Acknowledged, **left as-is** (suppressed +

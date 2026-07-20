@@ -1,7 +1,7 @@
 # Game progression — the global map graph (researched 2026-07-19)
 
 Briefed by Fairy Fox 2026-07-19: the map-states pass modelled each map's *own* timeline but never
-put those timelines into one **global order** — her bet was that maps later in the game **unset
+put those timelines into one **global order** — their bet was that maps later in the game **unset
 flags** the per-map view assumed were durable, that map access depends on *other* maps' progress
 (Saffron being the memory), and that the whole thing needs one big graph: every route from 0% to
 100%, per map and for the game, with the expected flag state at each point.
@@ -69,7 +69,7 @@ shows Mr. Fuji at home AND swaps two Saffron townsfolk (`TOGGLE_SAFFRON_CITY_E`�
 **hides 34 objects across eleven maps** (every rocket + scientist on Silph 2F–11F, plus Saffron
 City's seven street rockets + two more) and **shows six** (Saffron's civilians,
 `TOGGLE_SAFFRON_CITY_8`–`_D`). One event (`EVENT_BEAT_SILPH_CO_GIOVANNI`) plus this sweep IS the
-"Saffron occupied → Saffron liberated" state change Twilight remembered. ⚠️ It lives in
+"Saffron occupied → Saffron liberated" state change project leadership remembered. ⚠️ It lives in
 **`db TOGGLE_*` data tables**, not `ld a, TOGGLE_*` instructions — a mining pass that only greps
 the `ld` form (as this one's first cut did) sees *none* of it.
 
@@ -152,7 +152,7 @@ M19 E4 in fixed order → Champion → HALL OF FAME (the wipe fires; cave guard 
 M20 Post-game: Cerulean Cave → Mewtwo   (the only content the ending unlocks)
 ```
 
-**The windows (the non-linearity Twilight named):**
+**The windows (the non-linearity project leadership named):**
 
 - **Route 22 #1** exists only between M1 and M3 — Pewter Gym erases it. **#2** only after M16.
   A save's Route 22 state is *meaningless* without knowing where you are on the spine.

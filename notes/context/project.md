@@ -4,7 +4,7 @@
 
 A desktop save file editor for Pokemon Red & Blue (Game Boy), built in Qt C++/QML.
 This is the second version — a from-scratch rewrite after the first version (JS/Electron) became
-unmaintainable. It's open source, built by Twilight.
+unmaintainable. It's open source, built by project leadership.
 
 ## History
 
@@ -15,7 +15,7 @@ unmaintainable. It's open source, built by Twilight.
 
 ## Repository
 
-https://github.com/junebug12851/pokered-save-editor-2
+https://github.com/1fairyfox/pokered-save-editor-2
 
 ## Intended Features
 
@@ -43,5 +43,5 @@ https://github.com/junebug12851/pokered-save-editor-2
 
 ## Developer
 
-Open source, built by Twilight (with AI tooling assistance during the 2026 revival — see the in-app
+Open source, built by project leadership (with AI tooling assistance during the 2026 revival — see the in-app
 Credits and `projects/db/assets/data/credits.json`). Contributions are welcome.

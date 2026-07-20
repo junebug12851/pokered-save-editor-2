@@ -3,8 +3,8 @@
 > **Status: IMPLEMENTED and VERIFIED (2026-07-12).** All ten contrast values checked against the **real
 > console's palette registers** — zero mismatches (`scripts/emu/verify_palettes.py`).
 >
-> Twilight, before any of this was looked at: *"There are 4 contrast levels and 6 glitch palettes."*
-> **She was exactly right, and here is why.**
+> Project leadership, before any of this was looked at: *"There are 4 contrast levels and 6 glitch palettes."*
+> **They were exactly right, and here is why.**
 
 ## What "contrast" actually is
 
@@ -46,7 +46,7 @@ between two of them** — three bytes that were never meant to be a palette at a
 | 8 | 1/2 seam | `FF` | **glitch** |
 | **9** | FadePal1 | `FF` | **Black** |
 
-**Four levels (0, 3, 6, 9). Six glitch palettes (1, 2, 4, 5, 7, 8).** Exactly as Twilight said.
+**Four levels (0, 3, 6, 9). Six glitch palettes (1, 2, 4, 5, 7, 8).** Exactly as project leadership said.
 
 > Note contrast **1 and 2 look normal on the map** — `rBGP` is still `E4`. Their damage is in `rOBP0`/`rOBP1`,
 > the **sprite** palettes. So they will only *show* once the player and the NPCs are drawn. That is not a

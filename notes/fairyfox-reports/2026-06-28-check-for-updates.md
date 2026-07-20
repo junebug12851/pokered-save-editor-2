@@ -128,5 +128,5 @@ real upstream revision at hub 0.9.6 (the full-history / no-force-push sync fix);
 pre-authorization covers it, so nothing was applied. Adopting would touch
 `notes/reference/cross-project-sync.md` (primary), re-clone the shallow mirror full
 (operational), and optionally add one explicit line to `git-workflow.md`. Awaiting
-Twilight's go-ahead. (This report was written but, per the scheduled-run no-commit
+Project leadership's go-ahead. (This report was written but, per the scheduled-run no-commit
 guardrail, left **uncommitted** for review.)

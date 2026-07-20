@@ -30,7 +30,7 @@ The third brief of the day, delivered in full. Story:
 - **The canvas renders filter flags LIVE now** — ghosting read the cast snapshot, so switch
   flips and state applies didn't redraw; `misTick` + live `missablesAt` binding fix it
   (verified on screen: Oak full ↔ ghost).
-- Green: `tst_map_states` 9/9 · `tst_qml_screens` 28/28 · full `ctest` 92/92. Owed: her
+- Green: `tst_map_states` 9/9 · `tst_qml_screens` 28/28 · full `ctest` 92/92. Owed: their
   live pass.
 
 ### "CUSTOM" RETIRED — best-effort state matching + every step is a state (2026-07-19, `0.43.5-alpha`)
@@ -48,11 +48,11 @@ Fairy Fox's follow-up brief, delivered in full. Story: [`sessions/2026-07/2026-0
   reference/map-states.md amended). **Pinned:** `tst_map_states` 9/9 (new
   `bestEffort_neverCustom_andRawStepsResolve` — all 98 blueprints answer non-empty; raw-step
   apply is byte-exact); `tst_qml_screens` 28/28; `tst_map` 37/37. Screenshot-reviewed (combo,
-  popup, World section). Owed: her live pass.
+  popup, World section). Owed: their live pass.
 
 ### GLOBAL PROGRESSION — the cross-map deep dive: 70 resets, 5 classes, the spine (2026-07-19)
 
-Fairy Fox's brief — order the per-map timelines globally; her bet: later maps unset flags the
+Fairy Fox's brief — order the per-map timelines globally; their bet: later maps unset flags the
 per-map view thought durable. **Confirmed, and bigger.** Full story:
 [`sessions/2026-07/2026-07-19.md`](sessions/2026-07/2026-07-19.md); the graph:
 [`reference/game-progression.md`](reference/game-progression.md).
@@ -86,13 +86,13 @@ Full story: [`sessions/2026-07/2026-07-18.md`](sessions/2026-07/2026-07-18.md). 
   door's always-on corner tick removed; the hover tab is the one tab language.
 - Event-flag "?"s carry "Turns ON at stage N (name) — trigger."; missables lost self-evident
   blurbs; state matching provably ignores NPC wandering (script byte + own events + own missables
-  only). Green: `ctest` **92/92**. Owed: her live pass.
+  only). Green: `ctest` **92/92**. Owed: their live pass.
 
 ### ROUND 3 — the PANEL OVERHAUL: useless edits, stage-grouped flags, one state menu (2026-07-18, `0.43.3-alpha`)
 
 Full story: [`sessions/2026-07/2026-07-18.md`](sessions/2026-07/2026-07-18.md). The standing calls:
 
-- **"Useless edits"** (her word) is the gate for ONLY overwritten-or-never-read values —
+- **"Useless edits"** (their word) is the gate for ONLY overwritten-or-never-read values —
   placeholders, vestigial/temporary flags, the current town's Visited bit, Safari scratch,
   do-nothing oddities. Never merely-advanced controls. Panel switch, default hidden.
 - **A sprite is NEVER hidden** (overrules round 2): filter-flagged = always-visible GHOST
@@ -102,7 +102,7 @@ Full story: [`sessions/2026-07/2026-07-18.md`](sessions/2026-07/2026-07-18.md). 
   one-line rows, long form behind per-row "?" (MapInfoIcon rule amended for section/row use).
 - Rail: the storage button's rest look no longer equals the open-panel fill (wash+outline);
   the Sprite set and Character state icons; MapToolTip capped at 200 px.
-- Green: `ctest` **92/92**. Owed: her live pass; deeper sweep of the remaining panels' field
+- Green: `ctest` **92/92**. Owed: their live pass; deeper sweep of the remaining panels' field
   blurbs if wanted.
 
 ### ROUND 2 — silhouettes REAL (provider-served), strip above the world, harness hands (2026-07-18, `0.43.2-alpha`)
@@ -120,13 +120,13 @@ Second live pass + a harness brief. Full story:
   ToolTips purged for MapToolTip (tabs, roll buttons, ZoomMenu).
 - **Harness:** `drag` (real press-move-release; `MainWindow::debugDrag`) + `scroll`
   (top/bottom/named target) verbs; MCP tools `app_hover`/`app_drag`/`app_scroll`. All verified
-  end-to-end this session. Green: `ctest` 92/92. Owed: her live pass; one eye on a small view
+  end-to-end this session. Green: `ctest` 92/92. Owed: their live pass; one eye on a small view
   shift during tab-drags seen offscreen.
 
 ### THE LAYERS REWORK — one ink table, the Continue view, tab-drag, storage scroll (2026-07-18, `0.43.1-alpha`)
 
-Twilight's live pass (*"buggy… highly inconsistent… pieces feel like there shoved in half baked"*)
-plus her mid-session follow-up (tab-drag, snappier, click-off closes panels), delivered as one
+Project leadership's live pass (*"buggy… highly inconsistent… pieces feel like there shoved in half baked"*)
+plus their mid-session follow-up (tab-drag, snappier, click-off closes panels), delivered as one
 rework. Full story: [`sessions/2026-07/2026-07-18.md`](sessions/2026-07/2026-07-18.md).
 
 - **`MapEngine::ink(key)` is the ONE colour table** — panel swatches, canvas properties, every
@@ -136,7 +136,7 @@ rework. Full story: [`sessions/2026-07/2026-07-18.md`](sessions/2026-07/2026-07-
   ON) so every canvas ink is IN the panel.
 - **The Continue-load view:** a filter-flag-hidden sprite's artwork is not drawn (its box stays;
   tab-select shows a ghost). **Silhouettes had NEVER rendered** (`visible: false` source → empty
-  layer texture → MultiEffect drew nothing — her "they outline black"); fixed, verifiable only on
+  layer texture → MultiEffect drew nothing — their "they outline black"); fixed, verifiable only on
   hardware (shaders don't run offscreen).
 - **Z-order:** boxes (z 0) under objects (z 1); the hovered block's strip flips above (z 3).
   **Hover highlights** on all draggables + they hand the cell's tabs the withdraw signal.
@@ -146,11 +146,11 @@ rework. Full story: [`sessions/2026-07/2026-07-18.md`](sessions/2026-07/2026-07-
   of target (one hardcoded id) + a one-shot timer racing the layout. Fixed (target + a 450 ms
   settle window re-applying on content growth); pages open at the top. "Cut trees" → **"Cuttable
   trees"**. Snappier tab animations (60 ms).
-- **Owed: Twilight's live pass** — silhouette colours, hover/drag feel, click-off behaviour.
+- **Owed: project leadership's live pass** — silhouette colours, hover/drag feel, click-off behaviour.
 
 ### MAP STATES — BUILT: model + rename + UI, on the blueprints (2026-07-17, `0.43.0-alpha`)
 
-The second half of Fairy Fox's brief, delivered same-day on her go-ahead (ground rules: map change
+The second half of Fairy Fox's brief, delivered same-day on their go-ahead (ground rules: map change
 **seamless** — *"as though the map has always been loaded"*, no prompts; cross-map shared globals
 written **naturally**; transients **shown**). On top of the 98 blueprints:
 
@@ -173,7 +173,7 @@ written **naturally**; transients **shown**). On top of the 98 blueprints:
 - **A finding the tests forced:** BaseSAV's Pallet Town sits genuinely BETWEEN stages 2 and 3
   (Daisy walks, Town Map given, Poké Balls never collected) — the matcher answers **"" (custom)**
   for it, which is the honesty doctrine working, not a gap.
-- **Owed:** Twilight's live pass (the picker feel, a seamless map change, a roll on a gym);
+- **Owed:** project leadership's live pass (the picker feel, a seamless map change, a roll on a gym);
   MS-5 (randomizer hook) and MS-6 (console probes of constructed states) are the open phases.
 
 ### MAP STATES — per-map progression blueprints, researched + shipped as data (2026-07-17, `0.42.13-alpha`)
@@ -203,7 +203,7 @@ destination map on map-change, and feed the randomizer legal whole-states.
   the **"map script" → "map state" rename**, the state-picker UI, randomizer hook, console
   verification via the forge), decision entry in `decisions/architecture.md` (a NEW format,
   argued for — pret has no data format for this; it exists only as executable asm).
-- **Owed:** Twilight's pass on the plan's open questions (map-change default state, cross-map
+- **Owed:** project leadership's pass on the plan's open questions (map-change default state, cross-map
   context flags on roll, transients in the dropdown), then MS-2 onward. MS-6 console probes gate
   any UI. Data-only change — no app code touched; suite untouched (91/91 stands).
 
@@ -237,10 +237,10 @@ Research → 4 console probes → data/model → MapModel surface → panel + ca
   [`town-visited.md`](reference/town-visited.md), [`world-completed.md`](reference/world-completed.md),
   [`fossil-revival.md`](reference/fossil-revival.md) — the last completes v1→v2 map-page transference.
   Probes: `probe_in_game_trades.py`, `probe_town_visited.py`, `probe_world_completed.py`, `probe_fossil.py`.
-- **Owed: Twilight's live pass** — the group check-all/view-all in motion, the Milestones/Fossil
+- **Owed: project leadership's live pass** — the group check-all/view-all in motion, the Milestones/Fossil
   sections' scroll-feel (offscreen automation can't scroll to them), and the fossil independence.
 
-### THE CAMERA JUMP — her description WAS the diagnosis (2026-07-17, `0.42.9-alpha`)
+### THE CAMERA JUMP — their description WAS the diagnosis (2026-07-17, `0.42.9-alpha`)
 
 > *"The camera seem to mess around anytime something is committed to the data … other times the
 > camera seems to reset to the default position when you first open it."*
@@ -255,7 +255,7 @@ because it sets `framedMap` on its way past. Fixed; `framedMap` now reads **23**
 > **Two lessons, and the second is the one that keeps costing:**
 > - **"Sometimes" is a clue, not noise.** It meant *once per map load*, which is exactly what a
 >   one-shot guard initialised too late produces. Taking the word literally found it in minutes.
-> - **Use the app's own truth, not arithmetic.** Twilight: *"why dont you use the actual
+> - **Use the app's own truth, not arithmetic.** project leadership: *"why dont you use the actual
 >   screenshotting tools of the mcp server instead of calculating your own"*. I had "found" a
 >   cell-outline bug by computing where a block should be on screen and cropping there. There was no
 >   bug: `app_get` shows `hoverBlockX = 8` and `at.blockX = 8` **agree** — the status bar reports MAP
@@ -284,7 +284,7 @@ and hovering most of the map did nothing. **Four disagreeing systems cannot be p
   cost hover, tooltip *and* click across most of a water route. **Every kind now has a real
   destination**: grass/water → the **Wild Pokémon** panel (that is what they *are*), traits → the
   **Tileset** panel, objects → **Details**. Pinned: *no spot may be inert*.
-- **"1 spot = no tabs" was MY rule, not hers**, and it is gone. It made the map inconsistent — a
+- **"1 spot = no tabs" was MY rule, not theirs**, and it is gone. It made the map inconsistent — a
   two-thing block was interactive, the water block beside it was dead. **Every block with anything
   gets tabs.**
 - **Clicking a tab selected the block underneath it.** The ground's `TapHandler` acts *before* any
@@ -294,12 +294,12 @@ and hovering most of the map did nothing. **Four disagreeing systems cannot be p
   dragging everywhere. [`reference/qt-patterns.md`](reference/qt-patterns.md) (top).
 - ✅ **Hover does something**: hovering a tab **lights its own thing** on the map; the cell tints.
 
-**Owed:** her live pass. And an honest worry: with a tab per block, a water route is now **dotted
+**Owed:** their live pass. And an honest worry: with a tab per block, a water route is now **dotted
 with tabs** — uniform, as asked, but possibly too much furniture. That is a look-at-it call.
 
 ### THE LIVE PASS FOUND WHAT 91 GREEN TESTS DIDN'T (2026-07-17, `0.42.5-alpha`)
 
-Twilight opened it and, in about two minutes: *"none of this works actually"*. She was right about
+Project leadership opened it and, in about two minutes: *"none of this works actually"*. They were right about
 every item. Kept in full, because the **shape** of the miss matters more than the fixes.
 
 - **Map Storage opened COMPLETELY BLANK, on every map.** `MapStoragePanel.qml` used `FlatToggle`
@@ -358,7 +358,7 @@ Phase 1 of Fairy Fox's hidden-items brief. Research + traps + lessons:
 > able to fail.** And `tst_db_coverage_fill.cpp` had *written the symptom down* — *"the HiddenItems
 > store is empty"* — and filed it as a quirk of the fixtures. It was the bug, in writing, unread.
 
-**Owed (the rest of her brief, phased — restructure first, her call):** the script coord-trigger +
+**Owed (the rest of their brief, phased — restructure first, their call):** the script coord-trigger +
 event-flag extraction (16f-b part 2) · `flagHotspots()` → **`blockHotspots()`** (locations owning spot
 lists; must admit **tile traits**) · hidden items/coins **in the Map Storage panel** under their maps ·
 the **tab strip** + interaction model (hover-reaches-all · click-priority-is-layer-order ·
@@ -428,7 +428,7 @@ container doesn't).
     aqtinstall releases past 3.3.0.**
   - **A wrong conclusion was caught by leadership, not by me.** I wrote this up as a hard *ceiling*
     ("Windows can have at most 6.10.x") off one lazy step — *PyPI's newest is 3.3.0, therefore no fix
-    exists* — and put three options on top of it. Twilight: *"i find it hard to believe the community
+    exists* — and put three options on top of it. Project leadership: *"i find it hard to believe the community
     has no solution for this moving forward."* The fix had been merged **four months** earlier.
     Lessons (**"latest release can't" ≠ "can't"** · an ecosystem with no answer is a **smell** · don't
     promote an unchecked constraint into someone else's decision):
@@ -485,7 +485,7 @@ The **Events** feature (v1's cryptic `1cc`/`1cd` page) is researched end-to-end 
   Fixed: every map an event is filed on is selectable (**108 → 141 pages**).
 - **Heavy-page check:** worst is **Silph Co 7F, 227 rows** (median 16) — renders fine fully expanded
   (6055 px scroll, no hang). **No virtualisation needed.**
-- **Owed:** Twilight's **live pass** (scroll/toggle feel — a still PNG can't judge it). And the
+- **Owed:** project leadership's **live pass** (scroll/toggle feel — a still PNG can't judge it). And the
   **on-canvas hotspot layer** (Phase 10 — a clickable box on the map opening the panel at that flag;
   Oak's two spots) is **NOT built**: the research is done (918 objects, 226 conditional, the flag↔object
   links) but it needs its own brief/design pass first.
@@ -506,7 +506,7 @@ misreads the rival's text box as "healthy"** (why 2026-07-15 was inconclusive). 
 
 ### MAP SCRIPTS + MISSABLES on the Map Storage panel — BUILT (2026-07-16, `0.41.0-alpha`)
 
-Twilight's brief, delivered: every map with storage is a page (~100). Top of each page: **the map's
+Project leadership's brief, delivered: every map with storage is a page (~100). Top of each page: **the map's
 script** (the 97 `w<Map>CurScript` bytes at `0x289C`, `WorldScripts`) as a dropdown whose steps read
 like a story (458 descriptions — curated beats for the story maps), custom values via "Something
 else…" with the **out-of-range jp-hl crash warning** (stored, never refused). Below: the legacy
@@ -518,20 +518,20 @@ curMapScript combo shares the descriptions. Fixed en route: `MissablesDB` never 
 the old `0x28A0` missables-offset claim corrected (that's Viridian's script byte); a ComboBox
 model-reset binding trap (caught twice by the screenshot review). Everything:
 [`reference/map-scripts-missables.md`](reference/map-scripts-missables.md). Green: `tst_world` 19/19
-(two new byte-exact keystones), `tst_qml_screens` 16/16. **Owed: Twilight's live pass.**
+(two new byte-exact keystones), `tst_qml_screens` 16/16. **Owed: project leadership's live pass.**
 
 > **Connections live-review fixes (0.39.5-alpha):** the added-connection dead-state bug (interactive
 > strip now save-based, not DB-based), neighbour maps animate, and the smart grouped picker (default +
 > opposite-edge fits + sizes). Owed: the map **ring** rendering the save's connections, and the
 > **living/wandering-NPCs** brief (both tracked in `plans/map-screen.md`).
 
-> **Releases are MANUAL.** Commit and push to `dev` freely, but `main` only moves when Twilight says
+> **Releases are MANUAL.** Commit and push to `dev` freely, but `main` only moves when project leadership says
 > **"ship"**. Green is necessary, not sufficient. See [`reference/git-workflow.md`](reference/git-workflow.md).
 
 ### KNOWN, UNFIXED — the wallpaper attribution overlaps the Credits cards (found 2026-07-17)
 
 Caught by the mandated screenshot review while adding the aqtinstall credit. **Pre-existing, not from
-that change**, and **not fixed** — flagged for Twilight because the fix is hers to choose.
+that change**, and **not fixed** — flagged for project leadership because the fix is theirs to choose.
 
 **What:** on the **About / Credits** modal, `CreditWork` — the faint wallpaper attribution (*"Basic
 Pokemons Colors" by yoshiyaki (CC-BY-NC-ND 3.0)* + URL) — is `anchors.bottom`/`.right` on the Page and
@@ -544,7 +544,7 @@ are a design decision — do not independently change QML appearance"*, and this
 **licence-mandated** (CC-BY-NC-ND requires visible attribution), so where it goes and how legible it is
 has legal weight, not just aesthetic. An overlap is a bug; **the remedy is a design + licensing call.**
 
-**Options, for her:** give the ListView a bottom margin/footer inset so content can never reach it ·
+**Options, for them:** give the ListView a bottom margin/footer inset so content can never reach it ·
 move the attribution into the *Wallpapers* card it describes · give it a solid backing plate · pin it
 to the scrolling footer rather than the Page. **Not started.**
 
@@ -569,7 +569,7 @@ Docs: [`reference/dev-mcp.md`](reference/dev-mcp.md) → "The progression layer"
 
 ### THE DEV AUTOPILOT — pathfinding + auto-navigation over MCP, briefed + built + 7/7 (2026-07-16)
 
-Twilight briefed "describe the destination and the server takes you there" — and the rest of
+Project leadership briefed "describe the destination and the server takes you there" — and the rest of
 comprehensive high-level control: find a battle, execute it a certain way, talk to a **moving** NPC,
 long hauls (Mt. Moon end-to-end, town-to-town), one-call multi-step runs for the game AND the app.
 Built: `scripts/emu/navigate.py` (A\* + Dijkstra-over-portals off our own shipped map data),
@@ -580,11 +580,11 @@ haul **Pallet → Pewter through Viridian Forest** + a hunt won with `move:1`. F
 and fixed structurally (double-step holds; `wCurMap`-first transitions; solid warp squares;
 post-clamp connection offsets). Plan: [`plans/dev-autopilot.md`](plans/dev-autopilot.md); reference:
 [`reference/dev-mcp.md`](reference/dev-mcp.md). Also: "Filter Flags" casing fixed on the Map Storage
-panel. Owed: Twilight's live pass; HM routing/bike/spinners/elevators are stated v1 limits.
+panel. Owed: project leadership's live pass; HM routing/bike/spinners/elevators are stated v1 limits.
 
 ###  FORGED SAVES AT ANY MAP — console-authored, briefed + built + verified (2026-07-16)
 
-Twilight briefed the **total custom state resume**: the MCP server generates a proper save at any
+Project leadership briefed the **total custom state resume**: the MCP server generates a proper save at any
 map/position/flags in one call. Design: **the game authors the state itself** —
 `scripts/emu/forge_map_save.py` walks the real console to the target through a hijacked door
 (edge-hop for the 8 warpless routes, columns pre-filtered by our own collision data) and dumps the
@@ -613,12 +613,12 @@ map's whole Area block) is a future briefed phase. Full correction:
 **Built on it:** `tst_flag_scenarios` wired into CMake + **verified 5/5 on the real ROM** (one
 scenario per process; a wedge is recorded as a **"hang" verdict**, tree-killed, batch continues);
 `scripts/emu/forge_save.py` (the shared forge + reseal); `scripts/emu/drive_session.py` (interactive
-PyBoy as an owned child REPL); and **the dev MCP server** — `scripts/mcp/` — Twilight's brief: ONE
+PyBoy as an owned child REPL); and **the dev MCP server** — `scripts/mcp/` — project leadership's brief: ONE
 standardized transport for the whole dev loop (build/test/app-drive/screenshots-returned-inline/
 PyBoy install-update-drive/process hygiene), everything a background job with hard tree-kill
 timeouts, background-by-default + explicit `app_foreground`. Self-tested end-to-end. Reference:
-[`reference/dev-mcp.md`](reference/dev-mcp.md). Owed: registering it in Twilight's Claude config
-(`scripts/mcp/README.md`), her live pass, and the cross-map forge phase.
+[`reference/dev-mcp.md`](reference/dev-mcp.md). Owed: registering it in project leadership's Claude config
+(`scripts/mcp/README.md`), their live pass, and the cross-map forge phase.
 
 **The debug harness got its screws tightened too (0.40.5-alpha):** the "distorted screenshots" were
 **mid-transition grabs** — navigation verbs now settle before replying, `shot` waits out transitions
@@ -627,9 +627,9 @@ timeouts, background-by-default + explicit `app_foreground`. Self-tested end-to-
 
 ### MAP STORAGE panel (gym/safari minigame bytes) — BUILT (2026-07-15, `0.40.4-alpha`)
 
-Twilight briefed a **Map Storage panel** (right dock) for six global-but-map-specific save bytes —
+Project leadership briefed a **Map Storage panel** (right dock) for six global-but-map-specific save bytes —
 Vermilion trashcan switch 1/2, Cinnabar "next wrong answer", Safari game‑over, Safari balls, steps
-left. The accurate model (hers): **global state variables that are clearly map‑specific** — stored once
+left. The accurate model (theirs): **global state variables that are clearly map‑specific** — stored once
 save‑wide in the global **Main‑Data** block (persistent, not RAM scratch; not a per‑map Area slot),
 each belonging to one map, so the panel files each global byte under its owning map. Research + verified
 offsets + the big‑endian `wSafariSteps` trap + the `wGymTrashCanIndex`‑is‑a‑decoy trap:
@@ -646,11 +646,11 @@ correct (`WorldLocal`); pinned byte‑exact by **`tst_world`** (`local_writesExa
 `world.local`). `MapRailButton` gained a `primary` (filled‑at‑rest) style. Design: Phase 15 in
 [`plans/map-screen.md`](plans/map-screen.md). Green: `tst_qml_screens` 16/16, `tst_world` 17/17.
 Panel reviewed live (Vermilion page: values 4/7 = BaseSAV baseline, clean layout). **Owed:
-Twilight's live pass** (drag/scroll/combo/temp‑flag can't be still‑reviewed).
+Project leadership's live pass** (drag/scroll/combo/temp‑flag can't be still‑reviewed).
 
 ### LAYERS: "Components" → "Tiles"; the two "Warps" told apart, not merged (2026-07-15, `0.40.3-alpha`)
 
-Twilight caught the two-"Warps" confusion. There really are two different things: the tile-meaning
+Project leadership caught the two-"Warps" confusion. There really are two different things: the tile-meaning
 group's **warp tile-trait** (which tile *graphics* are warp-capable on this tileset — doors, stairs,
 cave mouths, warp pads; from `warp_tile_ids.asm`, read by `IsWarpTileInFrontOfPlayer` to know a tile
 CAN warp) and Game View's **Warps** (the save's warp *list* — coords/destinations, the draggable
@@ -659,28 +659,28 @@ objects). So the fix is **disambiguation, not deletion**:
 - The group is **renamed "Tiles"** (it's the tileset's tile meanings).
 - The warp tile-trait **stays**, relabelled **"Warp tiles"** so it reads apart from the object "Warps".
 - **Doors stay** — a door is a passable tile you cross to reach a warp, a real tileset trait.
-- **Defaults (Twilight):** every **Game View** layer ON except **Draw area** (player, people, warps,
+- **Defaults (project leadership):** every **Game View** layer ON except **Draw area** (player, people, warps,
   signs, screen box); every **Tiles** overlay OFF. Warps show by default as the Game View **object**
   layer (now ON by default — it used to be off only because the warp tile-trait was standing in for it).
   - ⚠️ **AMENDED 2026-07-17 (`0.42.1-alpha`): the Screen box is OFF by default** — *"disable camera
     view box by default … the outline around the player that would be exactly the gameboy screen
     view"*. The map now opens without an outline trailing the player. **Exactly one bit changed
-    (`ViewScreenBox`)** — the **Draw area was already off and was NOT touched** (Twilight's own
+    (`ViewScreenBox`)** — the **Draw area was already off and was NOT touched** (project leadership's own
     earlier call, `3a22f84`; it has never been in the default mask). Pinned by `tst_map_layers` 12/12.
     - **A wording bug worth remembering:** the first cut of this said *"both player-riding boxes
       now start off"* — true about the **state**, false about the **change**, and it read as though a
-      second layer had been disabled unasked. Twilight caught it. **When describing an edit, describe
+      second layer had been disabled unasked. Project leadership caught it. **When describing an edit, describe
       what the edit DID, not what the world now looks like** — the two diverge exactly when something
       was already in the desired state, which is precisely when a false claim is most alarming.
 
-⚠️ **History note:** an intermediate commit (`0.40.2`) briefly *removed* the warp tile-trait; Twilight
+⚠️ **History note:** an intermediate commit (`0.40.2`) briefly *removed* the warp tile-trait; project leadership
 corrected that ("it has to come back") once the two-warps distinction was clear. It's back.
 `tst_map_layers` 12/12 (nine tile overlays incl. Warp tiles; Game-View defaults pinned), `tst_map`
 27/27. The layer-name mapping is verified **not** swapped.
 
 ### WILD POKÉMON panel — BUILT (2026-07-15, Phase 8, `0.40.1-alpha`)
 
-Twilight briefed the **Wild Pokémon** panel; it's in the map screen's left dock. Two sections (grass,
+Project leadership briefed the **Wild Pokémon** panel; it's in the map screen's left dock. Two sections (grass,
 water), each an **Enable** switch + an **encounter-chance** slider (Low↔High) + the ten slots drawn like
 the Pokémon box: fixed **percent** upper-left, **editable level** upper-right, artwork centre, name
 below. **Click** a slot → the species picker (Pokémon-details `SelectSpecies`); **drag** → reorder
@@ -694,12 +694,12 @@ pinned by `tst_area_pokemon::wildTables_byteOrderIsLevelThenSpecies`. Species is
 as warps/signs (verified from the disassembly). New: [`reference/wild-encounters.md`](reference/wild-encounters.md),
 `WildPokemonPanel.qml` + `WildMonList.qml`, and the `MapModel` encounter surface. Green:
 `tst_area_pokemon` 6/6, `tst_map` 27/27, `tst_qml_screens` 16/16. Also this session: the **Door
-meaning-layer is off by default** now (Twilight asked; only Warps on) — backend mapping verified **not**
-swapped. **Owed: Twilight's live pass** (drag-reorder / click-to-pick / inline level edit).
+meaning-layer is off by default** now (project leadership asked; only Warps on) — backend mapping verified **not**
+swapped. **Owed: project leadership's live pass** (drag-reorder / click-to-pick / inline level edit).
 
 ### "3-step wild encounter cooldown" checkbox — BUILT (2026-07-15)
 
-Twilight briefed one checkbox for the **map details page**. Research: v2's `AreaPokemon::pauseMons3Steps`
+Project leadership briefed one checkbox for the **map details page**. Research: v2's `AreaPokemon::pauseMons3Steps`
 (`0x29D8` bit 0) is `wStatusFlags2` bit 0 = **`BIT_WILD_ENCOUNTER_COOLDOWN`** — the console's **post-battle
 cooldown**; set after every battle, and on the next `EnterMap` a set bit loads
 `wNumberOfNoRandomBattleStepsLeft = 3`, decremented per step until it self-clears. **Console-verified
@@ -708,11 +708,11 @@ DURABLE** (kept on load → no `!`) via `scripts/emu/probe_wild_encounter_cooldo
 **`wildEncounterCooldown`** (+ doc), exposed on `MapModel` (new `AreaPokemon*` ctor arg), placed as a
 `MapSwitch` on `DetailsPanel.qml`'s nothing-selected section. Note:
 [`reference/wild-encounter-cooldown.md`](reference/wild-encounter-cooldown.md). Green: `tst_area_pokemon`
-5/5, `tst_qml_screens` 16/16, `tst_map` 27/27. **Owed: Twilight's live pass** (toggling it).
+5/5, `tst_qml_screens` 16/16, `tst_map` 27/27. **Owed: project leadership's live pass** (toggling it).
 
 ### CHARACTER PANEL (`AreaNPC` flags) — BRIEFED + RESEARCHED (2026-07-15, not built)
 
-Twilight briefed the right-hand **Character panel** (the nine map-global NPC/control/battle flags from
+Project leadership briefed the right-hand **Character panel** (the nine map-global NPC/control/battle flags from
 v1's "NPC" page). Researched + written up in
 [`reference/npc-character-state.md`](reference/npc-character-state.md): all nine are transient
 script/battle/link scratch, **three v1 labels are wrong** (the "Scripted Battle" flag is really the
@@ -725,7 +725,7 @@ model-fix → 9c emulator probe (gates the UI) → 9d panel**. Owed: `scripts/em
 
 ### CONNECTIONS (connecting routes) — BRIEFED + DESIGNED (2026-07-15, not built)
 
-Twilight briefed the four edge connections and answered the design questions; written up as
+Project leadership briefed the four edge connections and answered the design questions; written up as
 **Phase 7** in [`plans/map-screen.md`](plans/map-screen.md), graduated out of §12b. The key idea:
 a connection has only **two human inputs** (neighbour map + a signed offset −27…+27); the other nine
 bytes are **macro-derived** — so editing is offset-driven with auto-derive, raw values shown (editable
@@ -747,7 +747,7 @@ each writing only the flag bit + its one slot. **`tst_connections` 14/14** — k
 corner-aligned / centred / flush). `connectionEditList` gained neighbour size + `snaps`.
 **`tst_qml_screens` 16/16**, tst_connections 14/14. **Owed:** the full draggable neighbour-map render,
 the drag-a-map-onto-arrow gesture, the sync-aware raw handles (7d), and
-**Twilight's live pass** (drag/select/snap can't be still-reviewed). Turn on the **Connections** layer
+**Project leadership's live pass** (drag/select/snap can't be still-reviewed). Turn on the **Connections** layer
 to see arrows + strips.
 
 **Phase 7c BUILT (2026-07-15, `0.39.3-alpha`) — the connection inspector.** Selecting a connection
@@ -760,12 +760,12 @@ live/restored honest note. `tst_connections` **16/16** (two new for the fields +
 connection renders its actual neighbour map (its own tileset) bleeding off the edge, aligned to the
 offset, drawn behind our opaque buffer so only the off-edge part shows, dimmed 45%, re-positioned live on
 a drag. `connectionEditList` gained `toTileset`. Still owed in Phase 7: the drag-map-onto-arrow
-gesture, the on-canvas resize nodes (7d), and **Twilight's live pass** (the alignment + all the drag
+gesture, the on-canvas resize nodes (7d), and **project leadership's live pass** (the alignment + all the drag
 interactions can't be still-captured — layer-gated, edge-located, zoom-dependent).
 
 ### THE PLAYER details panel — BUILT (2026-07-14, `0.39.0-alpha`)
 
-Twilight briefed **fleshing out the full player details panel** — all 26 `AreaPlayer` map-state bytes
+Project leadership briefed **fleshing out the full player details panel** — all 26 `AreaPlayer` map-state bytes
 (the v1 `area-player` field set: Moving, Last Stop, Current direction, X/Y + block coords, Jumping Y,
 Strength, Fly, Surf, the battle four, the special-warp offsets, the standing-on trio, Walk/Bike/Surf,
 End-edge jump, Spin, Card Key, Link Cable). Research **console-verified byte-by-byte**:
@@ -779,7 +779,7 @@ each wearing an amber **!** (with its own reason) or a grey **❌**. New: `MapMo
 `setPlayerField()`, `PlayerField.qml`, and **`tst_player`** (7 cases; keystone byte-diffs the whole
 32 KB across every field → exactly one byte/bit moves). `tst_qml_screens` 16/16.
 
-**Owed: Twilight's live pass** — scrolling the panel, toggling *Reloaded values* to reveal the
+**Owed: project leadership's live pass** — scrolling the panel, toggling *Reloaded values* to reveal the
 rewrite group, and the enum/flag controls are things the offscreen still-PNG review can only partly
 cover. (Screenshots captured: `tmp/player-panel-default.png`.)
 
@@ -817,11 +817,11 @@ step** (descriptive ComboBox from `MapDBEntry::getScriptSteps`, parsed from `map
 its byte(s); `areamap.{h,cpp}` docs corrected (names kept). New DB parse: `MapScriptStep` +
 `getScriptSteps`. Pinned by **`tst_area_state`** (6 cases; keystone byte-diffs every setter + the
 view-box sync doctrine). `tst_qml_screens` 16/16, `tst_map` 27/27, `tst_player` 7/7. **Owed:** the
-on-canvas **drag** of a broken-loose view box (canvas interaction), and Twilight's live pass.
+on-canvas **drag** of a broken-loose view box (canvas interaction), and project leadership's live pass.
 
 ### The "Map" page — the earlier research state (kept for context)
 
-Twilight brought v1's "Map" page (under "Area") into the map-details panel and asked what the seven
+Project leadership brought v1's "Map" page (under "Area") into the map-details panel and asked what the seven
 leftover fields do and **which are rewritten at boot**. Console-verified in
 [`reference/area-map-state.md`](reference/area-map-state.md).
 
@@ -832,7 +832,7 @@ The answer to *"which are rewritten at boot"*:
 - **Derived, TRUSTED on load (1):** `wCurrentTileBlockMapViewPointer` (the camera / view box).
   ⚠️ Predicted "recomputed"; **wrong** — its recompute is off the Continue path, so the save's
   value is trusted: writing `0xFFFF` made the cartridge **draw garbage** (`tmp/emu-areamap/areamap.png`).
-  Doctrine (clarified by Twilight): **synced to the coords by default**, with a **break-sync**
+  Doctrine (clarified by project leadership): **synced to the coords by default**, with a **break-sync**
   toggle + alert-on-manual-entry + **canvas dragging** of the view box for power users.
 - **Rewritten/reset every load (2):** `wMapViewVRAMPointer` (→ `$9800`) and `wCardKeyDoorX/Y` (→ 0).
 - **Auto-trigger lever (1):** `BIT_USE_CUR_MAP_SCRIPT` — ⚠️ predicted "cleared"; **survives on a
@@ -842,14 +842,14 @@ The answer to *"which are rewritten at boot"*:
   (2026-07-14)** — do not re-add it here.
 
 No save-corruption bug and no hazard; it's a naming/organisation fix plus the derived-value
-sync discipline. **Design direction (Twilight):** derived values (the view box) **kept in sync by
+sync discipline. **Design direction (project leadership):** derived values (the view box) **kept in sync by
 default** with a power-user break-sync path; scripts = descriptive ComboBox + "Something else…";
 pointer fields intuitively selectable, **never an address** except behind "Something else…".
 
 **Data landed for the script combo (2026-07-15):** `scripts/import_map_scripts.py` imported each
 map's `SCRIPT_<MAP>_<NAME>` steps into a new **`scriptEntries`** field in `maps.json` (additive,
 116 maps / 458 steps, `--check`-idempotent) — the descriptive list the "Current Script" ComboBox
-will read. Per-map progress (`w<Map>CurScript`) is out of scope (Twilight: current scripts only).
+will read. Per-map progress (`w<Map>CurScript`) is out of scope (project leadership: current scripts only).
 
 **CI fix (2026-07-15):** `dev` was red on a missing CI Qt module, not a test failure —
 `projects/CMakeLists.txt` requires Qt `ShaderTools` (genuinely: `app/CMakeLists.txt` `qt_add_shaders`
@@ -870,7 +870,7 @@ configure. Fix: added `qtshadertools` to the CI Qt modules in `{tests,lint,relea
 New test: **`tst_warps`** (24 cases). Keystone: drag a door across town and byte-diff the whole 32 KB —
 **exactly `x` and `y` moved**. Full `ctest` **85/85**.
 
-**Owed: Twilight's live pass** — the drag, the drop, the delete, the maker tools and the pickers are
+**Owed: project leadership's live pass** — the drag, the drop, the delete, the maker tools and the pickers are
 all things a still PNG cannot review.
 
 ### …and the screenshot review caught a cry-wolf that would have shipped (2026-07-14)
@@ -912,7 +912,7 @@ New test: **`tst_signs`** (15 cases). Keystone: drag a sign and byte-diff the wh
 - A sign rides the **same persistence linchpin as a warp** (`.loadSignData` inside `LoadMapHeader`,
   behind `BIT_NO_PREVIOUS_MAP`): live on Continue, restored on re-entry — the panel says so.
 
-**Owed: Twilight's live pass** — the drag, the delete, the tool and the grouped picker are things a
+**Owed: project leadership's live pass** — the drag, the delete, the tool and the grouped picker are things a
 still PNG can only partly review.
 
 ### WARPS — what the research found (2026-07-14)
@@ -953,14 +953,14 @@ out-of-table values that make a real console read arbitrary ROM as warp data. **
 
 Tool: `scripts/emu/probe_warp_persistence.py` (local-only, ROM-gated).
 
-### NOT YET BRIEFED — don't design or build these (2026-07-14, Twilight)
+### NOT YET BRIEFED — don't design or build these (2026-07-14, project leadership)
 
 > *"Signs and stuff, connecting routes, wild Pokémon — these are examples of things I haven't gotten to
 > yet. I'd hate to have to undo a lot of work because it was done before I explained anything."*
 
 **Area state (the AreaWarps/AreaLoadedSprites leftovers) · the tileset deep pass** are **un-briefed**.
 (Signs, connections, wild Pokémon/encounters and character state have since been briefed + built.) The sketches for them in `plans/map-screen.md` were written from the *save
-layout* — a map of what bytes exist, not of what Twilight wants a person to be able to *do* — and they
+layout* — a map of what bytes exist, not of what project leadership wants a person to be able to *do* — and they
 **carry no authority**. Each gets its own conversation, then research, then a design, then code.
 
 ⚠️ **Adjacency is not a brief.** Signs load out of the *same ROM block* as warps and are the *same shape*
@@ -999,7 +999,7 @@ theirs. **Music becomes their own `.asm` sheet music, parsed line by line** (owe
 assembly with macro names, so a *line parser* turns it straight into sound-engine commands — we never
 needed a byte compiler. See [`reference/file-formats.md`](reference/file-formats.md) and `CLAUDE.md`.
 
-### Owed from Twilight's 2026-07-13 review (captured, not yet done)
+### Owed from project leadership's 2026-07-13 review (captured, not yet done)
 
 - **The sprite Details panel is bad and gets rebuilt.** Raw values, cryptic, cramped, "Who/Where/When" is
   dumb. Group X+Y into one control; picture = a *picker* with the artwork; hide fields the combo makes
@@ -1041,7 +1041,7 @@ steps. Diffing would have cried wolf on every save ever opened. Pinned by
 New test: **`tst_map_sprites`** (10 cases). Its keystone is `moveNpc_writesExactlyTwoBytes` — drag a
 person across town and byte-diff the whole 32 KB save: **exactly `mapX` and `mapY` moved, nothing else.**
 
-**Owed: Twilight's live pass** on the drag, the drop, the delete and the panel — a still PNG can
+**Owed: project leadership's live pass** on the drag, the drop, the delete and the panel — a still PNG can
 review none of those.
 
 ### SPRITES — the research: the model was WRONG in four places (2026-07-13)
@@ -1096,8 +1096,8 @@ is verified against the *disassembly*, not yet against the *silicon*. See
 ###  The plan of record — read it before touching the map screen (2026-07-12)
 
 The map grew organs fast (blocks, tiles, meaning, palettes, the player, connections, music) and every one
-was bolted onto the same screen. Twilight's verdict — *"UX is one of the highest priorities and right now
-it's really bad"* — and she is right: three bars of unrelated chrome, panels that stack sideways and
+was bolted onto the same screen. Project leadership's verdict — *"UX is one of the highest priorities and right now
+it's really bad"* — and they are right: three bars of unrelated chrome, panels that stack sideways and
 **evict each other**, no real layer system, nothing editable on the canvas, and **most of the Area block
 has no UI at all**.
 
@@ -1179,12 +1179,12 @@ list; Mart *and* Poké Center are one list), and the v1 importer assumed one lis
 the chain slipped by one.
 
 **This had teeth:** `AreaTileset::loadFromData()` writes `collPtr` into the save, so "put the player in a
-Poké Mart" wrote **Red's-house collision** into it. Fixed with Twilight's go-ahead (3 lines), verified
+Poké Mart" wrote **Red's-house collision** into it. Fixed with project leadership's go-ahead (3 lines), verified
 against the cartridge, and pinned by `tst_tile_traits::derivedCollPtrs_matchTilesetJson` +
 `martAndRedsHouse_areNotTheSameList` — which were **negative-controlled**: put the bug back and they fail
 by name with the exact reason.
 
-**Owed: Twilight's live pass** on the chips, the click-to-inspect, and the two new panels.
+**Owed: project leadership's live pass** on the chips, the click-to-inspect, and the two new panels.
 
 ### ✅ And now the actual Game Boy checks our work (2026-07-12)
 
@@ -1224,7 +1224,7 @@ note length by one and it fails on frame 7 with the exact byte.
 Green: `tst_sound_parity` 48/48, `tst_audio` 10/10, `tst_qml_screens` 16/16, full `ctest` **78/78**. The
 whole story: [`plans/music.md`](plans/music.md).
 
-**Owed: Twilight's live pass.** It is sound and it is hover — a still PNG can review neither.
+**Owed: project leadership's live pass.** It is sound and it is hover — a still PNG can review neither.
 
 ### Music — the research (2026-07-12)
 
@@ -1232,7 +1232,7 @@ The next organ of the map emulator is **sound**, and it all lands on the **Map s
 (**No Audio Fadeout**, **Prevent Music Change**), the map's **music track** picker, and — the real ask —
 **actually playing the music**, accurately, with a ▶ per track and **hover-to-preview**.
 
-Decided with Twilight: the music data is **imported from `pret/pokered`** (the same precedent as the map
+Decided with project leadership: the music data is **imported from `pret/pokered`** (the same precedent as the map
 blocks — it ships, no ROM needed), and playback is a **full port** — the real Gen 1 sequencer driving a real
 **DMG APU** model in C++ (`pse-audio`), not an impression. Nothing is built yet.
 
@@ -1277,7 +1277,7 @@ mismatches**, and the resulting ring is byte-identical to the console's `wOverwo
 ⚠️ **`MapDBEntryConnect::stripSize()` is WRONG** (it branches on `fromWidth < toWidth`; the macro clamps on
 `min(curW + 3 - offset, toW)`), and `maps.json`'s **`flag`** field exists only to patch that. The real game
 has no flag. `MapEngine` ignores both and recomputes from the macro, so nothing is broken today — but the DB
-still carries a wrong formula. **Fixing it is Twilight's call** (curated data + a public DB API).
+still carries a wrong formula. **Fixing it is project leadership's call** (curated data + a public DB API).
 
 Everything about it: [`reference/map-connections.md`](reference/map-connections.md).
 
@@ -1287,7 +1287,7 @@ The save's `contrast` byte (`0x2609` = `wMapPalOffset`) is **not a brightness di
 from a pointer** into its fade-palette table (`LoadGBPal`, `home/fade.asm`). `0/3/6/9` land on real entries —
 **the four contrast levels** (0 normal, 6 the "needs FLASH" cave palette, 9 black). Everything else reads
 **across the seam between two entries** — `1, 2, 4, 5, 7, 8`: **the six glitch palettes.** Exactly what
-Twilight said, and now we know why.
+Project leadership said, and now we know why.
 
 The map is drawn **through** whichever `rBGP` that produces, so a glitch palette renders as the genuine
 article, not an imitation. **All ten verified against the real console's palette registers — zero
@@ -1312,7 +1312,7 @@ the world untouched and ruins *him*, exactly as the cartridge does.
 Everything about it (incl. the OAM hardware and Gen 1's 16-slot system):
 [`reference/sprites.md`](reference/sprites.md).
 
-The ROM is Twilight's own cartridge backup: **git-ignored, never committed, never shipped**; without it
+The ROM is project leadership's own cartridge backup: **git-ignored, never committed, never shipped**; without it
 every case SKIPs. Setup + the traps (the "has the save loaded?" trap, `wCurMapTileset` bit 7):
 [`reference/emulator-verification.md`](reference/emulator-verification.md).
 
@@ -1341,7 +1341,7 @@ ones greyed out (which is what guarantees the two "+" buttons are never both dea
 ⚠️ **The one hard-won rule there:** an exchange is priced as **one whole trade**, not per step — the
 *total* value is rounded up to a whole number of the given item and only that single leftover is
 refunded. 3 Fresh Water (₽600) costs exactly 2 Potions (₽600) and refunds **nothing**. Pricing each
-step separately (the original bug, caught by Twilight and fixed on 2026-07-11) invents money out of
+step separately (the original bug, caught by project leadership and fixed on 2026-07-11) invents money out of
 thin air. `giveFor()` / `refundFor()` are the single pricing path shared by the preview, the "+"
 gating, and `checkout()` — keep it that way.
 
@@ -1371,7 +1371,7 @@ verification pass; remaining per-control test depth. See [`plans/next-steps.md`]
 
 ## Pending rebuilds / awaiting in-app review
 
-- **The new full keyboard — reviewed in-app across five rounds with Twilight and SHIPPED in
+- **The new full keyboard — reviewed in-app across five rounds with project leadership and SHIPPED in
   0.16.6-alpha (2026-07-11).** Nothing outstanding. The live-only behaviours (typing with the caps
   flashing, held-vs-latched modifiers, Caps Lock, animated tiles, token-aware Backspace, the shake when
   a key won't fit, edit mode, Tab opening the tileset picker on the tile pages) were all exercised on
@@ -1402,7 +1402,7 @@ verification pass; remaining per-control test depth. See [`plans/next-steps.md`]
 | **Latent landmine: map DB `getToMap()`/`getToSprite()` never resolved** | `db.cpp` `deepLinkAll()`; consumers in `WarpData`/`MapConnData`/`SpriteData`/`AreaMap` | Still dormant, and the new map screen **deliberately does not touch those accessors** (it resolves the tileset by name and looks maps up by id, so it needs no deep link). Not a crash today. **Still must be defused before map *editing* / re-enabling map randomize** — those will dereference the unresolved `to*` links → add `MapsDB::inst()->deepLink()` to `DB::deepLinkAll()` first. Confirmed safe once called, via `tst_sprite_data` (all 918 sprites resolve). |
 | Randomizer: not-yet-built screens (Maps, Hall of Fame, Options) excluded | `savefileexpanded.cpp`, `worldgeneral.cpp` | **Working within scope as of 2026-06-07.** `randomizeExpansion()` runs end-to-end + is test-covered. Maps/HoF/Options calls are commented out (matching the disabled home tiles), each with a re-enable note. Re-enabling map randomize is gated mainly on calling `MapsDB::inst()->deepLink()` at boot (the type strings + per-call guards turned out to be the same deepLink landmine, not separate defects). |
 | Name editors — ongoing review | `name-full/*`, `general/NameDisplay.qml` | Ongoing live tweaks. `NameEdit`/`NameDisplay` are **shared** by player/rival/nickname + the keyboard footer preview — verify all of them on each rebuild. |
-| Keyboard caps are cramped at the default 750×480 window | `name-full/KeyboardDeck.qml` | By design it *scales* (key unit = min(width/13.5, height/6.0)), so it's comfortable on a resized window and tight on the default one. Multi-char code labels (`trainer`, `player`) elide at the smallest size. Revisit if Twilight wants the default window bigger, or the header/footer slimmer, to buy the deck more room. |
+| Keyboard caps are cramped at the default 750×480 window | `name-full/KeyboardDeck.qml` | By design it *scales* (key unit = min(width/13.5, height/6.0)), so it's comfortable on a resized window and tight on the default one. Multi-char code labels (`trainer`, `player`) elide at the smallest size. Revisit if project leadership wants the default window bigger, or the header/footer slimmer, to buy the deck more room. |
 | Dead menu files (unused after s13z7) | `name/NameDisplayMenu.qml`, `NameDisplayMenuNoTileset.qml`, `TilesetMenu.qml` | No longer instantiated; left in place + in qrc. Safe to delete later. |
 
 **Intentional (not bugs):** in the storage grid, Pokémon names are always visible below each icon

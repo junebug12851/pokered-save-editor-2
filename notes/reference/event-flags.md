@@ -18,7 +18,7 @@ it fills in as Phases 2–5 author the dossiers.
 >
 > *"i think filter flags also point to scripts which change event flags"*
 
-**She is right, and this settles a question the flag-box work had been circling.** Checked against
+**They are right, and this settles a question the flag-box work had been circling.** Checked against
 `pret/pokered`; the numbers below are counted, not estimated.
 
 **The taxonomy, as the cartridge actually has it:**
@@ -34,7 +34,7 @@ it fills in as Phases 2–5 author the dossiers.
 for something that does not exist. There is no flag→tile relation to find; there is a flag→**script**
 relation, and only *some* scripts have tiles.
 
-**The worked example she gave — Oak pulling you out of the grass — and what it proves.**
+**The worked example they gave — Oak pulling you out of the grass — and what it proves.**
 
 > *"if you walk in the grass and prof oak comes out and pulls you into his lab, im pretty sure what you
 > stepped on was a script allowed there by a filter flag and the script likely set a lot of stuff
@@ -61,7 +61,7 @@ PalletTownOakHeyWaitScript:
     predef ShowObject                        ; <- writes a FILTER flag (Oak appears)
 ```
 
-**She is right about the substance:** you step somewhere, a script fires, and it writes *"a lot of
+**They are right about the substance:** you step somewhere, a script fires, and it writes *"a lot of
 stuff"* — an event flag, a script step, and a filter flag. All three kinds of storage, from one tile.
 That is the case for the tabs, made by the cartridge itself.
 
@@ -109,10 +109,10 @@ established **from the source**, the script gets **no box** — never a guessed 
    AgathaEntranceCoords:
        dbmapcoord  4, 10               ; <- the x/y. THIS is a script's location.
    ```
-   These are the "script boxes" she means: a tile that runs code, and the event flags that code writes
+   These are the "script boxes" they mean: a tile that runs code, and the event flags that code writes
    are what belongs on its tabs.
 
-2. **A script reached through a filter-flag object** — her second point, and the mechanism is exact.
+2. **A script reached through a filter-flag object** — their second point, and the mechanism is exact.
    A script toggles an object's filter flag *and* writes event flags in the same breath.
    `scripts/BillsHouse.asm`:
    ```asm

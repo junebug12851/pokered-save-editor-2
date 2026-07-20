@@ -127,7 +127,7 @@ Semantics that keep it honest:
   row when nothing matches) + **◀ ▶ roll buttons** + the stage's story description. MapPicker:
   **"Construct the map on change"** switch, ON by default (seamless — leadership's call); OFF =
   the old one-byte power path with the stale-header notice. Screenshot-reviewed (panel, picker
-  popup, storage heading). Twilight's live pass owed.
+  popup, storage heading). Project leadership's live pass owed.
 - ✅ **Phase MS-4b — best-effort matching; "Custom" retired (2026-07-19, `0.43.5-alpha`).**
   Leadership: *"remove … the not recognized custom thing, just have the app do its best to
   determine the map progression via dead giveaway flags and/or current map script. If a state
@@ -177,7 +177,7 @@ Semantics that keep it honest:
   state matcher) should mark such states "re-armed on approach; not durable" instead of offering
   them as resting stages. Needs its own brief before any build.
 
-## Twilight's answers (2026-07-17) — the build's ground rules
+## Project leadership's answers (2026-07-17) — the build's ground rules
 
 - **Map change is SEAMLESS by default** — *"as though the map has always been loaded."* The app
   silently applies the destination stage that matches global story progress; **no prompts** unless

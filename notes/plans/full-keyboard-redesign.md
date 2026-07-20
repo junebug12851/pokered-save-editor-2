@@ -40,7 +40,7 @@ empty), + Space on the spacebar.
 
 ## 2. Page order & the mapping doctrine
 
-The category strip's order (minus "All") is the usage/priority order Twilight named:
+The category strip's order (minus "All") is the usage/priority order project leadership named:
 **Normal → Single-Char → Multi-Char → Variable → Picture → Control.** Pages are ordered by that,
 and cheap modifier combos get the high-usage pages.
 
@@ -58,7 +58,7 @@ But keys are **not** filled linearly by category. Three rules, in priority order
    often the tile actually shows up in names/dialogue.
 
 A tile is **promoted to a better key on a later page** rather than being buried on a bad key of an
-earlier page (Twilight's explicit instruction) — e.g. the box-frame glyphs and cursor arrows are
+earlier page (project leadership's explicit instruction) — e.g. the box-frame glyphs and cursor arrows are
 the only genuinely useful Pictures, so they take page 5's **home row** rather than being dumped in
 tile order.
 
@@ -97,7 +97,7 @@ Deck rows: **A** = number row `1 2 3 4 5 6 7 8 9 0`, **B** = `Q W E R T Y U I O 
 Pure identity: the base layer of a real keyboard — press a letter key, get the **lowercase** letter.
 36/36 used.
 
-> **Corrected 2026-07-11 (Twilight).** The first cut had uppercase here, reasoning that Gen 1 names are
+> **Corrected 2026-07-11 (project leadership).** The first cut had uppercase here, reasoning that Gen 1 names are
 > all-caps. That was wrong: it's the one place the deck would have contradicted every keyboard its user
 > has ever touched. All-caps is what **Caps Lock** is for (§5).
 
@@ -385,7 +385,7 @@ Plus `tst_qml_screens` must stay green (it loads every screen through the real e
 
 ---
 
-## 7. Decisions (Twilight, 2026-07-11)
+## 7. Decisions (project leadership, 2026-07-11)
 
 1. **Lowercase is the base layer; Shift is uppercase.** The first cut had it inverted (Gen 1 names are
    all-caps) — rejected, and rightly: it contradicted every keyboard the user knows. All-caps is what

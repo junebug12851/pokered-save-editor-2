@@ -23,7 +23,7 @@ on any overrun.
 1. **Background by default; foreground is an explicit act.** Builds, tests, emu runs
    are hidden console-less children logged to `tmp/mcp-jobs/`. `app_launch` defaults
    to a minimized window (or fully headless `mode='offscreen'`); **`app_foreground()`**
-   is the deliberate "it's ready for her to look at" moment (the standing 2026-07-12
+   is the deliberate "it's ready for them to look at" moment (the standing 2026-07-12
    rule), and `app_background()` puts it away again.
 2. **Jobs, never blocking calls.** Anything long returns a `job_id` immediately;
    `job_wait`/`job_status`/`job_log` poll it; a job that overruns its timeout has its
@@ -91,7 +91,7 @@ mandatory screenshot-review pass without any focus juggling.
 
 ## The autopilot — pathfinding & auto-navigation (2026-07-16)
 
-Briefed by Twilight the same day: *describe the destination and the server takes you there* —
+Briefed by project leadership the same day: *describe the destination and the server takes you there* —
 plus find-a-battle, execute-a-battle-a-certain-way, talk to a (moving) NPC, and whole runs in
 one call. Design + verification battery: [`../plans/dev-autopilot.md`](../plans/dev-autopilot.md).
 

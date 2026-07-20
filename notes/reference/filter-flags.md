@@ -2,7 +2,7 @@
 
 Briefed by Fairy Fox 2026-07-19: research each filter flag in detail — what it does, when it
 usually flips in the game or on its map, what on the map reacts to it (Prof. Oak in Pallet Town
-being her exemplar), and whether scripts or event flags drive the same machinery. Evidence:
+being their exemplar), and whether scripts or event flags drive the same machinery. Evidence:
 `scripts/analyze_filter_flags.py` → `tmp/filter-flags/filter_flag_dossiers.json` (per-flag:
 default, object, every Show/Hide call site with its routine, the blueprint stages that flip it,
 class). Sister notes: [`map-scripts-missables.md`](map-scripts-missables.md) (the save layout),
@@ -66,7 +66,7 @@ the puzzle — [`game-progression.md`](game-progression.md) §1a.
 
 ### 5. CUTSCENE / PER-ENTRY VISITORS — 13 flags, shown AND hidden by scripts
 
-The class Oak's street sprite heads (her exemplar, full lifecycle below). Also: **Pewter's two
+The class Oak's street sprite heads (their exemplar, full lifecycle below). Also: **Pewter's two
 dragger NPCs** (museum guy + gym guy — the city's entry script RESETS them shown each visit
 until their story flags say otherwise, then hides them mid-drag), the Cerulean rival
 (shown/hidden around the Nugget-bridge battle), the S.S. Anne 2F rival, Champion-room Oak

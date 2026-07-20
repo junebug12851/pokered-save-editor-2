@@ -78,7 +78,7 @@ baseline that has **not yet been adopted** here. Confirmed still outstanding thi
    copy/pointer; mind the name clash with the existing project-specific
    `notes/reference/deployment.md`). NOT pre-authorized.
 
-These remain awaiting Twilight's go-ahead; today's range added nothing to them.
+These remain awaiting project leadership's go-ahead; today's range added nothing to them.
 
 ## What adopting would touch in this repo
 

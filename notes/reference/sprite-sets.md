@@ -5,7 +5,7 @@
 `ram/wram.asm`.
 
 v1 of the editor had a screen called **"Cached sprites"** with a dropdown of *"Static List 1"*,
-*"Static List 2 (Lavender Town)"*, *"Dynamic List 1 (Route 2)"* … Twilight's question was the right
+*"Static List 2 (Lavender Town)"*, *"Dynamic List 1 (Route 2)"* … project leadership's question was the right
 one — *what even is this, and does the game use it?* Here is the answer, and it is a good one.
 
 ---
@@ -82,8 +82,8 @@ farcall InitMapSprites       ; -> InitOutsideMapSprites: re-reads the set from M
 Pressing **CONTINUE** runs `SpecialEnterMap → EnterMap → LoadMapData`. So the twelve bytes in your
 save are **recomputed from the map you are standing on before the game ever reads them**.
 
-**Twilight's instinct was right: the game does not use what is in the save.** The bytes are real,
-they are hers, and they are editable — but nothing you put there changes a thing in-game. The panel
+**Project leadership's instinct was right: the game does not use what is in the save.** The bytes are real,
+they are theirs, and they are editable — but nothing you put there changes a thing in-game. The panel
 says exactly that, at the top, rather than implying an edit that does nothing.
 
 ## INDOORS THERE IS NO SPRITE SET (2026-07-13)

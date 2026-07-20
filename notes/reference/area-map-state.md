@@ -93,7 +93,7 @@ per-map variable.** So:
 > the bit **and** the index, and the map runs *that* script step next tick — the auto-trigger.
 > The panel should present them together: the step selector plus a "run this step on load" toggle.
 
-> **UI (Twilight, 2026-07-15):** a **ComboBox with an actually descriptive list** — the named
+> **UI (project leadership, 2026-07-15):** a **ComboBox with an actually descriptive list** — the named
 > steps for *the current map* — plus a **"Something else…" link** for a raw value. **The data:**
 > `pret/pokered` has **98 `_ScriptPointers` tables** (`def_script_pointers` + `dw_const <routine>,
 > SCRIPT_<MAP>_<NAME>`); parsing them yields the ordered, named step list per map — the same
@@ -116,7 +116,7 @@ width (`AreaMap::coordsToPtr()` already reproduces the formula; `tst_map`'s
 > screen out of address `$FFFF` — **on-screen garbage** (`tmp/emu-areamap/areamap.png`). It is
 > corrected only when you take a step.
 
-So this is the textbook **derived byte** — and the doctrine (clarified by Twilight 2026-07-15,
+So this is the textbook **derived byte** — and the doctrine (clarified by project leadership 2026-07-15,
 CLAUDE.md → *"kept in sync by default; power users can break sync"*) is **NOT** "show a mismatch
 and make the user press Sync." It is:
 
@@ -130,9 +130,9 @@ and make the user press Sync." It is:
   the source stops driving it and it stands alone.
 - **The view box is its own movable thing on the canvas.** Because the box renders from *the
   pointer*, not the player, a desynced box can be **dragged around the map with the mouse** — a
-  real, welcome capability (it surprised even Twilight).
+  real, welcome capability (it surprised even project leadership).
 
-> **UI (Twilight, 2026-07-15):** *not* an address field in the normal case. Show it as an
+> **UI (project leadership, 2026-07-15):** *not* an address field in the normal case. Show it as an
 > **intuitively selectable camera / view box** that follows the coordinates by default, with a
 > break-sync affordance and canvas dragging when desynced; a raw-pointer entry only behind a
 > **"Something else…" link** for the power/hack path.
@@ -156,7 +156,7 @@ next tick consumes it). **Console: kept on Pallet** (a quiet map never routes th
 `ExecuteCurMapScriptInTable`, so the bit survives), but it would be consumed on the first tick
 of a scripted/trainer map.
 
-> **Not dead — a feature (Twilight, 2026-07-15).** Because it *survives* load on a quiet map, a
+> **Not dead — a feature (project leadership, 2026-07-15).** Because it *survives* load on a quiet map, a
 > save can carry it in **already set**, which means the next map-script tick runs `wCurMapScript`
 > instead of the default step — i.e. it can be used to **auto-trigger a chosen map script on
 > load**. So the panel should present it as an editable, meaningful toggle ("resume/run this
@@ -196,7 +196,7 @@ real name.
 And the thing the label *sounds* like — the actual **blackout destination map** — is a whole
 different byte, **`wLastBlackoutMap`** (`0x29C5`), which lives in **`WorldGeneral`** and is
 already surfaced per [`warps.md`](warps.md) → §4. **Nothing about blackout belongs on the Map
-page.** If Twilight wants it shown here, it *reads* the warp/world field; it does not re-own it.
+page.** If project leadership wants it shown here, it *reads* the warp/world field; it does not re-own it.
 
 ---
 

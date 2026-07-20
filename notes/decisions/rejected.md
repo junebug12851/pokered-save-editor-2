@@ -10,7 +10,7 @@ commit log; see `version.md` and `context/origins.md`). The rest are from the 20
 ## ❌ "Windows CI can't have Qt ≥ 6.11" — a WRONG conclusion, retracted the same hour (2026-07-17)
 
 **Concluded:** that Qt 6.11 was unreachable for the Windows CI/release jobs, and the choice was
-therefore between 6.10.3 everywhere, staying on 6.8.3, or putting Twilight's Qt account password into
+therefore between 6.10.3 everywhere, staying on 6.8.3, or putting project leadership's Qt account password into
 GitHub secrets. It was written up in `qt-patterns.md` as a *ceiling* and put to leadership as a
 settled constraint.
 
@@ -19,7 +19,7 @@ Windows repo per-arch at 6.11; aqt fetches `qt6_6110/qt6_6110/Updates.xml` and 4
 6.11.0/6.11.1/6.12.0 all fail identically) — and then it took **one bad step**: PyPI says 3.3.0 is the
 newest aqtinstall, therefore no fix exists, therefore it's impossible.
 
-**Twilight refused it:** *"i find it hard to believe the community has no solution for this moving
+**Project leadership refused it:** *"i find it hard to believe the community has no solution for this moving
 forward."* Ninety seconds of actually looking: issue
 [#959](https://github.com/miurahr/aqtinstall/issues/959) describes the exact folder split, and PR
 [#1000](https://github.com/miurahr/aqtinstall/pull/1000) *"Support Qt 6.11+ for Windows x64"* was
@@ -86,9 +86,9 @@ script advances, no battle engages). **Nothing about conflicts renders in the UI
 **Tried:** a `MapObjectStack` "group box" that gathered every map object sharing a tile (player + NPCs +
 warps + signs) into one tabbed widget — pick a member on the left, move the group from the centre, delete
 the group on the right — and made each lone chip hide itself (`isStacked`) when it became part of a stack.
-Added at Twilight's request 2026-07-14.
+Added at project leadership's request 2026-07-14.
 
-**Removed 2026-07-15, Twilight:** *"it never worked well and there's no point in fixing it because I only
+**Removed 2026-07-15, project leadership:** *"it never worked well and there's no point in fixing it because I only
 added it from a misunderstanding."* Overlapping objects now simply draw over each other, each an
 independent selectable/draggable chip (the ordinary behaviour, and the one that works). Do not
 reintroduce the group box. Deleted `MapObjectStack.qml` + the `stacks`/`stackList`/`isStacked`/dispatch

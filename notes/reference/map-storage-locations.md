@@ -65,7 +65,7 @@ tests bit *n* of the array where *n* is the row's position in `HiddenItemCoords`
 > **hidden item's save bit `i`  ==  row `i` of the coord table  ==  a real (map, x, y).**
 
 **66 boxes that need no guessing at all.** ⚠️ These do **not** use `wEventFlags` — a hidden item is its
-own kind of storage, not an event. That is the *"more stuff"* she meant, and it was next on her list.
+own kind of storage, not an event. That is the *"more stuff"* they meant, and it was next on their list.
 
 ⚠️ **Arg order trap:** the source reads `hidden_item VIRIDIAN_FOREST, 1, 18` = **(map, x, y)** (the
 file's own comment says so), but the macro *stores* `db \1, \3, \2` = map, **y, x**. Read the ARGS.
@@ -237,7 +237,7 @@ and at the top of that file, and nothing is allowed to disagree with it.
 was bolted on beside them. So the map **answered differently depending on what you pointed at**. You
 cannot polish four disagreeing systems into one; every fix moved the inconsistency somewhere else.
 
-| # | The rule | Her words |
+| # | The rule | Their words |
 |---|---|---|
 | **1** | **Everything on a map is the same kind of thing** — a person, the player, a door, a sign, a filter flag, a script trigger, a buried item, an event flag, grass, water. Each is a **spot**, on a **block**, with an **outline** and a **tab**. No category is scenery; none is unreachable. | *"Like anything else they need to be rendered and have a tab"* · *"the npcs scriptable stuff other things they need an outline too"* |
 | **2** | **The OUTLINE says what you can DO.** solid+filled = movable (player, people, doors, signs). dashed+hollow = fixed (scripts, filter flags, buried items, event flags, tile traits) — you change what it *does*, never where it *is*. One movable makes the whole **cell** solid. | *"stuff draggable, deletable, insertable… should have a solid fill and box, stuff that allows editing things from fixed locations like scripts and stuff should have a dashed outline and not be filled"* |
@@ -253,7 +253,7 @@ Details panel **without selecting** the thing, so the panel went on showing the 
 clothes** — and worth remembering as a diagnostic shape: when a colour "means the wrong thing",
 check what the click actually did before touching the palette.
 
-⚠️ **Three defaults that were never rules, only my inventions**, each of which she had to catch:
+⚠️ **Three defaults that were never rules, only my inventions**, each of which they had to catch:
 *"1 spot = no tabs"* (made the map inconsistent — a two-thing block was live, the water block beside
 it dead), *tabs shown permanently* (dotted the whole map with furniture), and *tile traits with
 `section: ""`* (which, because the hit areas were `enabled:` only when a section existed, switched
@@ -262,7 +262,7 @@ water). **If a rule isn't in the table above, it isn't a rule.**
 
 ## 2f. The canvas's visual language, and the tab strip (leadership, 2026-07-17)
 
-Five rulings, in the order she gave them. Together they are a **language**, not a set of looks —
+Five rulings, in the order they gave them. Together they are a **language**, not a set of looks —
 each one says what you can *do* with a thing before you touch it.
 
 | | The rule | Why it is not arbitrary |
@@ -402,7 +402,7 @@ leads to are *different* routines, and the flags are spread across all of them
 by that measure. Following `ld [w<Map>CurScript], a` to union the chain is the next step, and it is
 what will make the tabs complete.
 
-## 4. Filter flags → scripts → event flags (her chain, and it is exact)
+## 4. Filter flags → scripts → event flags (their chain, and it is exact)
 
 > *"i think filter flags also point to scripts which change event flags"*
 

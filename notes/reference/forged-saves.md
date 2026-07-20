@@ -2,7 +2,7 @@
 
 The testing system can produce a **real, bootable save file at ANY map, position,
 event-flag combination, or raw byte state** — the "total custom state resume" (briefed by
-Twilight, 2026-07-16). This is the grunt-work layer under the dev MCP server: an AI session asks
+Project leadership, 2026-07-16). This is the grunt-work layer under the dev MCP server: an AI session asks
 for "Route 22, x=25 y=8, with these three flags on" and gets a save the console has already run.
 
 ## Why a naive forge cannot work (the chimera)
@@ -138,7 +138,7 @@ real state, adjudicated by the machine.
 
 - **Entry scripts:** a map with an entry cutscene dumps whatever state the settle window reaches;
   BaseSAV's progression keeps most quiet. The sidecar json records the generation route.
-- **Default map library:** per Twilight, proper *default* map states ("set up like the scripts
+- **Default map library:** per project leadership, proper *default* map states ("set up like the scripts
   would") wait on the script import — this system is the console-authored stand-in until then, and
   the generation machinery (hijack → settle → dump) is exactly what that library will be built with.
 - The cache is git-ignored (`tmp/`); saves regenerate on demand from the ROM + BaseSAV.

@@ -108,7 +108,7 @@ cartridge (§4).
 - **It is a truth-in-labelling matter only.** The name `pauseMons3Steps` and the doc "Suppress
   encounters for 3 steps" describe the *effect* but not the *thing*. Recommended: keep the field, add a
   doc comment naming it `BIT_WILD_ENCOUNTER_COOLDOWN` and explaining set-after-battle / self-clearing;
-  optionally rename the property to `wildEncounterCooldown` (Twilight's call — guarded naming; low blast
+  optionally rename the property to `wildEncounterCooldown` (project leadership's call — guarded naming; low blast
   radius, only `areapokemon.{h,cpp}` + `tst_area_pokemon` reference it).
 - **Persistence marking: DURABLE.** Unlike the warp/player/npc scratch, this flag is **kept** on load —
   so on the map details page it gets **no yellow "!"**. The honest note is the opposite: an edit sticks,
@@ -117,10 +117,10 @@ cartridge (§4).
   it was saved right after a battle. So "on by default" is *normal*, not an edit; a UI that flagged a set
   bit as unusual would cry wolf on the base save.
 
-**The label (Twilight, 2026-07-15):** **"3-step wild encounter cooldown"**, with the honest one-line
+**The label (project leadership, 2026-07-15):** **"3-step wild encounter cooldown"**, with the honest one-line
 note: *"Gives 3 encounter-free steps when the save loads — the game's post-battle cooldown. Normally set
 automatically right after a battle, and it clears itself once you've walked those steps off."*
-**The property is renamed `wildEncounterCooldown`** (Twilight, 2026-07-15) with a doc comment naming
+**The property is renamed `wildEncounterCooldown`** (project leadership, 2026-07-15) with a doc comment naming
 `BIT_WILD_ENCOUNTER_COOLDOWN`.
 
 ---

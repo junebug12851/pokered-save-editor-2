@@ -86,7 +86,7 @@ fires on every push to `main` and publishes a GitHub Release when `VERSION` was 
   ```
 
 - **MINOR / MAJOR** (a milestone): go through a **`release/X.Y.0`** branch so the milestone is a
-  deliberate, reviewable event. (MAJOR → `1.0.0` is the project owner's — Twilight's — call only.)
+  deliberate, reviewable event. (MAJOR → `1.0.0` is the project owner's — project leadership's — call only.)
 
   ```sh
   git checkout dev
@@ -146,7 +146,7 @@ sessions keep the remote current, just like the living notes.
 
 > **Standing default (2026-06-10, amended 2026-07-10):** commit/push on `dev` is **automatic — done by
 > default without being asked**. **Releasing `dev → main` is NOT automatic anymore — it is MANUAL.**
-> Cut a release **only when Twilight explicitly says "ship" / "ship it" / similar** (2026-07-10); until
+> Cut a release **only when project leadership explicitly says "ship" / "ship it" / similar** (2026-07-10); until
 > then, keep committing and pushing to `dev` but leave `main` alone, even when everything is green.
 > (Green is required for a ship, but no longer triggers one on its own — this supersedes the earlier
 > "green-gated release is fully automatic" wording.) The *only-when-asked* restriction still also covers
@@ -157,7 +157,7 @@ sessions keep the remote current, just like the living notes.
 - **`dev`**: `git push origin dev` after each commit (and push `feature/*` branches as you go, to
   back them up).
 - **`main`**: advanced only by a `--no-ff` release merge, and **only on an explicit "ship it" from
-  Twilight** (releases are manual — see the note above), after a **green** checkpoint ("green" =
+  Project leadership** (releases are manual — see the note above), after a **green** checkpoint ("green" =
   builds + full `ctest` pass, and the remote `tests` CI is green). `git push origin main` then
   triggers `release.yml` (which tags + publishes). Never commit on `main` directly.
 
@@ -207,6 +207,6 @@ per-standard slice the fairyfox [compliance audit](compliance.md) aggregates):
 Done: `master` renamed to `main` locally; `dev` created; both pushed to `origin`; GitHub default
 branch set to `main`; stale `origin/master` deleted (verified **0** unique commits on it first,
 with a guard). Remote has exactly **`main`** (stable) + **`dev`**; `origin/HEAD → origin/main`.
-Repo: `github.com/junebug12851/pokered-save-editor-2`. No commits were lost in the rename. (The
+Repo: `github.com/1fairyfox/pokered-save-editor-2`. No commits were lost in the rename. (The
 `master → main` rename git-flow mandates was therefore already done long before this repo adopted
 git-flow.)

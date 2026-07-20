@@ -24,8 +24,8 @@ and counts across page loads; light + dark; API treeview pinned).
 
 This is the applied half of `2026-07-19-check-for-updates.md`. That pass checked, found the chrome
 bump adds a **new user-facing coin counter**, and stopped to surface it (a visible UX addition
-warranted Twilight's nod even though the standing `adopt-standards-by-default` ledger entry
-pre-authorizes it). Twilight replied **"adopt all please"** — so this run applied it under that
+warranted project leadership's nod even though the standing `adopt-standards-by-default` ledger entry
+pre-authorizes it). Project leadership replied **"adopt all please"** — so this run applied it under that
 standing authorization, with the full safety floor still running.
 
 ## What was done
@@ -69,4 +69,4 @@ standing authorization, with the full safety floor still running.
 ## Not applied
 
 VERSION unmoved (docs/notes/build-script change only — no app code, per versioning.md). No `main`
-release (adoption committed to `dev`; ship is Twilight's word).
+release (adoption committed to `dev`; ship is project leadership's word).

@@ -1,6 +1,6 @@
 # The dev autopilot — pathfinding, auto-navigation & scenario setup over MCP
 
-Briefed by Twilight, 2026-07-16 (same-day follow-on to the dev MCP server): the MCP server
+Briefed by project leadership, 2026-07-16 (same-day follow-on to the dev MCP server): the MCP server
 must carry **comprehensive, high-level control of the running game and the running app**, so
 that an AI session can say *"set this up and take me there"* in ONE call instead of driving
 hundreds of button presses over the transport. The wishes, in spirit:
@@ -51,7 +51,7 @@ validates them live** (move the cursor, watch the byte) before anything relies o
 - Hunting: `hunt` paces a passable two-square shuttle (bounded steps) until
   `wIsInBattle != 0`, then hands over to the policy.
 
-## NPCs — moving collision AND interaction targets (Twilight, 2026-07-16)
+## NPCs — moving collision AND interaction targets (project leadership, 2026-07-16)
 
 NPCs are both obstacles and destinations. The walker treats their **live** squares
 (StateData2 mapY/mapX, re-read every step) as soft collision — bounded retries, then

@@ -72,7 +72,7 @@ cross-project-sync sync-fix adoption is, by the ledger, **pre-authorized** — u
 normal interactive flow a node could adopt it without the re-prompt pause (verification
 floor still mandatory). The new `git-workflow.md` callout is **not** covered by any
 active entry. Per the scheduled-run guardrails and the explicit task instruction, this
-run still **applies nothing** and waits for Twilight's go-ahead either way.
+run still **applies nothing** and waits for project leadership's go-ahead either way.
 
 ## What adopting would touch in this repo
 
@@ -127,6 +127,6 @@ No `VERSION` movement, no app behavior change, no save-file surface involved.
 sync fix remains un-adopted (pre-authorized by the ledger). New this pass: a small,
 substance-neutral `git-workflow.md` "Who creates the tag" framing change (0.9.8) — this
 node already does CI-owns-tagging, so no behavioral gap. 0.9.9 is unrelated hub site
-content. Nothing applied per the scheduled-run guardrails; awaiting Twilight's go-ahead.
+content. Nothing applied per the scheduled-run guardrails; awaiting project leadership's go-ahead.
 (This report was written but, per the scheduled-run no-commit guardrail, left
 **uncommitted** for review.)

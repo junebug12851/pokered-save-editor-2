@@ -24,7 +24,7 @@ or misleading** and the two `wd730` source-comments are off, then **asked the ca
 survives a Continue. The console's answer overturned the natural source-read: it is *not* "all
 transient bits vanish". **Four are wiped on load (momentary); five keep their raw value across the
 save (durable).** That split is the whole point of the panel — every field is editable (hack values
-included, per the project rule — and there are **no hidden fields**, Twilight 2026-07-15), but each
+included, per the project rule — and there are **no hidden fields**, project leadership 2026-07-15), but each
 row must say whether an edit sticks or is erased on the next load.
 
 **The address maths** (identical to warps/player): the save's Main Data block starts at file offset
@@ -133,7 +133,7 @@ console-verified persistence mark:
   entry it names where we can; raw hex behind "Something else…".
 
 **Every value stays full-range and editable, hack values included, and nothing is hidden** — the
-project rule (and Twilight's explicit 2026-07-15 "there shouldn't be hidden fields"). The panel never
+project rule (and project leadership's explicit 2026-07-15 "there shouldn't be hidden fields"). The panel never
 refuses and never silently rewrites; it only tells the truth about what the console does with each on
 the next load. Because these are **map-global** (not per-object) they belong in the Area-state dock
 panel, not the on-canvas per-NPC inspector (Phase 4b) — the plan keeps the two apart.

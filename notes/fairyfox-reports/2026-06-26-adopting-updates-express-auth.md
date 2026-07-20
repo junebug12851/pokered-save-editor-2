@@ -10,7 +10,7 @@ hub_commit: 42b6ea4
 # Process Report — adopting-updates, 2026-06-26 (express-authorization)
 
 > Started as the standing automated "check the fairyfox system for updates" run
-> (scheduled task), then Twilight gave an explicit go-ahead in the same session, so
+> (scheduled task), then project leadership gave an explicit go-ahead in the same session, so
 > it became an adopt. Per the process-reports rule, a check that becomes an adopt in
 > one session is **one combined `adopting-updates` report** — this file. (Distinct
 > from the morning's `2026-06-26-adopting-updates.md`, which was a separate, earlier
@@ -26,7 +26,7 @@ hub_commit: 42b6ea4
 2. Diffed hub standards/templates `42263fe..42b6ea4` against this repo's adopted
    copies. Anchor from the prior report (`2026-06-26-adopting-updates.md`): hub
    **0.8.1**. So this pass covered **0.8.1 → 0.9.2**.
-3. Reported to Twilight, who said proceed. Adopted the changes below the git-flow way
+3. Reported to project leadership, who said proceed. Adopted the changes below the git-flow way
    (dev commit; notes/docs-only, so no `VERSION` bump and no changelog entry).
 
 ## What changed in the fairyfox system (0.8.1 → 0.9.2)
@@ -64,7 +64,7 @@ hub_commit: 42b6ea4
 
 This adoption was itself pre-authorized by the standing `express-authorization-rollout`
 entry, but as the node had not yet adopted the express-auth feature, the run still
-deferred to Twilight's explicit go-ahead — which was given. Future covered changes
+deferred to project leadership's explicit go-ahead — which was given. Future covered changes
 can adopt without the pause.
 
 ## What went well
@@ -80,9 +80,9 @@ can adopt without the pause.
   which reliably aborts against the force-pushed hub `dev`; this adoption closes that
   recurring snag by documenting the `reset --hard` mirror fallback.
 
-## Standing decision — verification is never skipped (Twilight, 2026-06-26)
+## Standing decision — verification is never skipped (project leadership, 2026-06-26)
 
-Twilight's directive on the open question above: **safeties, checks, tests, and
+Project leadership's directive on the open question above: **safeties, checks, tests, and
 compliance must be run regularly and comprehensively at every level throughout —
 especially around any automated or express-authorized applying.** Pre-authorization
 (or any automated apply) skips *only* the redundant confirmation pause; it never skips

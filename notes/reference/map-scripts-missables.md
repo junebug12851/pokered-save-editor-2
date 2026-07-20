@@ -1,6 +1,6 @@
 # Per-map script progress (the 97) & missables (the 228) — the Map Storage panel's big pages
 
-Briefed by Twilight 2026-07-16: the map scripts and the missables join the persistent Map Storage
+Briefed by project leadership 2026-07-16: the map scripts and the missables join the persistent Map Storage
 panel — the script as a **dropdown at the top of each map's page** (title + progression description
 per step, custom values via "Something else…"), the missables **sorted into their own group** under
 the owning map, with unused/glitch/known-issue flags and the missable↔event-flag conflict hooks.
@@ -12,7 +12,7 @@ the owning map, with unused/glitch/known-issue flags and the missable↔event-fl
 | Per-map script progress | **`0x289C`–`0x2915`** | `0xD5F0`+ (`wOaksLabCurScript`…) | **97 values** in `0x7A` bytes (1 byte each + pret's padding skips) | `WorldScripts` (`world.scripts`) |
 | Missable visibility | **`0x2852`–`0x2871`** | `0xD5A6` (`wToggleableObjectFlags`) | 256 bits, **228 used** | `WorldMissables` (`world.missables`) |
 
-- **Twilight's counts were exactly right:** 97 `w<Map>CurScript` variables in `ram/wram.asm`, 228
+- **Project leadership's counts were exactly right:** 97 `w<Map>CurScript` variables in `ram/wram.asm`, 228
   `TOGGLE_*` constants in `constants/toggle_constants.asm`.
 - The script block's layout (sizes + skips) is `scripts.json`'s — v1's import, kept verbatim.
   **Byte-exactness pinned** by `tst_world::scripts_writeExactlyTheirByte` (offsets hardcoded
@@ -34,7 +34,7 @@ the owning map, with unused/glitch/known-issue flags and the missable↔event-fl
   intro, the whole 19-step Oak's Lab opening, Route 22's two ambushes, Cerulean's bridge rival,
   Vermilion's dock, the Championship rooms…) and an honest derived one elsewhere (gym
   START/END/POST pattern, EXIT/cutscene/battle patterns) — every option reads like a stage of the
-  map's story, which is the *sense of progress* Twilight asked for.
+  map's story, which is the *sense of progress* project leadership asked for.
 - `AreaMap::curMapScript` (`0x2CE5`, the **live working step** of the map you're on) shows the
   **same descriptions** under the Details panel's "Current script step" combo — one meaning, two
   places. Relationship: on map entry the game copies the map's `w<Map>CurScript` into the dispatch

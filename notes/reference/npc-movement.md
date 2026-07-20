@@ -3,7 +3,7 @@
 _Read out of `engine/overworld/movement.asm` (`pret/pokered`), instruction by instruction. This is the
 **complete** algorithm, bugs included — not a summary, not an impression. `MapSim` reproduces it._
 
-> **Twilight, 2026-07-13:** *"walking needs to follow the games logic precisely and completely
+> **Project leadership, 2026-07-13:** *"walking needs to follow the games logic precisely and completely
 > accurately, find this in pokered."*
 
 ---

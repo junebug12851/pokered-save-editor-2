@@ -17,7 +17,7 @@ We've reached 500 Commits ♡〜٩( ˃́▿˂̀ )۶〜♡!
 
 **>> This is not complete and may contain lots of bugs, this is a work in progress and in deep construction <<**
 
-> **Please See https://github.com/junebug12851/pokered-save-editor which contains a much more mature and complete version 
+> **Please See https://github.com/1fairyfox/pokered-save-editor which contains a much more mature and complete version 
 until this leaves WIP status.**
 
 **This is also not meant to be used with Pokemon Bank or Pokemon Home or the Virtual Consoles. I make no effort to support any compatibility for that process.**
@@ -96,7 +96,7 @@ Right now all a WIP but I'm really holding out hope I can make the reboot happen
 
 ## License
 
-Copyright 2020 Twilight
+Copyright 2020 project leadership
 
 This project's source code is licensed under the Apache License, Version 2.0. See the [LICENSE](LICENSE) file for the full text, or http://www.apache.org/licenses/LICENSE-2.0.
 

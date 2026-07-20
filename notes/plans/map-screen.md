@@ -1,6 +1,6 @@
 # The Map screen — the complete overhaul
 
-**Status:** design approved by Twilight 2026-07-12 (chassis, layer grouping, edit scope, phased build).
+**Status:** design approved by project leadership 2026-07-12 (chassis, layer grouping, edit scope, phased build).
 Nothing built yet. This file is the single source of truth for the redesign; update it as the build
 lands.
 
@@ -15,7 +15,7 @@ lands.
 ## 1. Why
 
 The map emulator grew organs fast — blocks, tiles, meaning chips, palettes, the player, connections,
-music — and every one of them was bolted onto the same screen. The result is what Twilight called it:
+music — and every one of them was bolted onto the same screen. The result is what project leadership called it:
 **really bad UX**. Concretely:
 
 - **Three bars of unrelated chrome.** An info row that holds the map name *and* a hand-rolled contrast
@@ -43,7 +43,7 @@ The fix is not another chip. It is the chassis a real editor has.
 |---|---|---|
 | **Photoshop** | **Options bar** — a bar above the canvas whose contents change with the active tool. | Kills the "everything on one bar forever" problem. The bar only ever shows what the current tool/selection needs. |
 | **Photoshop** | **Contextual task bar** — an on-canvas bar offering the few actions that make sense for what's selected. | We adopt the *idea* (context-appropriate actions come to you), not the floating widget: our version is the Options bar + the Inspector. |
-| **Photoshop** | **Panels collapse to an ICON DOCK.** A dock rail of icons; clicking one expands its panel; clicking again collapses it back to the icon. | Exactly Twilight's "no clutter, things need to collapse in, panels do not need to stack out". |
+| **Photoshop** | **Panels collapse to an ICON DOCK.** A dock rail of icons; clicking one expands its panel; clicking again collapses it back to the icon. | Exactly project leadership's "no clutter, things need to collapse in, panels do not need to stack out". |
 | **Photoshop** | **Properties panel is contextual** — it shows the *document's* properties when nothing is selected, and the *selection's* properties when something is. | Gives every one of the ~120 Area fields a natural home without inventing 8 tabs. |
 | **Photoshop** | Layers panel: **eye + lock per row**, **groups as folders** whose eye/lock/opacity cascade to children, alt-click eye = **solo**. | The exact ask: grouped layers, each toggleable, group toggles the lot. |
 | **Tiled** | **Group Layers** ("work like folders… visibility, opacity, offset and lock of a group layer affects all child layers"). | The model for our 4 groups. |
@@ -58,7 +58,7 @@ The fix is not another chip. It is the chassis a real editor has.
 
 - **Floating / undockable / draggable panels** (Photoshop, Tiled). Power without payoff: this is one
   screen, not a workstation. Docked, collapsible, one column — no window management.
-- **Multi-panel stacks** (Tiled's permanent Layers-over-Properties). Twilight: *panels do not need to
+- **Multi-panel stacks** (Tiled's permanent Layers-over-Properties). Project leadership: *panels do not need to
   stack out*. One expanded panel at a time, its icon lit in the rail.
 - **Old-fashioned chrome** — menu bars, grey 3-D bevels, tiny 16px system icons, tool*bars* with
   separators. This app is themed, flat, rounded, chip-and-segment based. The *ergonomics* of Photoshop,
@@ -106,7 +106,7 @@ Sources: [Tiled — Working with Layers](https://doc.mapeditor.org/en/stable/man
 
 Four thin bars, each with **one** job, and two rails. Nothing wraps. Nothing evicts anything.
 
-- **Top bar (36px)** — **the tools, then what is loaded, then the palette** (revised 2026-07-13, Twilight):
+- **Top bar (36px)** — **the tools, then what is loaded, then the palette** (revised 2026-07-13, project leadership):
   `[ ↖ ✥ ⌕ ] │ [ Pallet Town · Overworld ⌄ ] [ 100% ⌄ ] [ 10×9 ] [ ⚠ unfinished copy ]`.
   - **The tools live here, not in a left rail.** A rail was 44px of chrome down the full height of the
     screen to hold three glyphs; the left edge went back to the map.
@@ -154,7 +154,7 @@ save**).
 | **Tiles** (was "Meaning"/"Components"; renamed 2026-07-15) | Walls | overlay bit `1<<0` | The tileset's own tile meanings MapEngine renders. |
 | | Grass | `1<<1` | Each has its own hue **and** its own 8×8 pattern (they stack and still read). |
 | | Water | `1<<2` | |
-| | **Warp tiles** | `1<<3` | ⚠️ The *tile trait*, **not** the warp objects. Which tile graphics are warp-capable on this tileset (doors, stairs, cave mouths, warp pads) — a tileset fact (`warp_tile_ids.asm`; `IsWarpTileInFrontOfPlayer` checks it to decide a warp can fire). Distinct from the save's warp *list* (the objects in Game View), so it's labelled "Warp tiles". (Twilight, 2026-07-15: kept — it's a real, separate thing.) |
+| | **Warp tiles** | `1<<3` | ⚠️ The *tile trait*, **not** the warp objects. Which tile graphics are warp-capable on this tileset (doors, stairs, cave mouths, warp pads) — a tileset fact (`warp_tile_ids.asm`; `IsWarpTileInFrontOfPlayer` checks it to decide a warp can fire). Distinct from the save's warp *list* (the objects in Game View), so it's labelled "Warp tiles". (project leadership, 2026-07-15: kept — it's a real, separate thing.) |
 | | Doors | `1<<4` | A door is a passable **tile type** you walk across to reach a warp (not the warp itself) — a real tileset trait, so it belongs here. |
 | | Ledges | `1<<5` | With the arrow you jump. |
 | | Counters | `1<<6` | |
@@ -185,7 +185,7 @@ save**).
   layer first. (Tiled's model. This is what makes clicking a warp under an NPC possible without a
   right-click menu.)
 
-**Defaults on open (Twilight, 2026-07-15):** **every Game View layer ON except the Draw area** — the
+**Defaults on open (project leadership, 2026-07-15):** **every Game View layer ON except the Draw area** — the
 player, the people, the **warps**, the signs and the screen box; the draw area (engine scratch) off.
 **Every Tiles-group overlay OFF** (*the map is the point*). Guides = block grid, map bounds and
 connections on; tile grid + border off. (Warps show by default now as the Game View **object** layer,
@@ -266,11 +266,11 @@ Exists; keeps its content.
 
 > **The `AreaMap` "Map page" slice is now researched + console-verified**
 > ([`../reference/area-map-state.md`](../reference/area-map-state.md), 2026-07-15): the seven
-> leftover fields Twilight is bringing to the map-details panel — `wCurMapScript` (Current Script),
+> leftover fields project leadership is bringing to the map-details panel — `wCurMapScript` (Current Script),
 > `wCurrentTileBlockMapViewPointer` + `wMapViewVRAMPointer` (the two UL-corner pointers),
 > `BIT_USE_CUR_MAP_SCRIPT` (Run cur map script instead), `BIT_ALWAYS_ON_BIKE` (force bike ride),
 > and `wCardKeyDoorX/Y`. Verdicts + the two probe surprises are in that note. Design direction
-> (Twilight, 2026-07-15): script = descriptive ComboBox + "Something else…"; the pointer fields
+> (project leadership, 2026-07-15): script = descriptive ComboBox + "Something else…"; the pointer fields
 > intuitively selectable, never a raw address except behind "Something else…". Awaiting the design
 > pass before any build.
 
@@ -316,7 +316,7 @@ that gets answered — nobody should have to already know what a *counter* is).
 
 ## 8b. The map is ALIVE — animation & simulation
 
-**Twilight, 2026-07-12: "map needs to animate and simulate right."** A still frame is not what the console
+**Project leadership, 2026-07-12: "map needs to animate and simulate right."** A still frame is not what the console
 puts on the screen, and a map editor that shows dead water is showing you something the game never shows
 anyone. This is a first-class part of the overhaul, not a garnish — and, like everything else here, it is
 an **emulation, not an impression**.
@@ -371,7 +371,7 @@ screen.
    Nothing else in the save moves — not a checksum region we weren't told to touch, not a "normalised"
    neighbouring field, not an unused bit. See `../context/principles.md` → *Save File Integrity Is Sacred*.
 2. **Derived bytes are kept IN SYNC by default — power users can break sync (clarified 2026-07-15,
-   Twilight).** A value the game *computes* from another (`currentTileBlockMapViewPointer` from the player's
+   Project leadership).** A value the game *computes* from another (`currentTileBlockMapViewPointer` from the player's
    coords + the map width; the tileset pointers; the music bank) is, **by default, kept correct
    automatically** — most people editing the Map want that, and it is *bad UX* to let a novice break their
    map because they didn't also hand-edit a derived field they had no reason to touch. The balance:
@@ -451,7 +451,7 @@ screens/non-modal/map/
 
 ## 12. The programme — the phases, plus one optional  *(Phase 15 "Map Storage" added 2026-07-15)*
 
-> **The bar (Twilight, 2026-07-12, mandatory):** *"You absolutely have to put in the long work for each of
+> **The bar (project leadership, 2026-07-12, mandatory):** *"You absolutely have to put in the long work for each of
 > these components and pieces."* This is not a re-skin sprint. **Each phase is a full pass on one body of
 > work** — designed, built, screenshot-reviewed, tested, documented, and *finished* — before the next one
 > starts. No phase is "roughed in and cleaned up later"; there is no later. A phase that is 90% done is
@@ -464,8 +464,8 @@ screens/non-modal/map/
 3. **The mandatory screenshot review, actually performed** — capture the screen, *look at it*, crop into
    the changed area, hunt overlaps / clipping / cramping / misalignment, and fix what's found. A glance is
    not a review.
-4. **Opened in front of Twilight**, on the right screen, with a save loaded (`--sav … --screen map …`) —
-   the moment it is worth her time.
+4. **Opened in front of project leadership**, on the right screen, with a save loaded (`--sav … --screen map …`) —
+   the moment it is worth their time.
 5. New knowledge written into the **notes** (this file, `ui-patterns.md`, `qt-patterns.md`,
    `decisions/*`, the session log) — in the same commit.
 6. **Credits** checked (did this phase bring in a new source, tool, asset or helper?).
@@ -527,7 +527,7 @@ The heart of the ask. **`MapLayersModel` first, UI second.**
 - **2c — Guides become layers.** Block grid, tile grid (new), map bounds, border ring — each independently
   toggleable, each drawn from `brg.map` numbers only.
 - **2d — Game View becomes layers.** The **red screen box** and the **accent draw area** — the two rings
-  around the player Twilight named — and the **player sprite** itself, each its own toggleable layer inside
+  around the player project leadership named — and the **player sprite** itself, each its own toggleable layer inside
   the group, the group toggling all three.
 - **2e — Meaning re-homed.** The nine semantic overlays move from chips to layer rows, swatch and all,
   keeping every behaviour (off by default; a layer with nothing to show says so).
@@ -570,7 +570,7 @@ every frame of it.
 
 ### Phase 4 — SPRITES: the canvas becomes editable ✅ **DONE (2026-07-13, `0.27.0-alpha`)**
 
-> Rewritten **2026-07-13** after the sprite research pass (Twilight). The research is in
+> Rewritten **2026-07-13** after the sprite research pass (project leadership). The research is in
 > [`../reference/sprites.md`](../reference/sprites.md) — read Parts 3, 5 and 6 before touching any of this.
 > Four sub-phases, each finished — designed, built, screenshot-reviewed, tested, documented — before the
 > next begins.
@@ -578,7 +578,7 @@ every frame of it.
 > **All four are in.** `tst_map_sprites` (10 cases) pins them; its keystone byte-diffs the whole save
 > across a drag and demands exactly `mapX` + `mapY` moved. Full `ctest` 83/83.
 >
-> **Owed: Twilight's live pass** — the drag, the drop, the delete and the panel are all things a still
+> **Owed: project leadership's live pass** — the drag, the drop, the delete and the panel are all things a still
 > PNG cannot review.
 
 #### What changed in the design, and why
@@ -626,7 +626,7 @@ saves. Every one is confirmed against the disassembly, three of them against the
   decide whether a missable NPC appears. We currently model only the per-map **list** (`0x287A`), which
   the game rebuilds from ROM on every map load and which therefore does nothing.
 - **Add a `group` field to `sprites.json`** — People / Trainers / Pokémon / Objects, curated from the
-  ROM's own names, **approved by Twilight before it is written**. The Characters bar needs it.
+  ROM's own names, **approved by project leadership before it is written**. The Characters bar needs it.
 
 Pinned by a new `tst_sprite_data` expansion: every fix gets a **negative control** (put the bug back, the
 test fails by name with the exact byte), and a whole-save **byte-diff** proves that loading and re-saving
@@ -724,7 +724,7 @@ with its range, and change.
 > `illegal && armed` — out of the table **and** something is going to read it. Pinned by
 > `guns_dontCryWolfOnAnOrdinarySave`.
 >
-> **Owed: Twilight's live pass** — the drag, the drop, the delete, the maker tools and the pickers
+> **Owed: project leadership's live pass** — the drag, the drop, the delete, the maker tools and the pickers
 > are all things a still PNG cannot review.
 
 ---
@@ -785,7 +785,7 @@ The doors join the NPCs as first-class objects, on 4b's machinery. Nothing new i
 - **Draw them** — a warp chip on its tile (⇄ glyph, its own layer colour), on the **Warps** layer.
 - **Select · drag · ✕ delete · ✎ edit** — identical to sprites. A drag commits **exactly two bytes**.
 - ⛔ **Signs are NOT in this phase.** They load out of the same ROM block and they are the same shape, and
-  that is exactly why they nearly got dragged in here. **Twilight has not briefed signs.** They get their
+  that is exactly why they nearly got dragged in here. **Project leadership has not briefed signs.** They get their
   own phase, after their own conversation. See "Not yet briefed" below.
 - **The pairing line.** Selecting a warp draws, in the status bar, **where it goes** — resolved through
   `MapDBEntryWarpIn`: *"→ Viridian City, arrival point 2 (11, 5)"*. If the destination map has no such
@@ -796,7 +796,7 @@ The doors join the NPCs as first-class objects, on 4b's machinery. Nothing new i
 
 ---
 
-#### Phase 5c — The toolbar becomes TOOLS  *(Twilight, 2026-07-14)*
+#### Phase 5c — The toolbar becomes TOOLS  *(project leadership, 2026-07-14)*
 
 > *"We would need the top toolbar to ironically contain actual tools and this is one of them — a create
 > random sprite here tool, and a create warp here tool. I guess they can be next to the cursor and stuff."*
@@ -810,7 +810,7 @@ a context bar is a worse affordance than **a tool per thing you make**:
    select    │  the makers  │        what is loaded
 ```
 
-**Exactly the two makers Twilight named, and no others.** The rail is designed to *grow* one slot at a
+**Exactly the two makers project leadership named, and no others.** The rail is designed to *grow* one slot at a
 time as each object type gets its own conversation — it is not a place to pre-emptively park a tool for
 something nobody has specced.
 
@@ -830,7 +830,7 @@ something nobody has specced.
 
 It sits with *what is loaded*, not in a panel, because **every `$FF` door on the map re-reads as you
 change it** — it is the single control that changes what a dozen warps *mean*, and watching them
-re-label as you pick is the whole point. (This is the field Twilight was reaching for with "From map".
+re-label as you pick is the whole point. (This is the field project leadership was reaching for with "From map".
 `wWarpedFromWhichMap`, the byte actually named that, is **dead** — see 5d.)
 
 ---
@@ -916,7 +916,7 @@ words, with its range, its legal values, whether the game will keep it, and whet
 > members kept their (now-documented) names — the rename in **5f-0** below is deferred as an optional
 > truth-in-labelling cleanup, since it is internal-only and carries breakage risk for no user-visible
 > gain; the panel already carries the correct English names and the load-behaviour notes. Pinned by
-> **`tst_player`** (7 cases). Owed: Twilight's live pass on the scroll, the switch and the controls.
+> **`tst_player`** (7 cases). Owed: project leadership's live pass on the scroll, the switch and the controls.
 
 > *"Let's flesh out more character details — the player detail panel should have Moving, Last Stop,
 > Current direction, X/Y Coords, X/Y Block Coords, Jumping Y, Using strength, Using Fly, Surfing
@@ -924,7 +924,7 @@ words, with its range, its legal values, whether the game will keep it, and whet
 > Standing on Door, Moving through door, Standing on warp, Walk/Bike/Surf status, End Edge jump, Spin
 > Player, Used Card Key, Using Link Cable. These are related to map state so they should be on the
 > player box. Figure out what all those options are, figure out which ones are rewritten on startup,
-> organize structure, follow the ui/ux."* — Twilight
+> organize structure, follow the ui/ux."* — project leadership
 
 5e shipped **just the player's position** in the Details panel. This phase puts **all 26 bytes of
 `AreaPlayer`** there — the full v1 `area-player` field set (Direction / Coordinates / HMs / Battle /
@@ -995,12 +995,12 @@ reads it.
 
 > **All of 6a–6d are in.** `tst_signs` (15 cases) pins them; the keystone byte-diffs the whole 32 KB
 > across a drag. Full test set green. The importer (`scripts/import_sign_text.py`) is additive-only —
-> strip its `textEntries` back out and `maps.json` is byte-identical to before. Owed: Twilight's
+> strip its `textEntries` back out and `maps.json` is byte-identical to before. Owed: project leadership's
 > live pass on the drag, the delete, the tool and the grouped picker.
 
 > *"Let's add sign features to the map — an add-sign tool, and the details panel on the left needs
 > x,y coordinates and an actual combo box to select from the text on the map. The usual delete
-> options, much the same as warps and sprites."* — Twilight, 2026-07-14. Then, on the combo: *"all
+> options, much the same as warps and sprites."* — project leadership, 2026-07-14. Then, on the combo: *"all
 > entries that can be referenced on a sign no matter what the text is meant for — group them"*; and
 > on scope: *"break it into as many phases as you need to fully and comprehensively cover this."*
 
@@ -1066,7 +1066,7 @@ invented.
 
 #### Phase 6c — The Place sign tool
 
-The tool rail (`[ ↖ ✥ ⌕ ] │ [ ⇄+ + ]`) grows exactly **one** slot — the third maker Twilight has now
+The tool rail (`[ ↖ ✥ ⌕ ] │ [ ⇄+ + ]`) grows exactly **one** slot — the third maker project leadership has now
 briefed, and no others:
 
 ```
@@ -1114,7 +1114,7 @@ byte-diff proving load+resave of an untouched save changes **nothing**, that dra
 
 ---
 
-### Phase 7 — CONNECTIONS: the connecting routes  *(BRIEFED 2026-07-15, Twilight)*
+### Phase 7 — CONNECTIONS: the connecting routes  *(BRIEFED 2026-07-15, project leadership)*
 
 > **Read [`../reference/map-connections.md`](../reference/map-connections.md) before touching any of this
 > — all of it, and especially the new "Editing a connection — the human model" section.** The strips are
@@ -1127,7 +1127,7 @@ byte-diff proving load+resave of an untouched save changes **nothing**, that dra
 > panel, the field kit) and the renderer that already reproduces the macro (`MapEngine::connectionOf`).
 > This is the derived-byte doctrine (§9.2) applied to its hardest case.
 >
-> **The four design decisions (Twilight, 2026-07-15):**
+> **The four design decisions (project leadership, 2026-07-15):**
 > 1. **Offset-driven, auto-derive** — pick the neighbour + slide one offset; the editor recomputes the
 >    nine derived bytes via the macro. **The Details panel always shows the raw values too** (read-only
 >    while synced, editable once desynced).
@@ -1183,9 +1183,9 @@ Pinned by a new **`tst_connections`**, negative-controlled like `tst_warps`/`tst
 > each empty edge → a grouped map picker → `addConnection`). Four fixed items each (not Repeater
 > delegates, so an offset edit never rebuilds one mid-drag); `selectedConnection` joins the
 > one-selection-at-a-time model. `tst_qml_screens` 16/16, `tst_connections` 14/14.
-> **Remaining in 7b (owed):** the **full neighbour-map render** bleeding off the edge (Twilight's
+> **Remaining in 7b (owed):** the **full neighbour-map render** bleeding off the edge (project leadership's
 > chosen visual; today it's the faithful strip-outline proxy), the **drag-a-map-onto-the-arrow**
-> gesture (today: click-to-add only), and **Twilight's live pass** (drag/select/snap can't be reviewed
+> gesture (today: click-to-add only), and **project leadership's live pass** (drag/select/snap can't be reviewed
 > from a still PNG). Feature rides the **Connections** layer (turn it on to see arrows + strips).
 
 The four edges become live, on 4b's object machinery + the neighbour-map renderer.
@@ -1206,13 +1206,13 @@ The four edges become live, on 4b's object machinery + the neighbour-map rendere
   > neighbour's own map (`image://map/<toMap>/<toTileset>/…`, `toTileset` added to `connectionEditList`),
   > positioned so the neighbour's shared map edge meets ours + the offset, drawn **behind** our opaque
   > buffer (z −0.5) so only the off-edge part shows, dimmed 45%, re-positioned live on an offset drag.
-  > Owed: Twilight's live pass on the alignment (layer-gated + edge-located + zoom-dependent, so it
+  > Owed: project leadership's live pass on the alignment (layer-gated + edge-located + zoom-dependent, so it
   > can't be still-captured).
 - **Drag = offset.** Grab the neighbour map and slide it **along the shared edge only** (constrained to the
   one axis); the offset snaps to whole blocks; the nine derived bytes recompute live; the border-ring strip
   re-renders as you drag. Live offset + Δ in the context bar, exactly like a warp drag. `Esc` cancels with
   nothing written; release commits only the touched slot's bytes.
-- **Snap to the landmarks (Twilight, 2026-07-15).** A raw block slide is fiddly; the drag should **snap to
+- **Snap to the landmarks (project leadership, 2026-07-15).** A raw block slide is fiddly; the drag should **snap to
   the positions a person actually wants**, with a light magnetism (and a modifier — `Alt` — to escape it for
   a free slide). The landmarks, all computable from the two maps' sizes: **offset 0** (the default a fresh
   connection lands on — the game's own resting value, the two maps corner-aligned), **flush edges** (the
@@ -1241,7 +1241,7 @@ the offset; add/delete/select behave like warps and signs.
 > nine (`connectionFields` / `setConnectionField` — a raw write moves exactly its own byte(s) and
 > desyncs), Delete, and the live/restored-on-re-entry honest note. `tst_connections` 16/16,
 > `tst_qml_screens` 16/16. Owed: the on-canvas **resize nodes** for a desynced strip (7d) and
-> Twilight's live pass.
+> Project leadership's live pass.
 
 Nothing selected → the map (as always). A connection selected → its inspector, on the field kit.
 
@@ -1262,7 +1262,7 @@ Nothing selected → the map (as always). A connection selected → its inspecto
 
 ---
 
-#### Phase 7d — Handles that match the sync state  *(Twilight's "simpler nodes when synced")*
+#### Phase 7d — Handles that match the sync state  *(project leadership's "simpler nodes when synced")*
 
 - **Synced (the default): one simple handle** — the neighbour map slides along the edge (7b). That is the
   *only* gesture, because width/src/dst are derived; offering to resize a value the offset controls would be
@@ -1290,7 +1290,7 @@ synced, more when the user has opted into raw editing.
 - **Render parity.** `tst_emu_parity` already proves the *ring* the strips produce matches the console
   byte-for-byte; a drag must leave that oracle green for the new offset.
 - **The mandatory screenshot review** at the ghost-arrow state, a live full-neighbour connection, and mid-
-  drag; then the live pass with Twilight (`--sav … --screen map`), since the drag/rotate/handles are things
+  drag; then the live pass with project leadership (`--sav … --screen map`), since the drag/rotate/handles are things
   a still PNG cannot review.
 
 **Exit of Phase 7:** a person can add a connecting route by clicking an edge and picking a map, slide the
@@ -1300,17 +1300,17 @@ action names.
 
 ---
 
-## 12b. ⛔ NOT YET BRIEFED — do not design these, do not build them  *(2026-07-14, Twilight)*
+## 12b. ⛔ NOT YET BRIEFED — do not design these, do not build them  *(2026-07-14, project leadership)*
 
 > *"Let's not get too far ahead of ourselves. Signs and stuff, connecting routes, wild Pokémon — these are
 > examples of things I haven't gotten to yet. I'd hate to have to undo a lot of work because it was done
 > before I explained anything."*
 
 The phases below are **placeholders, not designs.** They were sketched early, from the *save layout* —
-which is a map of what bytes exist, not of what Twilight wants a person to be able to *do*. Every screen
+which is a map of what bytes exist, not of what project leadership wants a person to be able to *do*. Every screen
 in this project that got designed from the bytes had to be built twice.
 
-**The rule:** a phase in this list gets **its own conversation with Twilight first**, then a research pass
+**The rule:** a phase in this list gets **its own conversation with project leadership first**, then a research pass
 (`CLAUDE.md` → *RESEARCH LANDS IN THE NOTES*), then a design written *here*, and only then code. **A
 neighbouring phase does not get to absorb one of these because the data happens to sit next to it.**
 Signs nearly rode into Phase 5b on exactly that logic — they load out of the same ROM block as warps —
@@ -1318,11 +1318,11 @@ and that is precisely the mistake this section exists to prevent.
 
 | Phase | Un-briefed | The temptation to resist |
 |---|---|---|
-| ~~**Signs**~~ | ✅ **BRIEFED 2026-07-14 — graduated to Phase 6.** | Was cut out of Phase 5b, held here until Twilight briefed it. She now has: add-sign tool, X/Y, a grouped text picker of the map's real text. See **Phase 6** above and [`../reference/signs.md`](../reference/signs.md). |
-| ~~**Connections**~~ | ✅ **BRIEFED 2026-07-15 — graduated to Phase 7.** | Was held here until Twilight briefed it. She now has: offset-driven editing with auto-derive, the full neighbour map draggable on the canvas, both add-gestures, explicit re-home (no rotation), delete + inspector. See **Phase 7** above and [`../reference/map-connections.md`](../reference/map-connections.md). |
-| ~~**Living / wandering NPCs**~~ | ❌ **DECLINED 2026-07-15** — Twilight: *"don't bother with the living wandering NPCs, it wouldn't be good for different reasons."* No wandering / NPC-AI. **But she does want the connecting maps' sprites SHOWN, static** (see the "neighbour sprites" item under Phase 7b). | — |
-| ~~**Phase 8 — Encounters**~~ | ✅ **BRIEFED + BUILT 2026-07-15 — the Wild Pokémon panel.** | Twilight briefed it: a left-dock panel, grass + water, enable + encounter-chance slider, the ten slots drawn like the Pokémon box (percent, editable level, species picker, drag-to-reorder), random-seed on enable, never-clear on disable. The research caught a real model bug (species/level byte order). See **Phase 8** below and [`../reference/wild-encounters.md`](../reference/wild-encounters.md). |
-| ~~**Character state (`AreaNPC`)**~~ | ✅ **BRIEFED 2026-07-15 — graduated to Phase 9.** | Twilight briefed the right-hand Character panel (the 9 map-global NPC/control/battle flags). Researched: [`../reference/npc-character-state.md`](../reference/npc-character-state.md). See **Phase 9** below. |
+| ~~**Signs**~~ | ✅ **BRIEFED 2026-07-14 — graduated to Phase 6.** | Was cut out of Phase 5b, held here until project leadership briefed it. They now have: add-sign tool, X/Y, a grouped text picker of the map's real text. See **Phase 6** above and [`../reference/signs.md`](../reference/signs.md). |
+| ~~**Connections**~~ | ✅ **BRIEFED 2026-07-15 — graduated to Phase 7.** | Was held here until project leadership briefed it. They now have: offset-driven editing with auto-derive, the full neighbour map draggable on the canvas, both add-gestures, explicit re-home (no rotation), delete + inspector. See **Phase 7** above and [`../reference/map-connections.md`](../reference/map-connections.md). |
+| ~~**Living / wandering NPCs**~~ | ❌ **DECLINED 2026-07-15** — project leadership: *"don't bother with the living wandering NPCs, it wouldn't be good for different reasons."* No wandering / NPC-AI. **But they do want the connecting maps' sprites SHOWN, static** (see the "neighbour sprites" item under Phase 7b). | — |
+| ~~**Phase 8 — Encounters**~~ | ✅ **BRIEFED + BUILT 2026-07-15 — the Wild Pokémon panel.** | project leadership briefed it: a left-dock panel, grass + water, enable + encounter-chance slider, the ten slots drawn like the Pokémon box (percent, editable level, species picker, drag-to-reorder), random-seed on enable, never-clear on disable. The research caught a real model bug (species/level byte order). See **Phase 8** below and [`../reference/wild-encounters.md`](../reference/wild-encounters.md). |
+| ~~**Character state (`AreaNPC`)**~~ | ✅ **BRIEFED 2026-07-15 — graduated to Phase 9.** | project leadership briefed the right-hand Character panel (the 9 map-global NPC/control/battle flags). Researched: [`../reference/npc-character-state.md`](../reference/npc-character-state.md). See **Phase 9** below. |
 | **Area-State leftovers** | the `AreaWarps` state that isn't warp-flow, `AreaLoadedSprites` | Still "the leftovers", which is not a design. Un-briefed (was bundled into the old "Phase 9 — Area State"). |
 | **Phase 10 — Tileset & Blocks** | the deep pass | The panels exist; the *deep* pass does not have a brief. |
 
@@ -1338,7 +1338,7 @@ build a UI for it.
 
 ---
 
-### Phase 8 — Encounters  *(the Wild Pokémon panel — briefed + BUILT 2026-07-15, Twilight)*
+### Phase 8 — Encounters  *(the Wild Pokémon panel — briefed + BUILT 2026-07-15, project leadership)*
 
 > **BUILT.** `WildPokemonPanel.qml` (left dock) → two `WildMonList.qml` sections (grass, water). Each:
 > an **Enable** switch (`rate > 0`), an **encounter-chance** slider (Low↔High), and the ten slots drawn
@@ -1346,7 +1346,7 @@ build a UI for it.
 > `WildMonEncounterSlotChances`), an **editable level** upper-right, the mon's artwork centre, its name
 > below. **Click** a slot → the species picker (the Pokémon-details `SelectSpecies` list); **drag** a
 > slot → reorder, which re-weights rarity. **Enabling a blank table seeds ten random mons** (the box's
-> new-random); **unchecking only disables — it never clears** (Twilight, 2026-07-15). `MapModel` gained
+> new-random); **unchecking only disables — it never clears** (project leadership, 2026-07-15). `MapModel` gained
 > rates/enable, `grassMons()`/`waterMons()`, per-slot species+level setters and `moveGrassMon`/
 > `moveWaterMon`, each writing only the byte(s) it names.
 >
@@ -1355,7 +1355,7 @@ build a UI for it.
 > UI), pinned by `tst_area_pokemon::wildTables_byteOrderIsLevelThenSpecies`. Full write-up + the
 > Continue-persistence finding: [`../reference/wild-encounters.md`](../reference/wild-encounters.md).
 >
-> **Owed: Twilight's live pass** — the drag-to-reorder, the click-to-pick species, and the inline
+> **Owed: project leadership's live pass** — the drag-to-reorder, the click-to-pick species, and the inline
 > level edit are things a still PNG can only partly review. (Screenshot: `tmp/screenshots/wild-panel2.png`.)
 
 The original sketch (kept for the record): species picker + level, drag-to-reorder, rate 0 said in
@@ -1366,9 +1366,9 @@ agree. The **post-battle cooldown flag** (`wildEncounterCooldown`, once wrongly 
 
 ---
 
-### Phase 9 — Character State  *(the right-hand Character panel — briefed 2026-07-15, Twilight)*
+### Phase 9 — Character State  *(the right-hand Character panel — briefed 2026-07-15, project leadership)*
 
-> Twilight: *"There needs to be a panel on the right of the map screen that houses character options
+> Project leadership: *"There needs to be a panel on the right of the map screen that houses character options
 > for all characters."* — the nine map-global `AreaNPC` flags: Face-away-on-interaction, scripted
 > movement init/running, ignore controls, scripted controls, scripted battle, trainer battle, and the
 > trainer pointer (plus the hidden trade-center bit). **Research done this session** and written up in
@@ -1415,11 +1415,11 @@ value** (*Scripted movement init/running*, *Trainer battle*, *Test battle*, *Tra
 quoted verbatim in [`npc-character-state.md`](../reference/npc-character-state.md) §5; the `⚠`/`kept`
 marks are now `✅`. (This is exactly why the probe is a gate — the guess was wrong.)
 
-#### Phase 9d — The Character panel  ✅ *(built 2026-07-15, `CharacterStatePanel.qml`; awaiting Twilight's live pass)*
+#### Phase 9d — The Character panel  ✅ *(built 2026-07-15, `CharacterStatePanel.qml`; awaiting project leadership's live pass)*
 
 A right-dock panel (`id: "charstate"`, glyph , wired in `Map.qml` + `app.qrc`), three titled groups
 (v1's own split), each flag a `MapSwitch` with a one-line plain-English blurb and, where the game
-rewrites it, an inline `MapWarnIcon` (**no hidden fields** — Twilight 2026-07-15; the ⚠ is a label, not
+rewrites it, an inline `MapWarnIcon` (**no hidden fields** — project leadership 2026-07-15; the ⚠ is a label, not
 a reason to hide):
 
 - **Sprites** — *Don't face the player when talked to* (⚠ zeroed on load), *Trade-center sprites have
@@ -1434,8 +1434,8 @@ a reason to hide):
   (nothing refused), plus a one-click **Clear** for the leftover. A resolved picker is *not* owed here;
   if ever wanted it's its own briefed feature gated on a trainer-header extraction.
 
-`tst_qml_screens` green (16/16). Screenshot-reviewed; then opened in the foreground for Twilight's live
-UI/UX pass (she owns the layout/wording/glyph decisions).
+`tst_qml_screens` green (16/16). Screenshot-reviewed; then opened in the foreground for project leadership's live
+UI/UX pass (they own the layout/wording/glyph decisions).
 
 > **Area-State leftovers** — the non-warp-flow `AreaWarps` state fields and `AreaLoadedSprites`
 > (`loadedSetId` + 11 slots) that used to share the old "Phase 9 — Area State" heading are **still
@@ -1443,12 +1443,12 @@ UI/UX pass (she owns the layout/wording/glyph decisions).
 
 ---
 
-### Phase 15 — Map Storage  *(the right-dock per-map persistent-state panel — briefed 2026-07-15, Twilight)*
+### Phase 15 — Map Storage  *(the right-dock per-map persistent-state panel — briefed 2026-07-15, project leadership)*
 
 > A content phase, numbered after the tail; it sits beside Phase 9 (a map-wide state panel), not with
 > the polish phases. Briefed this session and researched: [`../reference/gym-safari-state.md`](../reference/gym-safari-state.md).
 
-> Twilight: *"a new maps panel that will be expanded later on the right toolbar … the panel needs a
+> Project leadership: *"a new maps panel that will be expanded later on the right toolbar … the panel needs a
 > map dropdown pre-selected to the current map … have the panel titled **Map Storage** … the [dock]
 > button needs to be a primary‑colour, filled‑in storage icon."*
 
@@ -1456,7 +1456,7 @@ UI/UX pass (she owns the layout/wording/glyph decisions).
 titled **Map Storage**, whose **dock/tool‑rail icon is the primary colour, filled, with a storage
 glyph** — signalling it holds *persistent* save storage. A **map combo box** at the top, **pre‑selected
 to the save's current map**, lists **only maps that actually have stored bytes**; selecting a map shows
-**that map's storage page**. Twilight will *add more maps' storage over time* — the panel is the
+**that map's storage page**. Project leadership will *add more maps' storage over time* — the panel is the
 container, seeded now with the three locations we have.
 
 **The bytes are GLOBAL, not Area** — the one thing the research changed. These six do **not** live in
@@ -1478,7 +1478,7 @@ console‑verified durable):
 | | Safari balls | `wNumSafariBalls` `0x2CF3` | persistent; range 0–30 |
 | | Game‑over flag | `wSafariZoneGameOver` `0x2CF2` | **shown, marked TEMPORARY** — console‑verified inert (zeroed every frame by `OverworldLoop`→`SafariZoneCheck`) |
 
-**Persistent vs temporary (Twilight's two‑zone idea, now with a real split).** Five bytes are durable
+**Persistent vs temporary (project leadership's two‑zone idea, now with a real split).** Five bytes are durable
 and wear the **persistent** styling (primary‑filled storage marker). `wSafariZoneGameOver` is **shown,
 marked temporary** — it stays on the Safari Zone page but visibly flagged inert (editing does nothing;
 the probe proved it). This is the amber‑`!`/"reloaded" idiom, applied to exactly one byte.
@@ -1498,7 +1498,7 @@ Zone — the gate resets steps/balls to 502/30 on entry").
   combo (only‑maps‑with‑storage, current preselected), the per‑map pages, persistent vs temporary
   marking; screenshot‑reviewed then a live pass.
 
-**✅ Safari Zone resolved (Twilight 2026‑07‑15): "combine Safari Zone".** The several safari maps
+**✅ Safari Zone resolved (project leadership 2026‑07‑15): "combine Safari Zone".** The several safari maps
 (Center/East/North/West, rest houses, gate) collapse to **one combined "Safari Zone" entry** in the
 combo — the shared counters live on that single page, not repeated per safari map. Design fully locked.
 
@@ -1607,7 +1607,7 @@ layer has a *pattern* as well as a hue, which is already true of the overlay and
 - **A byte-diff harness run over every edit the screen can make**: load a save, perform the edit, diff the
   whole 32 KB. Anything that changed and shouldn't have is a **release blocker**, not a bug report.
 - Linux Docker (standard / asan / xvfb / coverage).
-- A live pass with Twilight on the built app.
+- A live pass with project leadership on the built app.
 
 ---
 
@@ -1632,7 +1632,7 @@ layer has a *pattern* as well as a hue, which is already true of the overlay and
 > thing clicked. so like in oaks lab the pokeballs should have boxes around them because there all tied to
 > flags"* … *"Have the outline there even if the sprite isnt there"* … *"sprites and objects and stuff
 > should have there own outline, if its tied to [event flags] it should have a different color"*
-> (she corrected *scripts* → **event flags** herself).
+> (they corrected *scripts* → **event flags** themselves).
 
 **What it is.** Every object on the map that the save has a flag for wears an **outline box**. Clicking
 the box opens **Map Storage** at *that exact flag* — the canvas becomes an index into the panel. It is a
@@ -1658,7 +1658,7 @@ the save already exists:
 (5, 2) Prof. Oak    missable 46        (1, 9) Girl          -- no missable, no box
 ```
 
-Both things she named — *"the pokeballs should have boxes"* and Oak standing in **two** places — are
+Both things they named — *"the pokeballs should have boxes"* and Oak standing in **two** places — are
 already in the data. 8 of Oak's Lab's 11 objects are flag-governed; the Girl and the two Aides are not,
 and correctly get **no box**.
 
@@ -1667,12 +1667,12 @@ and correctly get **no box**.
 The boxes are drawn from the **ROM cast** (`MapDBEntry::sprites`), **not** from the save's 16 sprite
 slots. That is the whole trick: a missable whose bit says *hidden* has no sprite on screen, but its ROM
 object still has coordinates — so **the box is still there, exactly where the thing would stand.** This
-is what she asked for, and it is only possible because the outline's source is the cartridge's list, not
+is what they asked for, and it is only possible because the outline's source is the cartridge's list, not
 the save's.
 
 #### Colour + state — attachment is the colour, visibility is the line
 
-**Colour = what it is attached to** (her rule):
+**Colour = what it is attached to** (their rule):
 
 | Attachment | Meaning | Box |
 |---|---|---|
@@ -1719,7 +1719,7 @@ to the row and **highlights** it. Missable-attached → `missableSection`; event
 
 **So this is NOT "flags on an object".** It is **any persistent storage that lands on the same location
 of the map** — filter flags and event flags are just the two we happen to have built. The game has many
-pieces, and more storage kinds are coming (she has said repeatedly that Map Storage is a container she
+pieces, and more storage kinds are coming (they have said repeatedly that Map Storage is a container they
 will keep adding to). The rule is about a **place**, not about a sprite.
 
 The design above assumes **one spot, one box**, and that assumption is wrong. A single tile can carry a
@@ -1774,7 +1774,7 @@ sites · **22** files with both · **41** files with coord triggers.
   is near the object" is the same static-co-location reasoning that produced the Route 22 false
   positive and shelved the conflicts system. Anything ambiguous gets **no tab**.
   - **THE DESIGN OF RECORD: truthful HIGHLIGHT, block-granular HIT TARGET.** *(leadership,
-    2026-07-17 — her third and settled statement on it. This **supersedes both** earlier same-day
+    2026-07-17 — their third and settled statement on it. This **supersedes both** earlier same-day
     calls: ~~"put a box around the whole range"~~ **and** ~~"highlight the blocks separately, per-block
     or per-tile boxes"~~.)*
 
@@ -1825,7 +1825,7 @@ sites · **22** files with both · **41** files with coord triggers.
     uniform block hit-grid lies over a canvas where sprites, warps, signs and the player are already
     **selectable and draggable**, and the shipped Flag boxes layer deliberately clicks the **ring
     only** so *"clicking the sprite itself still opens its details as before"* (0.42.0-alpha). Three
-    candidates went up (layer-gated · object-first · block-always-wins). **She picked none of them:**
+    candidates went up (layer-gated · object-first · block-always-wins). **They picked none of them:**
 
     > *"any overlap with selections need to be accessible under mouseover, click order is based on
     > layer order in the panel shown to users. So the first click is highest layer however the square
@@ -1864,7 +1864,7 @@ sites · **22** files with both · **41** files with coord triggers.
       **tile traits** as a kind, and each spot needs its **unit** so the gap can be placed. This is a
       widening of 16f's scope and it lands *before* 16f-c is built, not after.
 
-    ❓ **Still unstated, and small enough to settle at build time with her in the room:** what the
+    ❓ **Still unstated, and small enough to settle at build time with their in the room:** what the
     square's *colour* means (the layer's own colour is the obvious read — the layer tree already
     assigns one per layer), and the hover affordance's exact shape ("accessible under mouseover" —
     peek, or a strip that lists them). Neither blocks 16f-a/16f-b.
@@ -1903,13 +1903,13 @@ Until then, boxes link to the filter flag only — **verified**, and it covers t
 - **16d — The link** — click → Map Storage → section → scroll + highlight.
 - **16e — Verification** — `tst_map_hotspots`: Oak's Lab yields **8** boxes and not 11; the three balls
   sit at (6,3)/(7,3)/(8,3) with missables 43/44/45; flipping a missable bit flips solid↔dashed and
-  **writes only that bit** (the byte-diff keystone); mandatory screenshot review; then her live pass.
+  **writes only that bit** (the byte-diff keystone); mandatory screenshot review; then their live pass.
 
 ---
 
 ### Phase 15 — SIMULATE: walk the map  *(**OPTIONAL / stretch** — runs last, gates nothing)*
 
-**Twilight, 2026-07-12: "an accurate simulation like a play/pause button on the map might be cool but it's
+**Project leadership, 2026-07-12: "an accurate simulation like a play/pause button on the map might be cool but it's
 not a high priority unless you think it's important."** Here is the honest split, because the two halves of
 "animate and simulate" are *not* the same size:
 
@@ -1921,7 +1921,7 @@ not a high priority unless you think it's important."** Here is the honest split
   require a frozen frame 0, so the pause *already has to exist*. Exposing it as a ▶/⏸ costs a button.
 - **Walking the map is the cool one, and it is genuinely optional.** It is a small game engine — collision,
   step cadence, ledges, camera, warps. Nothing else in the plan depends on it, so it sits **last**, and it
-  only gets built when everything above it is done, or when Twilight asks for it.
+  only gets built when everything above it is done, or when project leadership asks for it.
 
 If/when it is built:
 
@@ -1965,7 +1965,7 @@ priority rendering** on the map.
 
 ---
 
-## 14. Open questions for Twilight
+## 14. Open questions for project leadership
 
 1. **The dark canvas well** — Photoshop/Aseprite/Tiled all surround the artwork with a dark neutral so the
    art reads. This app is light-themed. Proposed: a *theme-derived* dark neutral behind the map only (the

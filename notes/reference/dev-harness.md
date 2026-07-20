@@ -13,9 +13,9 @@ lighting its own box, a tooltip) is driven by this and nothing else, so without 
 be checked without a human sitting there. Verified live: one `hover` updates the status bar's
 `tile 11, 15 · block 5, 7` and pops a warp's tooltip.
 
-**It exists because I claimed hover was untestable and Twilight refused to accept it** — *"i find
+**It exists because I claimed hover was untestable and project leadership refused to accept it** — *"i find
 it hard to beleive theres no solution for testing hover you cannot tell me the community has no
-solution for this"*. She was right; it took two lines. Same failure as the aqtinstall "hard ceiling"
+solution for this"*. They were right; it took two lines. Same failure as the aqtinstall "hard ceiling"
 the same day: I hit the edge of what I had **already built** (`tap` sends press+release), and
 reported the *capability* as missing. **"My harness can't" is not "it can't."**
 See [`qt-patterns.md`](qt-patterns.md) (top).
@@ -84,7 +84,7 @@ object per line, get one reply per line. Verbs:
   grabs it, who consumes it, what it falls through to), `click` **cannot see it** and `tap` can.
 
   That gap is why the "opening the picture picker drops your selection" bug survived a fix and why I
-  ended up clicking the screen by hand instead of using our own tooling. Twilight asked why; the
+  ended up clicking the screen by hand instead of using our own tooling. Project leadership asked why; the
   answer was that the harness couldn't do it. Now it can. **Reach for `tap` whenever the question is
   "what happens when the user actually clicks *there*".**
 - `{"cmd":"reload"}` — force a QML reload. `{"cmd":"list","arg":"<substr>"}` — matching `objectName`s.

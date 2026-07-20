@@ -33,12 +33,12 @@ light/dark themes.
 3. Diffed the hub `docs-site/` standard against what the project runs. The model **changed**: the
    chrome is no longer a spec you reimplement — since 0.15.0 it is a **vendored bundle** you copy
    verbatim (`12-shared-chrome.md` + `chrome/`), and the hub ships a **Doxygen adapter** that names
-   this project as its reference case. Also folded in: the owner rename `junebug12851 → 1fairyfox`
+   this project as its reference case. Also folded in: the owner rename `1fairyfox → 1fairyfox`
    (this repo's own remote is already `github.com/1fairyfox/...`), and the reader's Farms dropdown +
    story-only line-spacing/width controls.
 4. **Surfaced the one real conflict and asked** (a deliberate local divergence must not be clobbered
    even under pre-authorization): the bundle's `head.html` loads fonts from Google Fonts, but this
-   project deliberately self-hosts them (2026-07-06, per the hub legal-docs standard). Twilight chose
+   project deliberately self-hosts them (2026-07-06, per the hub legal-docs standard). Project leadership chose
    **keep self-hosted** + file a recommendation to the hub (below).
 5. Vendored `main.css` + `reader.js` + `nav.js` from the master into `docs/fairyfox/`; pinned
    `docs/fairyfox/CHROME_VERSION = 2.0.0`. Rebuilt `header.html`/`footer.html` as Doxygen templates
@@ -68,7 +68,7 @@ light/dark themes.
 None of these are hub problems — they're the inherent "wear the chrome, let the reference body be
 reference" boundary the Doxygen adapter already calls out. The adapter was accurate and sufficient.
 
-## Recommendation back to the hub (requested by Twilight)
+## Recommendation back to the hub (requested by project leadership)
 
 **Move the shared-chrome bundle to self-hosted fonts.** The bundle's `chrome/head.html` currently
 pulls Fraunces / Inter / JetBrains Mono from `fonts.googleapis.com`. Every node that also honors the

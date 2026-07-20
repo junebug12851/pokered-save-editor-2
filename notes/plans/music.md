@@ -2,13 +2,13 @@
 
 ## Phase 8 — "ship the `.asm`, not a `.bin`" — FEASIBILITY (2026-07-13)
 
-Twilight asked for the music data to be pret/pokered's **assembly sheet music**, parsed line by line,
+Project leadership asked for the music data to be pret/pokered's **assembly sheet music**, parsed line by line,
 rather than a compiled blob — under the standing *use-the-game's-own-file-formats* rule. Checked it
 before starting. **Three findings, and the second one changes what the job is.**
 
 ### 1. The SOURCE is already their `.asm`. It has been all along.
 
-`scripts/import_music.py` **is** the line parser she described. It reads `audio/headers/*.asm` and the
+`scripts/import_music.py` **is** the line parser they described. It reads `audio/headers/*.asm` and the
 music `.asm` **line by line**, uses their macro names (`note`, `octave`, `dutycycle`…), and never
 touches a ROM — the cartridge is only an *optional* `--check` oracle. So the "we need a line parser,
 not a byte compiler" insight was right, and it is already how the data gets in.
@@ -30,7 +30,7 @@ bar. Music does not meet it.
 ### 3. Why it still comes out as BYTES — and the version of this I got wrong
 
 I first wrote that we *could not* parse to "commands" because it would destroy the glitch music.
-**Twilight pushed back, and she was right to.** Her exact objection is the one worth recording:
+**Project leadership pushed back, and they were right to.** Their exact objection is the one worth recording:
 
 > *"You sometimes make it sound like it reads an address offset to jump to — and if that's the case it
 > wouldn't just play on one channel, it would read a whack jump address and jump to a weird location
@@ -104,7 +104,7 @@ Background you must read first:
 1. **The two flags, exposed.** `No Audio Fadeout` and `Prevent Music Change` — checkboxes, on the Map
    screen. (v1 had them; v2 reads/writes them already but shows neither.)
 2. **The map's music, editable.** The track picker (id + bank), on the Map screen, next to the flags.
-3. **The music, actually playing.** A **play button next to each track**, and — the thing Twilight
+3. **The music, actually playing.** A **play button next to each track**, and — the thing project leadership
    actually asked for — **hover-to-preview**: with playback on, running the mouse down the track list
    switches the music as you go, so you can skim the soundtrack.
 4. **Completely accurate.** Not "sounds like Pokémon". The real sequencer, driving a real APU model,
@@ -115,7 +115,7 @@ the same screen that already draws the map, the border ring, the palettes and th
 of what a map *is* in the save; it does not get its own screen. (This supersedes v1's separate
 "Area → Audio" card.)
 
-## 2. The decisions (taken 2026-07-12, with Twilight)
+## 2. The decisions (taken 2026-07-12, with project leadership)
 
 | Decision | Choice | Why |
 |---|---|---|
@@ -123,7 +123,7 @@ of what a map *is* in the save; it does not get its own screen. (This supersedes
 | **How faithful** | **Full port: the Gen 1 sound engine + a DMG APU emulator, in C++** | Anything less is an impression. This is also the only version that is *verifiable*, and it gives us SFX/cries later for free. |
 | **What we build first** | **Research + notes + plan** (this document), then stop | The build is long; the plan gets read before a line of it is written. |
 
-**The ROM stays out of it.** `assets/references/backup.gb` remains Twilight's own cartridge backup:
+**The ROM stays out of it.** `assets/references/backup.gb` remains project leadership's own cartridge backup:
 git-ignored, never committed, never shipped, tests SKIP without it. It is used **only** as the *oracle*
 in tests — never as a runtime data source.
 
@@ -261,7 +261,7 @@ restarts on the overworld after ~80 frames — every channel re-pointed, every r
 is the game, not `UpdateMusic`, and `UpdateMusic` is the only thing this test is entitled to judge, so it
 stops cleanly there and requires ≥ 60 verified frames.
 
-### Phase 5 — playback + the UI ✅ DONE (2026-07-12) — awaiting Twilight's live review
+### Phase 5 — playback + the UI ✅ DONE (2026-07-12) — awaiting project leadership's live review
 
 `MusicPlayer` (`brg.music`) owns the engine + the chip and hands `QAudioSink` a `QIODevice` that **runs
 the Game Boy on demand** — a frame of the sequencer, a frame of the chip, drain the samples, repeat.
@@ -276,7 +276,7 @@ hover-auditions/click-commits, and the "previewing — the save still holds X" l
 Green: `tst_qml_screens` 16/16, `tst_audio` 10/10, full `ctest` **77/77**. Screenshot-reviewed with the
 panel open (the ♪ was crowding the contrast name; the panel was white-on-white — both fixed).
 
-**Still needs Twilight's live pass** — it is *sound* and *hover*, and neither survives a still PNG.
+**Still needs project leadership's live pass** — it is *sound* and *hover*, and neither survives a still PNG.
 
 ### Phase 6 — the free stuff (later, optional)
 
@@ -294,11 +294,11 @@ indented under its parent and labelled *"channel 2 alone"*. A switch hides them.
 The channel count comes straight out of the header table we imported, at the address the game reads it
 from — so the list is derived, not hand-maintained.
 
-**Decisions taken with Twilight (2026-07-12):**
+**Decisions taken with project leadership (2026-07-12):**
 
 - **They stay in the picker.** They *are* selectable map music — verified on the cartridge: id 187 in the
   save's music byte makes the real game play Pallet Town's channel 2 alone.
-- **The data stays as bytes.** She asked whether a JSON-of-instructions would reduce liability. It would
+- **The data stays as bytes.** They asked whether a JSON-of-instructions would reduce liability. It would
   not: it's the same instructions in a different encoding, and pret publishes the same content as readable
   text. There is an *engineering* argument (readable/diffable) but no legal one, and rewriting the engine's
   fetch layer would cost the console-verified parity proof. **Left as bytes, deliberately.**
@@ -333,13 +333,13 @@ plain warning that it hangs the real game.
 |------|-----------|
 | **The port is subtly wrong and it "sounds fine"** — the classic chiptune trap | The frame-by-frame `$C000` parity test. Ears are not evidence; the console is. |
 | Qt Multimedia latency/underruns making hover-preview feel bad | Generous ring buffer; engine runs ahead; preview switches on the next engine frame, not the next sample. Measure before tuning. |
-| Shipping the game's music data | Twilight's call, taken above; it is the same category as the map blocks we already ship, imported from the same public disassembly. Credited. If that ever needs to change, the import script is the single place to change it. |
+| Shipping the game's music data | project leadership's call, taken above; it is the same category as the map blocks we already ship, imported from the same public disassembly. Credited. If that ever needs to change, the import script is the single place to change it. |
 | Scope creep into SFX/cries | Phase 6 is explicitly fenced off. |
 | APU edge cases (zombie envelope, wave-RAM quirks) | Not implemented until the parity/PCM evidence says they're needed. Record the decision here if they are. |
 
-## 6. The UI — decided (2026-07-12, with Twilight)
+## 6. The UI — decided (2026-07-12, with project leadership)
 
-Twilight: *"figure out a place — I'm going to redo the UI/UX later anyway. Hover preview: nice. The map's
+Project leadership: *"figure out a place — I'm going to redo the UI/UX later anyway. Hover preview: nice. The map's
 current music should be selected by default."*
 
 So placement is **mine and provisional**, which sets one hard constraint: **the whole thing must be one
@@ -414,5 +414,5 @@ answers "what is this map's music?")
 - ✅ **Phase 3** — `GbApu`.
 - ✅ **Phase 4** — `Gen1SoundEngine`, **verified frame-by-frame against the console on all 46 tracks**.
 - ✅ **Phase 5** — `MusicPlayer` + the Map screen's Music panel (▶ + hover-preview).
-- **Twilight's live pass** — it is sound and hover; a still PNG can review neither.
+- **Project leadership's live pass** — it is sound and hover; a still PNG can review neither.
 - ⬜ Phases 6–7 (SFX/cries; the inner voices in the UI + sheet music) — not started.

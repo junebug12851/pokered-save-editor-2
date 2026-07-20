@@ -5,13 +5,13 @@
 > in the real cartridge — zero mismatches.** The resulting border ring is byte-identical to the console's
 > `wOverworldMap` (`tst_emu_parity::theBorderRing_carriesTheConnectedMaps`).
 >
-> Twilight's warning, and she was right: *"connection strips are notoriously complicated and error prone,
+> Project leadership's warning, and they were right: *"connection strips are notoriously complicated and error prone,
 > they have layers of complexity, the algorithms are very complicated."* The maps must render so accurately
 > that **glitches render accurately**. So nothing here is reasoned-about-and-hoped: every claim below is
 > checked against the cartridge (`scripts/emu/verify_connections.py`) and the console's RAM
 > (`tst_emu_parity`; see [`emulator-verification.md`](emulator-verification.md)).
 >
-> **She was also right that her own formulas might be wrong. They are — see "the length" below.**
+> **They were also right that their own formulas might be wrong. They are — see "the length" below.**
 
 ## What a connection actually is
 
@@ -124,7 +124,7 @@ Checked against the real headers:
 
 So everything the macro needs is recoverable from data we already ship. **Nothing has to be invented.**
 
-## Editing a connection — the human model (2026-07-15, briefed by Twilight)
+## Editing a connection — the human model (2026-07-15, briefed by project leadership)
 
 Everything above is what the *game* reads. This is what a **person** should be handed, and it is the
 whole reason v1's Map page was error-prone: it exposed the 11-byte struct raw (Map ID, UL Corner,
@@ -143,7 +143,7 @@ connections: the user sets **map id + offset**, and we recompute the nine — ex
 does, and exactly the invert-then-recompute round-trip proven in "What `maps.json` kept" above. Raw-byte
 editing stays available (break-sync), for power users and for reproducing glitch connections.
 
-**Is a connection rewritten on startup, or kept from the save? — KEPT (Twilight asked, 2026-07-15).**
+**Is a connection rewritten on startup, or kept from the save? — KEPT (project leadership asked, 2026-07-15).**
 On **Continue** the game restores the four connection structs from the save's WRAM snapshot and does
 **not** re-read them from ROM — the same `BIT_NO_PREVIOUS_MAP` linchpin as warps/signs (see "one dead
 end" below: the emulator-verification approach failed *because* the save restores the structs). So an
@@ -266,9 +266,9 @@ guessed.
 - **`MapEngine::applyConnections()`** — border block first, then N, S, W, E over the top, with the two
   different loop shapes.
 
-## Still open — a DB question for Twilight
+## Still open — a DB question for project leadership
 
 `MapDBEntryConnect::stripSize()` is wrong (above) and `maps.json`'s **`flag`** field exists only to patch
 it. `MapEngine` does not use either — it recomputes from the macro — so nothing is broken today. But the DB
 still carries a wrong formula and a field the real game has no concept of. Fixing that touches curated data
-and a public DB API, so it is **hers to call**, not something to do unasked.
+and a public DB API, so it is **theirs to call**, not something to do unasked.

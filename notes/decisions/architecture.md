@@ -485,14 +485,14 @@ now says adoption **is a file copy**, not a paraphrase (`12-shared-chrome.md`). 
 whose only jobs are (1) mapping doxygen-awesome's variables onto main.css's live theme tokens so the
 generated API body tracks the reader theme, and (2) the "generated-reference boundary" layout
 reconciliation (single-page scroll under the sticky chrome; the treeview pinned below the chrome on
-**API pages only**, prose pages full-width — Twilight's rule, 2026-07-19). The screenshots gallery
+**API pages only**, prose pages full-width — project leadership's rule, 2026-07-19). The screenshots gallery
 (`scripts/build_gallery.py`) wears the same bundle.
 
 **DEVIATION (documented, so it's compliant): self-hosted fonts, not Google Fonts.** The bundle's
 `head.html` loads the type families (Fraunces / Inter / JetBrains Mono) from `fonts.googleapis.com`;
 this project instead loads the **self-hosted woff2 copies** (`docs/fairyfox/fonts/fonts.css`) — same
 families and weights, no third-party IP/privacy exposure, matching the hub's own **legal-docs**
-standard. This was Twilight's explicit call on adoption (2026-07-19); a recommendation to move the
+standard. This was project leadership's explicit call on adoption (2026-07-19); a recommendation to move the
 hub bundle itself to self-hosting was filed back to the system in
 `notes/fairyfox-reports/2026-07-19-adopting-updates.md`. It is the ONLY edit to the bundle's fixed
 parts; every other part is copied verbatim.

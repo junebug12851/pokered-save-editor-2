@@ -243,8 +243,8 @@ let them be edited, and **say plainly that changing them does nothing**.
 
 ## 4. The two bytes that ARE the workflow — and were on the wrong screen
 
-Twilight's instinct — *"from map needs to be in the top toolbar, it's important to workflow"* — is
-right, but **`wWarpedFromWhichMap` is not the field she means.** These two are:
+Project leadership's instinct — *"from map needs to be in the top toolbar, it's important to workflow"* — is
+right, but **`wWarpedFromWhichMap` is not the field they mean.** These two are:
 
 | Save | WRAM | Name | What it is |
 |---|---|---|---|

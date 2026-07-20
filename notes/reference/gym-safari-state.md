@@ -1,13 +1,13 @@
 # Gym & Safari minigame state — six saved event bytes
 
 _The Vermilion Gym trash‑can switches, the Cinnabar Gym "wrong answer" opponent, and the Safari
-Zone run counters. Six bytes Twilight asked to put on a new **Map Storage** panel (2026‑07‑15).
+Zone run counters. Six bytes project leadership asked to put on a new **Map Storage** panel (2026‑07‑15).
 Verified against `pret/pokered`, cross‑checked against the v1 editor's own offsets, and
 **console‑verified** (see below)._
 
 ## The headline — global state variables that are clearly map‑specific
 
-Twilight's mental model is the right one: these are **global state variables that are clearly
+Project leadership's mental model is the right one: these are **global state variables that are clearly
 map‑specific** — each byte is stored once, save‑wide, but belongs unambiguously to **one map**
 (Vermilion Gym, Cinnabar Gym, the Safari Zone). That "global storage, map‑specific meaning" split is
 exactly why they get a **Map Storage** panel keyed by map. Two refinements to the first‑pass wording,
@@ -34,7 +34,7 @@ grouping.
 Data: **`WRAM = file + 0xAD54`** (anchored on `wMainDataStart` `0x25A3→0xD2F7` and `wCurMapScript`
 `0x2CE5→0xDA39`). All four that v1 also modelled match v1's offsets exactly.
 
-| Twilight's name | pokered name | file | WRAM | size | v1 home |
+| Project leadership's name | pokered name | file | WRAM | size | v1 home |
 |---|---|---|---|---|---|
 | Trashcan switch 1 | `wFirstLockTrashCanIndex` | `0x29EF` | `0xD743` | 1 | `AreaPuzzle.firstTrashcanLock` |
 | Trashcan switch 2 | `wSecondLockTrashCanIndex` | `0x29F0` | `0xD744` | 1 | `AreaPuzzle.secondTrashcanLock` |
@@ -133,7 +133,7 @@ they define the *armed window*, not the persistence claim the probe pins.
 - **Home:** these are **global**, not `Area*`. They do not belong on `AreaMap`/the Area block. In v2
   terms they want a global home (`WorldGeneral`/`WorldLocal`/a small new "minigame state" class), and
   `MapModel` reads them from there — the panel is a *view*, not a per‑map object. (Design decision
-  for Twilight — see the report.)
+  for project leadership — see the report.)
 - **A "Maps" panel is fine as a UI grouping** (by location: Vermilion Gym, Cinnabar Gym, Safari Zone)
   even though the bytes are global — but the panel should be honest that it's showing **global run
   state**, with a plain note of the **armed window** for each (like the warps "live on Continue /

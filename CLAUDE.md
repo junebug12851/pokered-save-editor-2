@@ -1,6 +1,6 @@
 # pokered-save-editor-2 — AI Context
 
-Pokemon Red & Blue save file editor. Qt 6 C++/QML desktop app. Open source, built by Twilight.
+Pokemon Red & Blue save file editor. Qt 6 C++/QML desktop app. Open source, built by project leadership.
 Originally built 2017-2020, revived in 2026.
 
 ## Start Here
@@ -15,7 +15,7 @@ The full notes system is in `notes/`. Everything is organized by topic:
 | `notes/sessions/` | **Session logs**, one file per day grouped in month folders (`YYYY-MM/YYYY-MM-DD.md`) — the day-by-day story of what changed and why. `sessions/README.md` defines the system; `revival-s13-series.md` holds the undated pre-corruption revival narrative |
 | `notes/version.md` | **Changelog** — the plain-English, one-entry-per-commit history (index; months under `notes/version/`). NOT the version-number scheme (that's `reference/versioning.md`) |
 | `notes/context/project.md` | What the project is and its goals |
-| `notes/context/collaboration.md` | **Working with Twilight** — the consolidated standing preferences, working rules & cross-cutting feedback (who she is, content/spelling rules, data/JSON, git & MANUAL releases, tooling, credits, never-change list). The canonical home for what used to live in AI "memory" |
+| `notes/context/collaboration.md` | **Working with project leadership** — the consolidated standing preferences, working rules & cross-cutting feedback (who they are, content/spelling rules, data/JSON, git & MANUAL releases, tooling, credits, never-change list). The canonical home for what used to live in AI "memory" |
 | `notes/context/architecture.md` | Codebase structure, build system, key patterns |
 | `notes/context/principles.md` | Project philosophy — what the app must/must not do |
 | `notes/context/origins.md` | The 2019–2020 pre-revival story — three rewrites, the JS detour, the library/DB refactor |
@@ -38,11 +38,11 @@ The full notes system is in `notes/`. Everything is organized by topic:
 | `notes/reference/warps.md` | **Warps** — the doors, and the twelve bytes around them. **The linchpin**: `LoadMainData` *sets* `BIT_NO_PREVIOUS_MAP` on the saved tileset byte, so `LoadMapHeader` **bails out on Continue** and the save's own warp list is the one the console runs on (the game restores the map's original doors on re-entry — the sprite rule, again). The traps: **`wStatusFlags3` is ZEROED on every load** (it shares a byte with `wCableClubDestinationMap`, which `SpecialEnterMap` clears) so `scriptedWarp`/`isDungeonWarp` — and `npcsFaceAway`, `tradeCenterSpritesFaced`, `isBattle`, `isTrainerBattle` — **can never survive a save**; `wWarpedFromWhichWarp`/`Map` are **written and never read** (dead); and **two destination bytes are hazards** (`wDestinationMap` has **13** legal values, the dungeon map+hole pair has **12**, neither is bounds-checked) — which `AreaWarps::setTo()`/`randomize()` currently fill with **random illegal values**. The two bytes that actually matter (`wLastMap`, `wLastBlackoutMap`) live in `WorldGeneral`, not `AreaWarps`. **All verified on the cartridge** (`scripts/emu/probe_warp_persistence.py`). Plan: `plans/map-screen.md` → Phase 5 |
 | `notes/reference/player-state.md` | **The Player** — position, facing, and the **26 bytes of map state** in `AreaPlayer` (the source of v1's Direction/Coords/HMs/Battle/Warps/Other page). The headline: **ten are rewritten the instant the save loads** — `wPlayerDirection` is **forced to DOWN** every Continue, `wStatusFlags3` (`isBattle`/`isTrainerBattle`) is **zeroed** whole, `strengthOutsideBattle` is **reset** (unless the battle-over bit is set — a real interaction the probe caught), `battleEndedOrBlackout`/`usingLinkCable`/the door + ledge move-bits are **cleared**, `Jumping Y` is **zeroed**; **three are dead** (`x/yOffsetSinceLastSpecialWarp`, `usedCardKey` = `BIT_UNUSED_CARD_KEY`, `; never checked`); and several are **misnamed** (`isBattle`=`BIT_TALKED_TO_TRAINER`, `flyOutofBattle`=`BIT_USED_FLY`, `finalLedgeJumping`=`BIT_LEDGE_OR_FISHING`). Byte offsets/bits are all **correct** — it's a truth-in-labelling fix, its own phase before UI. **All 26 verified on the cartridge** (`scripts/emu/probe_player_state.py`; ⚠️ `wMovementFlags` clears bits per-routine, NOT whole-byte — a read of the asm alone gets it wrong). Plan: `plans/map-screen.md` → Phase 5e |
 | `notes/reference/area-map-state.md` | **The "Map" page** — the seven leftover `AreaMap` state bytes from v1's Map/Area page (**Current Script, the two UL-corner view pointers, Run cur map script instead, force bike ride, to blackout dest, card key door X/Y**). Two are durable/editable (`wCurMapScript`, `BIT_ALWAYS_ON_BIKE`), one is **derived and trusted-on-load** (`wCurrentTileBlockMapViewPointer` — editing coords desyncs it; show + recompute, never a raw address), three are **rewritten every load** (`wMapViewVRAMPointer`→`$9800`, `wCardKeyDoorX/Y`→0, `BIT_USE_CUR_MAP_SCRIPT` transient), and **"to blackout dest" is a ghost** — already moved to `AreaWarps::escapeWarp`. ⚠️ The probe overturned **two** source-reads (the view pointer is *kept* not recomputed → drew garbage from `$FFFF`; `BIT_USE_CUR_MAP_SCRIPT` *survives* on a quiet map). No corruption bug, no hazard — naming + one derived-value discipline. **Verified on the cartridge** (`scripts/emu/probe_area_map_state.py`). Plan: `plans/map-screen.md` → Phase 8 (Area State) |
-| `notes/reference/npc-character-state.md` | **Character-state flags** (v1's "NPC" page → the right-hand **Character panel**) — nine **map-global** (not per-NPC) NPC/control/battle bits: `npcsFaceAway`, scripted-movement init/running, ignore controls, scripted controls, `runningTestBattle`, `trainerWantsBattle`, `wTrainerHeaderPtr` (+ hidden trade-center bit). **Verified against the disassembly** (`WRAM = save+0xAD54`: `0x29D9`=`wStatusFlags3`, `0x29DA`=`wStatusFlags4`, `0x29DC`=`wStatusFlags5`, `0x29DF`=`wStatusFlags7`, `0x2CDC`=`wTrainerHeaderPtr`). **All nine are transient script/battle/link scratch**; three v1 labels are **wrong** ("Scripted Battle" = the **debug** `BIT_TEST_BATTLE`; "Scripted Controls" = `BIT_SCRIPTED_MOVEMENT_STATE`; "Face Away" = `BIT_NO_NPC_FACE_PLAYER` = *don't turn to face*); v1's `areanpc.{h,cpp}` carried all the wrong names — **renamed + doc'd 2026-07-15** (byte-identical output; `tst_area_npc` pins offsets + proves fidelity). **Persistence console-verified** (`scripts/emu/probe_npc_character_state.py`): **4 rewritten on load** (both Sprites bits zeroed; `disableJoypad`/`scriptedMovementActive` cleared) — the source-read guess that "all transient bits vanish" was **wrong**, the probe caught it; **5 kept** (`initScriptedMovement`, `scriptedNpcMoving`, `testBattle`, `trainerBattle`, `wTrainerHeaderPtr`). Plan: `plans/map-screen.md` → **Phase 9** — 9a research ✅ · 9b model-fix ✅ · 9c probe ✅ · 9d panel ✅ (`CharacterStatePanel.qml`, awaiting Twilight's live pass). **No hidden fields** (Twilight 2026-07-15). |
+| `notes/reference/npc-character-state.md` | **Character-state flags** (v1's "NPC" page → the right-hand **Character panel**) — nine **map-global** (not per-NPC) NPC/control/battle bits: `npcsFaceAway`, scripted-movement init/running, ignore controls, scripted controls, `runningTestBattle`, `trainerWantsBattle`, `wTrainerHeaderPtr` (+ hidden trade-center bit). **Verified against the disassembly** (`WRAM = save+0xAD54`: `0x29D9`=`wStatusFlags3`, `0x29DA`=`wStatusFlags4`, `0x29DC`=`wStatusFlags5`, `0x29DF`=`wStatusFlags7`, `0x2CDC`=`wTrainerHeaderPtr`). **All nine are transient script/battle/link scratch**; three v1 labels are **wrong** ("Scripted Battle" = the **debug** `BIT_TEST_BATTLE`; "Scripted Controls" = `BIT_SCRIPTED_MOVEMENT_STATE`; "Face Away" = `BIT_NO_NPC_FACE_PLAYER` = *don't turn to face*); v1's `areanpc.{h,cpp}` carried all the wrong names — **renamed + doc'd 2026-07-15** (byte-identical output; `tst_area_npc` pins offsets + proves fidelity). **Persistence console-verified** (`scripts/emu/probe_npc_character_state.py`): **4 rewritten on load** (both Sprites bits zeroed; `disableJoypad`/`scriptedMovementActive` cleared) — the source-read guess that "all transient bits vanish" was **wrong**, the probe caught it; **5 kept** (`initScriptedMovement`, `scriptedNpcMoving`, `testBattle`, `trainerBattle`, `wTrainerHeaderPtr`). Plan: `plans/map-screen.md` → **Phase 9** — 9a research ✅ · 9b model-fix ✅ · 9c probe ✅ · 9d panel ✅ (`CharacterStatePanel.qml`, awaiting project leadership's live pass). **No hidden fields** (project leadership 2026-07-15). |
 | `notes/reference/wild-encounter-cooldown.md` | **The post-battle wild-encounter cooldown** — v2's `pauseMons3Steps` (save `0x29D8` bit 0) is `wStatusFlags2` bit 0 = **`BIT_WILD_ENCOUNTER_COOLDOWN`**: the console **sets it after every battle**, and on the next map entry (`EnterMap`, which the **Continue path reaches** via `SpecialEnterMap`) a set bit loads `wNumberOfNoRandomBattleStepsLeft = 3` ("minimum steps between battles"), decremented per step until it **self-clears**. So its save-editing effect is exact: **3 encounter-free steps on the next Continue**. **DURABLE** — kept on load (no `!`), **console-verified** (`scripts/emu/probe_wild_encounter_cooldown.py`: bit kept + steps-left 3; cleared control → 0). ⚠️ **`BaseSAV` already carries it set.** Same byte as the audio-fade flag (bit 1) — no collision. Renamed `pauseMons3Steps` → **`wildEncounterCooldown`** (2026-07-15); on the **map details page** as "3-step wild encounter cooldown". |
 | `notes/reference/wild-encounters.md` | **Wild Pokémon** — the map's grass + water encounter tables. `wGrassRate` `0x2B33` + 10 slots `0x2B34`; `wWaterRate` `0x2B50` + 10 slots `0x2B51`; **rate 0 = none**. ⚠️ Each slot on disk is **`LEVEL, then SPECIES`** (pokered `db level, species`; `BaseSAV` `0x2B35` = 165 = RATTATA) — the model read species-first through 0.39.x, **inverting every real save; FIXED** (pinned by `tst_area_pokemon::wildTables_byteOrderIsLevelThenSpecies`). Species is the **internal index** (== `PokemonDBEntry::ind`), not the Pokédex number (the DB's `pokedex` is **0-based** — the box's `+1` icon trick). A slot's rarity is its **position** (pokered `WildMonEncounterSlotChances`: 19.9/19.9/15.2/9.8×3/5.1×2/4.3/1.2), so reordering re-weights it. **Live on Continue** — `LoadWildData` is inside `LoadMapHeader` *after* the `BIT_NO_PREVIOUS_MAP` early-return, the **same linchpin as warps/signs** (restored on re-entry). UI: `WildPokemonPanel`/`WildMonList` (Phase 8). Plan: `plans/map-screen.md` → Phase 8 |
 | `notes/reference/event-flags.md` | **Event flags — the 2,560 world-event bits** (`wEventFlags`, file `0x29F3`–`0x2B32`, WRAM `0xD747`–`0xD886`, 320 bytes, ends right before `wGrassRate`; verified against `pret/pokered`). v1's cryptic **Events** page. `NUM_EVENTS = $A00 = 2560`, fixed by ROM. pret names **507**; **2,053** are gaps — but per project leadership **every one gets the full treatment** (name, description, map, group, classification). `scripts/import_event_flags.py` parses `event_constants.asm` → the canonical 2,560-row bit-map (self-validating; every bit attributed to its map-region). **Naming rule:** real discerned name wherever findable; **"Unknown #<hex id>"** is a last resort ONLY after exhausting every file incl. raw assembly AND with explicit leadership sign-off (per-flag/group) — never silent; distinct from "unused". Plan: [`notes/plans/event-flags.md`](notes/plans/event-flags.md) |
-| `notes/reference/map-storage-locations.md` | **What has a PLACE on the map** (the Phase 16f dive) — the per-kind answer to "where does this stored thing live?". The headline: **event flags have NO location** (they belong to the code — which is why the old extractor found only 14 object↔event links in 223 maps: it hunted a relation that doesn't exist). **Hidden items (54) + coins (12) are the cleanest data we have** — bit `i` **==** row `i` of `HiddenItemCoords`, exact, already modelled (`WorldHidden` `0x299C`/`0x29AA`), and **not** event flags. Scripts are located only when they test coords: **99 tiles** (`dbmapcoord`) + **37 ranges** (raw `wYCoord`/`wXCoord` — Pallet Town's `cp 1` is *the whole north row*). ⚠️ **A range is NOT drawn as one box** (leadership 2026-07-17, superseding her earlier same-day call): the extractor **fans it out** into the units it covers and each gets an ordinary fixed-size box with the ranged script as **one more tab** — so **there is no `w`/`h`**, and a range is just a spot that lands on many locations. **16f's interaction model (leadership 2026-07-17):** overlaps are **all reachable on hover**; **click priority IS the Layers panel's own order** (first click = highest layer — a rule already on screen and user-controlled, not a new invisible one); and the **square colour tabs can be CLICKED *and DRAGGED*** to reach a spot directly whatever sits above it — so a buried object is never undraggable and the grid needs no gating. Tabs are tagged **left**, with a **gap splitting them by unit**: tile-based (Door, Warp tiles) vs non-tile (filter flags, script locations, coord ranges). ⚠️ **Tile traits therefore get tabs** — the strip spans the **Tiles** group too, so `blockHotspots()`'s `spots[]` must admit tile traits + carry each spot's unit, **before** 16f-c. **THREE units, and each kind uses "the measurement its suppose to be"** (leadership): **tile** 8×8 = tile attributes (collision/ledges/water/counters/warp tiles) · **half-block** 16×16 = the walk grid = **`wYCoord`/`wXCoord` → objects+filter flags, warps, signs, hidden items, script coord triggers** · **block** 32×32 = `.blk`, map size, border, connections. ⚠️ **Nothing positional is block-scoped** — a block box spans 2×2 walk squares and can't tell two warps apart. The shipping 16×16 boxes are **correct**; only the word was wrong (16×16 is a **half-block**, NOT a tile — the game proves it: `wYBlockCoord = wYCoord & 1`). **Rename, don't resize.** Her chain **object → filter flag → script → its event flags** is exact (22 of 224 files). ⚠️ Traps that ate whole maps: coord tables are **local labels** (`.PlayerCoordsArray`) and **the colon is optional** in RGBDS. `card_key_coords.asm` is **UNUSED** (pret says so) — don't draw it. Tool: `scripts/extract_map_storage_locations.py` |
+| `notes/reference/map-storage-locations.md` | **What has a PLACE on the map** (the Phase 16f dive) — the per-kind answer to "where does this stored thing live?". The headline: **event flags have NO location** (they belong to the code — which is why the old extractor found only 14 object↔event links in 223 maps: it hunted a relation that doesn't exist). **Hidden items (54) + coins (12) are the cleanest data we have** — bit `i` **==** row `i` of `HiddenItemCoords`, exact, already modelled (`WorldHidden` `0x299C`/`0x29AA`), and **not** event flags. Scripts are located only when they test coords: **99 tiles** (`dbmapcoord`) + **37 ranges** (raw `wYCoord`/`wXCoord` — Pallet Town's `cp 1` is *the whole north row*). ⚠️ **A range is NOT drawn as one box** (leadership 2026-07-17, superseding their earlier same-day call): the extractor **fans it out** into the units it covers and each gets an ordinary fixed-size box with the ranged script as **one more tab** — so **there is no `w`/`h`**, and a range is just a spot that lands on many locations. **16f's interaction model (leadership 2026-07-17):** overlaps are **all reachable on hover**; **click priority IS the Layers panel's own order** (first click = highest layer — a rule already on screen and user-controlled, not a new invisible one); and the **square colour tabs can be CLICKED *and DRAGGED*** to reach a spot directly whatever sits above it — so a buried object is never undraggable and the grid needs no gating. Tabs are tagged **left**, with a **gap splitting them by unit**: tile-based (Door, Warp tiles) vs non-tile (filter flags, script locations, coord ranges). ⚠️ **Tile traits therefore get tabs** — the strip spans the **Tiles** group too, so `blockHotspots()`'s `spots[]` must admit tile traits + carry each spot's unit, **before** 16f-c. **THREE units, and each kind uses "the measurement its suppose to be"** (leadership): **tile** 8×8 = tile attributes (collision/ledges/water/counters/warp tiles) · **half-block** 16×16 = the walk grid = **`wYCoord`/`wXCoord` → objects+filter flags, warps, signs, hidden items, script coord triggers** · **block** 32×32 = `.blk`, map size, border, connections. ⚠️ **Nothing positional is block-scoped** — a block box spans 2×2 walk squares and can't tell two warps apart. The shipping 16×16 boxes are **correct**; only the word was wrong (16×16 is a **half-block**, NOT a tile — the game proves it: `wYBlockCoord = wYCoord & 1`). **Rename, don't resize.** Their chain **object → filter flag → script → its event flags** is exact (22 of 224 files). ⚠️ Traps that ate whole maps: coord tables are **local labels** (`.PlayerCoordsArray`) and **the colon is optional** in RGBDS. `card_key_coords.asm` is **UNUSED** (pret says so) — don't draw it. Tool: `scripts/extract_map_storage_locations.py` |
 | `notes/reference/in-game-trades.md` | **The ten NPC trades** — `wCompletedInGameTradeFlags`, **2 bytes at `0x29E3`–`0x29E4`** (Main Data), bit `i` = trade `i` via the same `FlagAction` as the event flags. **9 are located** on their trader's tile (the join is **(map id, text id) → trade**, exact — and a trade NPC's `textEntries` row is a **`string: null`** today, because its text is `text_asm`; the trades ARE the missing words); **1 (`CHIKUCHIKU`) is unused with no coordinates** → the **General** page. ⚠️ **The 4th `npctrade` field is the received Pokémon's NICKNAME, not the trader's name** — TERRY is the Nidorina. Traders have no names, only classes (which repeat), so leadership's rule is **class name = the "species", nickname if they had one** — same logic as a Pokémon. The flag is the **only** gate: clearing it genuinely re-arms the trade. Other traps: `TRADE_DIALOGSET_EVOLUTION` **doesn't mean evolution** (a JP Blue leftover about two Pokémon that can't evolve) · the trade-evo check is **dead code** (tests for GRAVELER/"SPECTRE", species the final game removed) · received mon takes the **given mon's level**, OT **"TRAINER"**, OT ID **random** (so it disobeys) · two traders **walk** · Cinnabar Lab Trade Room holds **two** trades. ✅ `WorldTrades` was **already correct** (offset, count, and the spare bits are never written) — a rare pass with no model bug to fix first |
 | `notes/reference/town-visited.md` | **Town "visited" flags** — `wTownVisitedFlag`, **2 bytes at `0x29B7`–`0x29B8`**, **11 towns** (`NUM_CITY_MAPS`), and **bit `i` == map id `i`** (`MarkTownVisited` does `ld c, [wCurMap]` straight into `FlagAction` — no translation). Read **only by Fly**. ⚠️ **THE TRAP: the town you're saved in RE-MARKS ITSELF on Continue** — `MarkTownVisitedAndLoadToggleableObjects` is line **2006** of `LoadMapHeader` and the `BIT_NO_PREVIOUS_MAP` **linchpin bails at line 2017**, so this flag runs *before* the protection every other per-map thing enjoys. **You cannot un-visit the town you're standing in** — but only when saved **outdoors** (`cp FIRST_ROUTE_MAP`; a save inside a house re-marks nothing). **And `fly.json` was WRONG for 6 of 11** (Lavender↔Vermilion swapped; Saffron/Fuchsia/Cinnabar/Indigo rotated) — **v1 shipped it**, its Towns screen walked the list positionally so "Vermilion City" ticked Lavender's bit. **Fixed + pinned** (`tst_db_integrity::everyFlyDestinationSitsAtItsMapId`, negative-controlled). **A plausible list is not a correct one** — every name was real, every name was a town, the count was exact, and nothing ever asserted it against the game |
 | `notes/reference/world-completed.md` | **The "completed" one-shots** — the 8 `WorldCompleted` flags (3 rods `0x29D4` b3-5 · Saffron guards b6 · Lapras `0x29DA` b0 · nurse b2 · starter b3 · elite4 `0x29E0` b1). **All 8 offsets already correct**; all durable Main-Data, all written AND read. **But `defeatedLorelei` is a LIE** — `0x29E0` b1 is **`BIT_STARTED_ELITE_4`**, set just for **walking into** Lorelei's room, and read by **Indigo Plateau Lobby to WIPE your whole Elite 4 run**. A box labelled "Defeated Lorelei" arms an **erasure**, not a victory (v1's name, inherited verbatim — the `fly.json` shape again). The real one is **`EVENT_BEAT_LORELEIS_ROOM_TRAINER_0`**, already shipped in the 2,560. And `wElite4Flags` b0 is literally `BIT_UNUSED_BEAT_ELITE_4` — set by Hall of Fame, **never read**. Other traps: a **rod flag ≠ owning the rod** (it means "the Guru already gave you one"; ticking it does NOT add a rod, it denies you one forever — and the game only sets it on `GiveItem` **success**) · **`everHealedPokemon` really means "ever talked to a nurse"** (set before the Yes/No, and it only controls the *"Shall we heal your Pokémon?"* line — it gates nothing) · `BIT_UNKNOWN_4_1` is set by the Poké Center and read by **nothing**. **Group kinds split exactly as leadership guessed:** rods = **alike** (3 bits, 1 kind); **Saffron guards (1 bit, 4 gate maps) + starter (1 bit, Oak's Lab + Red's House) = SHARED**. ⚠️ These share bytes with bits `AreaPlayer` marks *reset on load* → **probe before UI** |
@@ -67,12 +67,12 @@ The full notes system is in `notes/`. Everything is organized by topic:
 | `notes/decisions/architecture.md` | Key structural choices and why |
 | `notes/decisions/rejected.md` | Things tried that failed — do not repeat |
 | `notes/plans/next-steps.md` | Ordered task list |
-| `notes/plans/music.md` | **Music** — the six-phase plan to put the audio flags, the track picker and **real, accurate music playback** (hover-to-preview) on the **Map screen**: import the music data from `pret/pokered`, port the Gen 1 sequencer + a DMG APU into a new `pse-audio` library, verify it frame-by-frame against the console. Decisions, risks, and the open design questions for Twilight |
+| `notes/plans/music.md` | **Music** — the six-phase plan to put the audio flags, the track picker and **real, accurate music playback** (hover-to-preview) on the **Map screen**: import the music data from `pret/pokered`, port the Gen 1 sequencer + a DMG APU into a new `pse-audio` library, verify it frame-by-frame against the console. Decisions, risks, and the open design questions for project leadership |
 | `notes/plans/map-screen.md` | **The Map screen** — the complete UI/UX overhaul (approved 2026-07-12): the research (Tiled / Photoshop / Aseprite — what we take, what we reject), the **chassis** (identity bar · tool rail · context bar · dark canvas well · collapsing icon **dock**, one panel at a time, never stacked · status bar), the **4-group layer tree** (Guides / Meaning / Game View / Objects — the red screen box, the accent draw area and the player are LAYERS), **on-canvas object editing** (warps/signs/NPCs/connections: select, drag, add, delete), **frame-accurate animation + the optional walk simulation**, and the **field→home table for every byte of the Area block**. **Thirteen deep phases + one optional** — read it before ANY map-screen work |
 | `notes/plans/testing.md` | **Testing** — the suite (QtTest/CTest, GUI harness, Docker variants, coverage) and remaining gaps. Live, not a blueprint — full `ctest` is green |
 | `notes/plans/future.md` | Longer-term ambitions |
 
-## USE THE GAME'S OWN FILE FORMATS (a standing rule, 2026-07-13, Twilight)
+## USE THE GAME'S OWN FILE FORMATS (a standing rule, 2026-07-13, project leadership)
 
 > **Where `pret/pokered` has a format, WE USE THAT FORMAT. By default, without asking.**
 
@@ -95,7 +95,7 @@ nobody looked.
 
 Full write-up: [`notes/reference/file-formats.md`](notes/reference/file-formats.md).
 
-## RESEARCH LANDS IN THE NOTES — every time, by default (a standing rule, 2026-07-14, Twilight)
+## RESEARCH LANDS IN THE NOTES — every time, by default (a standing rule, 2026-07-14, project leadership)
 
 > **If you understood something you did not understand before, WRITE IT DOWN — in `notes/`, in the same
 > session, without being asked.**
@@ -137,10 +137,10 @@ that will have to be built twice.
 - **Do wrap any `Q_INVOKABLE` that returns a QObject in `qmlCppOwned()`** (`pse-savefile/qmlownership.h`). Q_INVOKABLE returns of a parentless QObject default to JavaScriptOwnership and get garbage-collected by QML mid-session → dangling pointer → use-after-free crash. (Q_PROPERTY returns are safe; Q_INVOKABLE returns are NOT.) All existing `…At()` methods were fixed in session 13h. See `notes/reference/qt-patterns.md`.
 - **Do NOT write any save-file bit or byte you weren't explicitly instructed to change.** Bit- and byte-exact fidelity is a top-tier project value: the editor changes *only* the exact bits and bytes for the edit and leaves every other bit and byte of the save totally untouched — even unused/unallocated bits are precious; a single unintended bit flip is unacceptable (this has been verified over many hours of manual testing). Never "rewrite/normalize the whole save," never reorder/repack, never touch checksums/regions you weren't told to. Corrupting a save is among the worst possible outcomes. See `notes/context/principles.md` → "Save File Integrity Is Sacred".
 - **No hacks, no temporary fixes, no bad fallbacks.** The quality bar here is high — UX is the #1 priority and there is no room for clunky/janky/interrupting behavior. Prefer the correct, clean solution even when it's the longer route; if you can only see a hacky path, surface it and ask rather than commit it. See `notes/context/principles.md` → "What the App Should Feel Like".
-- **Do the LONG WORK on every component — no rough-in, no "clean it up later" (2026-07-12, Twilight; mandatory).** Big features are built as **phases, one body of work at a time**, and a phase is *finished* — designed, built, screenshot-reviewed, tested, documented — before the next begins. There is no later. A phase that is 90% done is not done. When work is deep and complex (the map screen is the standing example), **plan it across more phases rather than fewer**, and put the hours into each one. Getting it comprehensive and right outranks getting it soon. See `notes/plans/map-screen.md` → "The programme".
+- **Do the LONG WORK on every component — no rough-in, no "clean it up later" (2026-07-12, project leadership; mandatory).** Big features are built as **phases, one body of work at a time**, and a phase is *finished* — designed, built, screenshot-reviewed, tested, documented — before the next begins. There is no later. A phase that is 90% done is not done. When work is deep and complex (the map screen is the standing example), **plan it across more phases rather than fewer**, and put the hours into each one. Getting it comprehensive and right outranks getting it soon. See `notes/plans/map-screen.md` → "The programme".
 - **The MAP screen has a design of record — follow it.** `notes/plans/map-screen.md` is the approved design: the **collapsing icon dock** (one panel at a time — panels never stack out and never evict each other), the **4-group layer tree** (Guides / Meaning / Game View / Objects; the red screen box, the accent draw area and the player are **layers**, grouped and toggleable), on-canvas **object editing** (drag/select/add/delete warps, signs, NPCs), and **every byte of the Area block editable — hack and glitch values included, shown and never silently rewritten**. Nothing about the map screen gets designed ad hoc in a chat; it gets designed in that file first.
-- **DON'T BUILD WHAT TWILIGHT HASN'T BRIEFED — adjacency is not a brief (2026-07-14, Twilight).** *"I'd hate to have to undo a lot of work because it was done before I explained anything."* A feature gets **its own conversation first**, then research, then a design written into the plan, then code. **A phase does NOT get to absorb a neighbouring feature because the data happens to sit next to it in the save.** Signs nearly rode into the warps phase on exactly that logic (same ROM block, same shape) — they were cut. The same guard applies to **connections/"connecting routes", wild Pokémon/encounters, area state, and the tileset deep pass**: all un-briefed, all listed in `notes/plans/map-screen.md` → **§12b "NOT YET BRIEFED"**. Sketches written from the *save layout* are a map of what bytes exist, not of what she wants a person to be able to *do* — they carry **no authority**. When a briefed feature genuinely needs an un-briefed one, it **reads** it; it does not build a UI for it. If in doubt, **ask before building, not after**.
-- **A derived byte is kept IN SYNC by default; power users can break sync (clarified 2026-07-15, Twilight).** When the save holds a value the game *computes* from another (the map view pointer from the player's coords; the tileset pointers; the music bank), the editor **keeps it correct automatically by default** — most people editing that area want that, and it is bad UX to let a novice break their map by not hand-editing a derived field they had no reason to touch. But **raw-byte editing is always available**, and a derived value **may be deliberately desynced** — via a *break-sync* toggle, by entering a different value (which raises an **alert offering to break sync**), or (the view box) by **dragging it on the canvas**. Byte fidelity still holds — an edit writes only the bytes its action implies — so this is the *opposite* of silent corruption, not an exception to it. See `notes/plans/map-screen.md` → "The doctrine".
+- **DON'T BUILD WHAT PROJECT LEADERSHIP HASN'T BRIEFED — adjacency is not a brief (2026-07-14, project leadership).** *"I'd hate to have to undo a lot of work because it was done before I explained anything."* A feature gets **its own conversation first**, then research, then a design written into the plan, then code. **A phase does NOT get to absorb a neighbouring feature because the data happens to sit next to it in the save.** Signs nearly rode into the warps phase on exactly that logic (same ROM block, same shape) — they were cut. The same guard applies to **connections/"connecting routes", wild Pokémon/encounters, area state, and the tileset deep pass**: all un-briefed, all listed in `notes/plans/map-screen.md` → **§12b "NOT YET BRIEFED"**. Sketches written from the *save layout* are a map of what bytes exist, not of what they want a person to be able to *do* — they carry **no authority**. When a briefed feature genuinely needs an un-briefed one, it **reads** it; it does not build a UI for it. If in doubt, **ask before building, not after**.
+- **A derived byte is kept IN SYNC by default; power users can break sync (clarified 2026-07-15, project leadership).** When the save holds a value the game *computes* from another (the map view pointer from the player's coords; the tileset pointers; the music bank), the editor **keeps it correct automatically by default** — most people editing that area want that, and it is bad UX to let a novice break their map by not hand-editing a derived field they had no reason to touch. But **raw-byte editing is always available**, and a derived value **may be deliberately desynced** — via a *break-sync* toggle, by entering a different value (which raises an **alert offering to break sync**), or (the view box) by **dragging it on the canvas**. Byte fidelity still holds — an edit writes only the bytes its action implies — so this is the *opposite* of silent corruption, not an exception to it. See `notes/plans/map-screen.md` → "The doctrine".
 
 ## Forge-a-save console testing + the conflicting-flags system (standing rules, 2026-07-15)
 
@@ -208,29 +208,29 @@ Windows machine via the PowerShell terminal:
 After making changes, run this loop **without being asked** (established 2026-06-10). Route all build/test
 output to logs (`> log 2>&1`) so it's readable; builds run detached + polled (PowerShell ~60s cap).
 
-> **EVERYTHING RUNS IN THE BACKGROUND — mandatory, by default (2026-07-12, Twilight).** Builds, tests,
+> **EVERYTHING RUNS IN THE BACKGROUND — mandatory, by default (2026-07-12, project leadership).** Builds, tests,
 > screenshot captures, emulator runs, git, installs: all of it runs **hidden/headless** (`Start-Process
-> -WindowStyle Hidden`, `QT_QPA_PLATFORM=offscreen`, detached + polled via a log). **Nothing steals her
-> screen or her focus** *while you are working*. A window appearing unbidden mid-work is an interruption,
-> and interruptions are not free. If you can capture it headless and *show her the image instead*, do that.
+> -WindowStyle Hidden`, `QT_QPA_PLATFORM=offscreen`, detached + polled via a log). **Nothing steals their
+> screen or their focus** *while you are working*. A window appearing unbidden mid-work is an interruption,
+> and interruptions are not free. If you can capture it headless and *show them the image instead*, do that.
 >
-> **THE OTHER HALF (2026-07-12, Twilight): when it's ready for her to LOOK at it, OPEN IT — in the
+> **THE OTHER HALF (2026-07-12, project leadership): when it's ready for them to LOOK at it, OPEN IT — in the
 > foreground, already on the right screen, without being asked.** Don't finish by saying "it's ready for
-> your live pass" and leave her to launch the app and navigate to the feature herself. **Take the
-> opportunity the moment it presents itself:** launch it in front of her, with the save loaded, landed
+> your live pass" and leave them to launch the app and navigate to the feature themselves. **Take the
+> opportunity the moment it presents itself:** launch it in front of them, with the save loaded, landed
 > directly on the screen under review —
 > `PokeredSaveEditor.exe --sav assets\saves\natural-clean\BaseSAV.sav --screen <name> [--select ...]`
 > (see `notes/reference/dev-harness.md`). Background while building; **foreground the second it's worth
-> her time.**
+> their time.**
 
-0. **Track the work with TASKS — early, often, and comprehensively (by default, 2026-07-11, Twilight).**
+0. **Track the work with TASKS — early, often, and comprehensively (by default, 2026-07-11, project leadership).**
    Open a task list at the *start* of anything with more than one step — not retroactively, not "if it
    gets complicated". Break the work down properly (a real breakdown, not three vague buckets), keep
    statuses live as you go (`in_progress` when you start it, `completed` the moment it's done), and add
    new tasks the instant new work surfaces mid-flight. **Whenever you learn something worth keeping —
    a finding, a gotcha, a decision, a constraint — offer to record it on a task by default** (and write
    it into the task's description), so nothing learned evaporates between steps. The task list is a
-   working artifact Twilight watches live, not a formality. (This does NOT replace the `notes/` — durable
+   working artifact project leadership watches live, not a formality. (This does NOT replace the `notes/` — durable
    knowledge still lands in the notes; tasks carry the in-flight state and the trail that gets it there.)
 1. **Build + launch (on any C++/qrc change).** Rebuild the **kit dir**
    (`cmake --build "projects\build\Desktop_Qt_6_11_0_llvm_mingw_64_bit-Debug" --target PokeredSaveEditor`)
@@ -252,7 +252,7 @@ output to logs (`> log 2>&1`) so it's readable; builds run detached + polled (Po
      **clipping past a card/panel border**, whether groupings read cleanly, and overall polish. A glance
      is not a review. Assume "there's a lot to pay attention to" and proactively fix layout problems
      (overlaps, cramping, clipping) **even when not explicitly asked**. Do not call UI work done, and do
-     not tell Twilight it's ready, until this pass is complete. (The trainer-card clock overlapped the
+     not tell project leadership it's ready, until this pass is complete. (The trainer-card clock overlapped the
      artwork and shipped because this step was skipped — that must not recur.) See
      `notes/reference/screenshots.md` and `notes/reference/ui-patterns.md`.
 2. **Test.** Run the **affected** test(s) per change for speed (build `build/`, run `build\tst_x.exe`);
@@ -269,12 +269,12 @@ output to logs (`> log 2>&1`) so it's readable; builds run detached + polled (Po
    capture a **real stack trace** (output routed to a log), and diagnose from that — never guess.
    Do **periodic profiling** passes when touching hot paths. Always redirect std+err to a log to read it.
 4. **Commit + push often on `dev`; release `main` ONLY on an explicit "ship it" (manual releases).**
-   Releases are **manual** as of 2026-07-10 (Twilight): commit early/often and `git push origin dev`
+   Releases are **manual** as of 2026-07-10 (project leadership): commit early/often and `git push origin dev`
    after each commit **by default**, but **NEVER** cut a release (merge/FF `dev → main`) on your own —
-   even when everything is green. **Wait for Twilight to say "ship", "ship it", or similar**; that word
+   even when everything is green. **Wait for project leadership to say "ship", "ship it", or similar**; that word
    is the trigger. Green is necessary but no longer sufficient. When work is done, finish on `dev`,
-   verify (build/test/CI), and **tell Twilight it's ready to ship — then stop and leave `main` alone.**
-   (This supersedes the earlier "fully automatic green-gated release" default.) When Twilight *does* say
+   verify (build/test/CI), and **tell project leadership it's ready to ship — then stop and leave `main` alone.**
+   (This supersedes the earlier "fully automatic green-gated release" default.) When project leadership *does* say
    ship, release the git-flow way: `main` advances only by `--no-ff` tagged-release merges (PATCH
    straight from `dev`; MINOR/MAJOR via a `release/*` branch). See `notes/reference/git-workflow.md`:
    - **Changelog rides inside the commit (write it BEFORE committing).** For any substantive change,
@@ -287,11 +287,11 @@ output to logs (`> log 2>&1`) so it's readable; builds run detached + polled (Po
      "How this is kept updated (the inline rule)".
    - **Keep `VERSION` current — bump it inside the same commit when a change warrants it.** **PATCH**
      for a bug fix / small change, **MINOR** for a feature / notable change (you decide). **NEVER bump
-     MAJOR** (`→ 1.0.0`) — that's the project leaders' (Twilight's) call only. Docs / notes / test /
+     MAJOR** (`→ 1.0.0`) — that's the project leaders' (project leadership's) call only. Docs / notes / test /
      CI-only commits don't move the number. See `notes/reference/versioning.md`.
    - Commit early/often on **`dev`** with focused `type: summary` messages, **staging specific files only**
      (never `git add -A`/`.`), and `git push origin dev` after each commit.
-   - When the **full suite is green AND Twilight has said "ship it"**, release `dev → main` the git-flow
+   - When the **full suite is green AND project leadership has said "ship it"**, release `dev → main` the git-flow
      way (a **PATCH** goes direct; a **MINOR/MAJOR** milestone goes through a `release/X.Y.0` branch —
      see git-workflow.md). Without an explicit ship command, do **not** run this even if green:
      `git checkout main && git merge --no-ff dev && git push origin main && git checkout dev`.
@@ -321,17 +321,17 @@ output to logs (`> log 2>&1`) so it's readable; builds run detached + polled (Po
 
 ## GitHub Is Part of Default Management (a standing instruction)
 
-The GitHub CLI (`gh`) is installed + authenticated (account `junebug12851`), so GitHub state is part of
+The GitHub CLI (`gh`) is installed + authenticated (account `1fairyfox`), so GitHub state is part of
 the normal workflow — not something to wait to be asked about. The cadence is **event-based, not a
-calendar** (Twilight's call): the trigger is **preparing `main` for shipment**, not a timed ping.
+calendar** (project leadership's call): the trigger is **preparing `main` for shipment**, not a timed ping.
 
 - **Whenever prepping `main` for shipment** (i.e. about to release `dev → main`), do a quick GitHub check as part of
   the same step: `gh run list` (CI/release health — must be green; see Default Workflow step 4), plus
   `gh issue list` and `gh pr list`. If there are **open/new/changed issues or PRs**, surface them to
-  Twilight as a short summary and **ask whether to work on them now or later** — don't silently start.
+  Project leadership as a short summary and **ask whether to work on them now or later** — don't silently start.
 - **Non-trivial issues / PR reviews are usually their own chat.** Offer to spin one up rather than
   derailing the shipment; a quick "these are open — now or later?" is the default, not diving in.
-- **No timed/scheduled pings** unless Twilight later asks for one — the check rides on the
+- **No timed/scheduled pings** unless project leadership later asks for one — the check rides on the
   shipment-prep event. (If wanted, a scheduled digest can be added with the scheduled-tasks tools.)
 - **Never auto-act on issues/PRs** (no closing issues, merging PRs, or pushing to PR branches) without an
   explicit go-ahead — surfacing + asking is the default, acting is opt-in. Hard git safety rules apply.
@@ -350,7 +350,7 @@ calendar** (Twilight's call): the trigger is **preparing `main` for shipment**, 
   the **Doxygen home is the root** (`…github.io/pokered-save-editor-2/`) with **Screenshots + GitHub**
   custom nav tabs (injected via a generated `DoxygenLayout.xml`, README untouched), and the images live
   at `…/screenshots/<name>` (no `frames/`) — zero repo-size growth, no third-party host. README + docs
-  embed the absolute `https://junebug12851.github.io/pokered-save-editor-2/screenshots/<name>` URLs. See
+  embed the absolute `https://1fairyfox.github.io/pokered-save-editor-2/screenshots/<name>` URLs. See
   `notes/reference/deployment.md`.
 
 ## Maintaining the Notes — Your Responsibility
@@ -359,9 +359,9 @@ calendar** (Twilight's call): the trigger is **preparing `main` for shipment**, 
 
 **These `notes/` are THE memory of this project — use them by default: read them at the start of every
 session and write to them regularly as you work.** Any standing instruction, preference, decision, or
-piece of feedback from Twilight goes **into the right notes file** (and, when it's a workflow rule, into
+piece of feedback from project leadership goes **into the right notes file** (and, when it's a workflow rule, into
 this `CLAUDE.md`) — that is the single source of truth. **Do NOT stash project knowledge in any
-external/personal "memory" instead of the notes** (established 2026-07-10, Twilight); default to the
+external/personal "memory" instead of the notes** (established 2026-07-10, project leadership); default to the
 notes, not a side channel. If a fact doesn't fit an existing file, create the right one (see below).
 
 As things happen during a session, update the appropriate file on the spot:
@@ -394,7 +394,7 @@ with no information trapped in a human's head or lost between sessions.
 ## Keep the Credits Screen Living
 
 > **ENFORCED, BY DEFAULT — check credits on every substantive change (re-stated 2026-07-11 by
-> Twilight, who is the first to admit she forgets them).** Credits are not a release-time chore you
+> Project leadership, who is the first to admit they forget them).** Credits are not a release-time chore you
 > remember if you happen to think of it: **before you commit**, ask "did this change bring in anyone
 > or anything new?" — a new data source, library, tool, service, asset/icon/artwork, or AI helper —
 > and if so, add it to `credits.json` **in that same commit** (and regenerate `credits.md`). Treat a
@@ -430,7 +430,7 @@ communication is git-only, one-directional per flow, read-only on the far side, 
 happens **only on explicit request** (so the repos can never set each other off in a
 loop).
 
-**When Twilight asks you to check *the fairyfox system* for updates** — to sync the
+**When project leadership asks you to check *the fairyfox system* for updates** — to sync the
 standards, get the latest version, or pull a particular standard/runbook — treat it as
 the check-for-updates flow. **To invoke it the request must carry the word "fairyfox"**
 — normally **"the fairyfox system"**, or a *fairyfox*-prefixed variant ("fairyfox.io",
@@ -443,12 +443,12 @@ flow.
 The default is **check, report, then wait**: refresh the read-only system clone under
 `assets/references/fairyfox.io/` (git-ignored), diff it against what this project has
 adopted, and **report what changed + what adopting it would touch — then stop.** Apply
-nothing until Twilight clearly says go ahead; applying is a separate, confirmed act.
+nothing until project leadership clearly says go ahead; applying is a separate, confirmed act.
 Full procedure: the shared `adopting-updates` runbook (in the hub's `hub/standards/`).
 
 **Exception — pre-authorized changes.** The system keeps an express-authorization
 ledger (`assets/references/fairyfox.io/hub/authorizations.yml`), read out of the same
-read-only clone. If an active entry there `covers` the change being adopted, Twilight
+read-only clone. If an active entry there `covers` the change being adopted, project leadership
 **already gave the go-ahead at the system** — apply it directly, skipping the "wait"
 pause. Skip *only* that redundant pause: still reconcile (don't clobber a deliberate
 local divergence — re-prompt if you would), still write the process report, still
@@ -474,7 +474,7 @@ the system act on this repo); never apply changes or rewrite history without an
 explicit go-ahead (an active `authorizations.yml` entry that covers the change *is*
 that go-ahead, given at the system); reconcile with local edits, don't clobber them.
 
-> Naming: Twilight calls it **the fairyfox system** in conversation; the public website
+> Naming: project leadership calls it **the fairyfox system** in conversation; the public website
 > calls it the **hub**. Both name the same fairyfox.io mesh.
 
 ## Project Preferences

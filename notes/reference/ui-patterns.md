@@ -2,8 +2,8 @@
 
 ## The two that keep coming back (read these first) — 2026-07-13
 
-Twilight has reported both of these on **three separate passes**. Each time I fixed the one instance
-she pointed at and left the rest. So they are now rules, at the top of the page.
+Project leadership has reported both of these on **three separate passes**. Each time I fixed the one instance
+they pointed at and left the rest. So they are now rules, at the top of the page.
 
 ### 1. NEVER use the stock `ToolTip`. Use `MapToolTip`.
 
@@ -54,7 +54,7 @@ and cramped. It is said once now; everything else is a compact icon.
 menu" affordance) + either a `glyph` (Map ⊞, Warp ⇄) or a nested **reactive icon** (Contrast's live
 four-shade swatch; Music's ♪ tinted accent while playing). The button owns only the chrome and the
 ▾; the popup still belongs to the picker, which positions it (`y: root.height + 4`). Prefer a reactive
-icon over a static one where it's natural — Twilight's rule: *"prefer a contrast icon showing the
+icon over a static one where it's natural — project leadership's rule: *"prefer a contrast icon showing the
 active contrast over a generic contrast button."*
 
 - ⚠️ A `color` property can't hold `""` as a sentinel — `Invalid property assignment: color expected`,
@@ -75,7 +75,7 @@ its panels to a group; the right dock keeps separate icons.
 
 **`MapSimButton`** — the top bar's *simulation* controls (music, tile-animation, walk) are a family:
 a play/pause SPLIT button — one rounded frame with a **▶/⏸ + subject** zone and, when there's a menu,
-a hairline + a **▾** zone **inside the same frame** (Twilight: the ▾ must be inside, like a normal
+a hairline + a **▾** zone **inside the same frame** (project leadership: the ▾ must be inside, like a normal
 dropdown tool button; a floating ▾ sprawled the group out). Running = filled orange, at rest =
 outlined. The three sit in their **own tight RowLayout** so they read as a group, divider-separated
 from the config buttons. The button doesn't own the popup — the caller does, positioned under the ▾.
@@ -91,7 +91,7 @@ day; it was removed when the panels were ungrouped.)
 > **blank** there and can't be reviewed. The screenshot review caught exactly this. Same lesson as
 > `PixelImage`'s shader falling back to nearest.
 >
-> ⚠️ **Walk = footprints, not a walking figure** (Twilight): a pedestrian silhouette can read as an
+> ⚠️ **Walk = footprints, not a walking figure** (project leadership): a pedestrian silhouette can read as an
 > accessibility symbol. Footprints say "walking" with no human figure at all.
 
 ## The map's LEFT RAIL — tools + makers above the panels (2026-07-14)
@@ -143,7 +143,7 @@ Use `PixelImage` for anything that draws Game Boy art at a zoom. Never `Image { 
 > is the honest behaviour of the only sampler that backend has, and it is exactly right at the whole
 > zooms a test renders at.
 
-**Zoom lives in exactly one place** (Twilight): the **▾** on the toolbar's zoom tool. A slider (log
+**Zoom lives in exactly one place** (project leadership): the **▾** on the toolbar's zoom tool. A slider (log
 scale — a linear one spends half its travel between 6× and 12×, which nobody uses) and a **Go to…**
 list. The status bar keeps the *number* and has no buttons: a number is a fact, and that bar is for
 facts. A thing you DO belongs up top.
@@ -726,7 +726,7 @@ count). These are the drag analogue of the `checked*` bulk actions.
 buy/sell × money/coins). It's a **two-pane** `RowLayout` (2026-06-15): the **shopping list**
 on the left and a store-style **receipt** on the right, with a 1px `dividerColor` divider
 between. (The first pass that day was an internal-only modernization; the two-pane receipt
-was the follow-up redesign Twilight asked for.)
+was the follow-up redesign project leadership asked for.)
 
 - **Layout = a full-width header + a switching body.** The two segmented strips live in a **full-width
   accent header** (not the left pane). Below, the body switches on `isExchangeMode`: **Buy/Sell** → the
@@ -1064,7 +1064,7 @@ tile→key map: [`../plans/full-keyboard-redesign.md`](../plans/full-keyboard-re
 
 ### The deck's LOOK — the rules the first cut broke (2026-07-11)
 
-Twilight's verdict on the first pass was *"looks really bad but i cant place my finger on why"*. Every
+Project leadership's verdict on the first pass was *"looks really bad but i cant place my finger on why"*. Every
 cause was nameable, and each one is a rule worth keeping:
 
 - **Figure/ground.** Light caps on a light chassis on a light pane = mush. The chassis is a **dark
@@ -1313,7 +1313,7 @@ The trainer card adopted the same combo language, and two reusable pieces came o
   against / overlap the trainer artwork; more width gives the right column + Playtime group clear
   separation from the art, more height fits the two-row group. **Lesson (the important one): capture and
   actually scrutinise the screenshot** — the overlap existed in the first action-groups pass and was only
-  caught when Twilight pointed it out. Manual screenshot review (overlaps, alignment, clipping, polish)
+  caught when project leadership pointed it out. Manual screenshot review (overlaps, alignment, clipping, polish)
   is a standing default for any card/screen layout change, not a glance.
 
 ### Segmented active segment: round the fill's outer corners (the "Market" flat-edge)
@@ -1345,7 +1345,7 @@ MapRailButton`.
 - **Four thin bars, one job each.** Top (36px — **the tools**, *what is loaded*, *the palette*) ·
   context (32px — *the options for the tool in your hand*) · the canvas · status (26px — *where the
   cursor is, what's under it, the zoom*). The moment a bar grows a second job, split it.
-- **Tools in the TOP BAR, not a left rail (2026-07-13, Twilight).** A 44px rail down the whole height
+- **Tools in the TOP BAR, not a left rail (2026-07-13, project leadership).** A 44px rail down the whole height
   of the screen to hold three glyphs is 44px the map isn't getting. They sit left of a divider, in
   the same `MapRailButton` language, with their one-key shortcuts on the tooltip.
 - **A picker CHIP that drops a small panel beats three combo boxes in a bar.** `MapPicker.qml` is one
@@ -1389,7 +1389,7 @@ MapRailButton`.
 
 ## Colour, tooltips and hierarchy — the rules from the 2026-07-13 review
 
-Twilight's live pass on the map screen produced five rules that are **not map-specific**:
+Project leadership's live pass on the map screen produced five rules that are **not map-specific**:
 
 - **RED MEANS BROKEN. Nothing else.** ("You have red text everywhere, even to indicate
   information, which is bad.") A save that legitimately holds an unusual value — blocks from one
@@ -1404,7 +1404,7 @@ Twilight's live pass on the map screen produced five rules that are **not map-sp
 - **In a tree, a child's control must sit RIGHT of its parent's.** A group row that starts with a
   fold chevron and *then* its eye needs its children indented by **chevron + spacing** (26px), not by
   a guessed 14 — otherwise the child's eye lands LEFT of the parent's and the hierarchy reads upside
-  down. Caught by Twilight, not by us: *"a manual screenshot would have detected this."*
+  down. Caught by project leadership, not by us: *"a manual screenshot would have detected this."*
 - **Outline colours must be distinguishable, and not all warm.** Three theme colours (error red,
   primary pink, accent blue) over a grey map read as one alarm. The map's boxes now use **Okabe-Ito**
   — the colour-blind-safe set: `#0072b2` blue (map bounds), `#009e73` green (draw area), `#e69f00`

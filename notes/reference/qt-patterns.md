@@ -2,14 +2,14 @@
 
 ## "HOVER CAN'T BE TESTED" — wrong, and wrong the SAME WAY as the aqtinstall "ceiling" — 2026-07-17
 
-I told Twilight that hover could not be driven synthetically — *"only your cursor can confirm the
-strip appearing, the tabs lighting their own boxes"* — and handed her the verification. She didn't
+I told project leadership that hover could not be driven synthetically — *"only your cursor can confirm the
+strip appearing, the tabs lighting their own boxes"* — and handed them the verification. They didn't
 buy it:
 
 > *"i find it hard to beleive theres no solution for testing hover you cannot tell me the community
 > has no solution for this"*
 
-She was right, and the answer is **two lines**:
+They were right, and the answer is **two lines**:
 
 ```cpp
 QMouseEvent ev(QEvent::MouseMove, at, global, Qt::NoButton, Qt::NoButton, Qt::NoModifier);
@@ -26,7 +26,7 @@ nothing missing from the toolkit. Now shipped as `MainWindow::debugHover` + the 
 the aqtinstall section below records me declaring a hard *ceiling* ("Windows CI can have at most
 6.10.x") off one lazy step — the released tool couldn't, therefore it was impossible; the fix had
 been merged four months earlier. This is the same move: `debugTap` sends press+release, so I hit the
-edge of **what I had already built**, concluded the *capability* did not exist, and made her do it
+edge of **what I had already built**, concluded the *capability* did not exist, and made them do it
 by hand.
 
 > **The rule: "my harness can't" is not "it can't", and "the API I already wrote doesn't" is not
@@ -47,7 +47,7 @@ by the time the item pass begins. This has now cost three rounds:
    geometric containment test the ground consults before acting.
 2. The same, again, via the popup's dismiss-press leaking down.
 3. **The storage tabs** (2026-07-17): clicking a tab **selected the block underneath it instead**,
-   and the tab's own gesture arrived into an already-changed selection. Twilight: *"clicking on
+   and the tab's own gesture arrived into an already-changed selection. Project leadership: *"clicking on
    things too is often buggy or glitchy"* — which is exactly what a lost race feels like.
 
 **The fix is always the same shape: the ground must ASK, and stand down.** No z-order, no
@@ -74,7 +74,7 @@ qrc:/ui/app/screens/non-modal/map/MapStoragePanel.qml:948:19: FlatToggle is not 
 
 ⚠️ **And the whole suite was green (91/91).** `tst_qml_screens` loads every *screen* — but a dock
 panel lives behind a **Loader that only builds when the dock is opened**, so its QML was never
-compiled by anything. Twilight found it in about two seconds by clicking the dock button.
+compiled by anything. Project leadership found it in about two seconds by clicking the dock button.
 
 **The fix, and it generalises:** `tst_qml_screens::everyMapPanelCompiles` now compiles **every** Map
 dock panel + canvas item on its own. Negative-controlled — put `FlatToggle` back and it says
@@ -114,8 +114,8 @@ line worked verbatim in `MapFlagBox.qml`, which was **not** inside a Repeater. *
 **Read this before proposing any Qt version bump.** ⚠️ **An earlier draft of this section called it a
 hard ceiling — "Windows CI can have at most 6.10.x". That was WRONG**, and it is kept as a heading
 scar because of *how* it was wrong: the released tool couldn't do it, so it was written up as
-impossible. Twilight didn't buy it — *"i find it hard to believe the community has no solution for
-this moving forward"* — and she was right. The fix was merged upstream **four months ago**. The lesson
+impossible. Project leadership didn't buy it — *"i find it hard to believe the community has no solution for
+this moving forward"* — and they were right. The fix was merged upstream **four months ago**. The lesson
 is in [`../decisions/rejected.md`](../decisions/rejected.md): **"latest release can't" is not "can't",
 and an ecosystem this size having no answer should read as a smell, not a finding.**
 
@@ -246,7 +246,7 @@ revert. Done here: `tst_map` gave `27 passed, 0 failed` on **both** paths, so th
 compilable *and* pixel-identical before the push.
 
 **Why there is no local escape hatch:** the only Qt on this machine is 6.11, and the Docker image is
-**also** 6.11 (its own Dockerfile says so: *"Mirrors Twilight's local kit: Qt 6.11 + clang. (CI uses
+**also** 6.11 (its own Dockerfile says so: *"Mirrors project leadership's local kit: Qt 6.11 + clang. (CI uses
 gcc/6.8.3…)"*). ASan, coverage, the whole container suite — all 6.11. **The remote is the only 6.8
 compiler this project has.** Note also that a failed CI build stops after a handful of files, so one
 6.9-ism can mask others behind it; expect to iterate.
@@ -1142,7 +1142,7 @@ screen, not on a `visible:` binding.
 # Case study: player / rival name-edit hang (the two-way-bind feedback loop)
 
 **Status: FIXED in s13w** (root-caused s13v). Reported symptom: clicking/editing the rival
-name (and "probably the player name too") makes the app crash/hang; she suspected "a circular reference
+name (and "probably the player name too") makes the app crash/hang; they suspected "a circular reference
 from a hack to get the rival and player name variables working." This is the canonical example of why
 heavy `WRITE` setters + a manual QML two-way bind + per-keystroke writes are a trap.
 
