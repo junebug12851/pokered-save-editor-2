@@ -2,7 +2,7 @@
 """Build the themed /screenshots/ gallery page for the Pages site.
 
 It wears the vendored fairyfox chrome bundle (../main.css, ../reader.js, ../nav.js,
-../doxygen-awesome.css, ../fairyfox-doxygen.css, self-hosted ../fonts.css), so the
+../coins.js, ../doxygen-awesome.css, ../fairyfox-doxygen.css, self-hosted ../fonts.css), so the
 gallery is seamless with the rest of the Fairy Fox docs site rather than a bare page.
 
 Usage:
@@ -143,6 +143,7 @@ FF_FOOTER = """<footer class="site-footer">
 
 FF_SCRIPTS = """<script src="../nav.js" defer></script>
 <script src="../reader.js" defer></script>
+<script src="../coins.js" defer></script>
 <script>
 (function(){var r=document.documentElement;
 function sync(){var t=r.getAttribute("data-theme")||"system";

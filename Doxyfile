@@ -176,13 +176,14 @@ HTML_EXTRA_STYLESHEET  = docs/doxygen-awesome/doxygen-awesome.css \
                          docs/fairyfox/main.css \
                          docs/fairyfox/fairyfox-doxygen.css
 # Fairy Fox chrome/reader assets, copied flat into the html output as-is:
-#   nav.js + reader.js  vendored bundle behaviour (loaded deferred at end of footer)
+#   nav.js + reader.js + coins.js  vendored bundle behaviour (loaded deferred at end of footer)
 #   fonts.css + woff2   self-hosted type families (Fraunces / Inter / JetBrains Mono) —
 #                       DOCUMENTED DEVIATION from the bundle's Google-Fonts head.html; keeps
 #                       the no-third-party-IP posture (notes/decisions/architecture.md).
 # (pse-logo.png is copied by Doxygen itself via PROJECT_ICON, so it's not listed here.)
 HTML_EXTRA_FILES       = docs/fairyfox/nav.js \
                          docs/fairyfox/reader.js \
+                         docs/fairyfox/coins.js \
                          docs/fairyfox/fonts/fonts.css \
                          docs/fairyfox/fonts/fraunces-latin.woff2 \
                          docs/fairyfox/fonts/inter-latin.woff2 \

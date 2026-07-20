@@ -56,11 +56,13 @@ $generatedby&#160;<a href="https://www.doxygen.org/index.html"><img class="foote
   </div>
 </footer>
 
-<!-- bundle behaviour: nav.js (hamburger + Farms dropdown) then reader.js (injects the
-     "Aa" button + the reading-settings panel). Vendored master copies under docs/fairyfox/;
-     pulled at build time, never hot-linked. -->
+<!-- bundle behaviour: nav.js (hamburger + Farms dropdown), then reader.js (injects the
+     "Aa" button + the reading-settings panel), then coins.js (injects the reading-engagement
+     coin counter just left of "Aa"). Vendored master copies under docs/fairyfox/; pulled at
+     build time, never hot-linked. -->
 <script type="text/javascript" src="$relpath^nav.js" defer="defer"></script>
 <script type="text/javascript" src="$relpath^reader.js" defer="defer"></script>
+<script type="text/javascript" src="$relpath^coins.js" defer="defer"></script>
 
 <!-- Project glue (NOT part of the bundle): (1) mirror the reader's data-theme onto
      doxygen-awesome's light-mode/dark-mode class so the generated reference body's

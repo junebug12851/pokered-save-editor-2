@@ -206,6 +206,11 @@ th{font-weight:700;color:var(--text)}
   border-radius:999px;white-space:nowrap;font-family:var(--sans)}
 .subnav a:hover{color:var(--text);background:var(--panel-2);text-decoration:none}
 .subnav a.active{color:var(--text);background:color-mix(in srgb,var(--violet) 16%,transparent)}
+/* Canonical project subnav zones: the project name (overview) reads as a sub-brand on
+   the left; the repository link is pushed to the far right. See docs-site 05-navigation. */
+.subnav a.subnav-home{color:var(--text);font-family:var(--display);font-weight:700}
+.subnav a.subnav-repo{margin-left:auto;color:var(--text-faint)}
+.subnav a.subnav-repo:hover{color:var(--text)}
 @media (max-width:540px){
   .subnav > .wrap{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
   .subnav > .wrap::-webkit-scrollbar{display:none}
@@ -382,6 +387,13 @@ a.card:hover{text-decoration:none;transform:translateY(-4px);box-shadow:var(--sh
 .doc-cat ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.05rem}
 .doc-cat li a{display:block;color:var(--text-soft);padding:.36rem .45rem;border-radius:7px;font-size:.93rem}
 .doc-cat li a:hover{color:var(--text);background:var(--panel-3);text-decoration:none}
+.doc-cat a.cat-title{text-decoration:none}
+.doc-cat a.cat-title:hover{color:var(--accent-ink)}
+.doc-cat .cat-count{margin-left:auto;font-family:var(--sans);font-weight:600;font-size:.72rem;
+  color:var(--text-faint);background:var(--panel-3);border-radius:999px;padding:.05rem .5rem}
+.doc-cat .cat-more{display:inline-block;margin-top:.4rem;font-size:.82rem;font-weight:600;
+  color:var(--accent-ink);padding:.3rem .45rem;text-decoration:none}
+.doc-cat .cat-more:hover{text-decoration:underline}
 
 /* ── Updates (home grid + feed) ──────────────────────────────────────────── */
 .update-grid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
@@ -517,6 +529,9 @@ a.card:hover{text-decoration:none;transform:translateY(-4px);box-shadow:var(--sh
 .footer-bar > .wrap{padding-block:1.05rem;display:flex;flex-wrap:wrap;gap:.5rem 1.2rem;align-items:center;
   color:var(--text-faint);font-size:.83rem}
 .footer-bar .spacer{margin-left:auto}
+.footer-legal{display:inline-flex;gap:.4rem;flex-wrap:wrap}
+.footer-legal a{color:var(--text-faint);text-decoration:none}
+.footer-legal a:hover{color:var(--text);text-decoration:underline}
 @media (max-width:720px){.site-footer > .wrap{grid-template-columns:1fr 1fr}}
 @media (max-width:460px){.site-footer > .wrap{grid-template-columns:1fr}}
 
@@ -639,3 +654,72 @@ a.card:hover{text-decoration:none;transform:translateY(-4px);box-shadow:var(--sh
 .ff-rp-reset{flex:none;border:none;background:none;cursor:pointer;font:inherit;font-size:.75rem;font-weight:650;
   color:var(--accent-ink)}
 .ff-rp-reset:hover{text-decoration:underline}
+/* "Clear my data" — a small, soft link (not a button), bottom-right of the coins panel. */
+.ff-rp-clear{flex:none;border:none;background:none;padding:0;cursor:pointer;font:inherit;font-size:.7rem;
+  font-weight:500;color:var(--text-faint);text-decoration:underline;text-underline-offset:2px;
+  text-decoration-color:color-mix(in srgb,var(--text-faint) 45%,transparent)}
+.ff-rp-clear:hover{color:var(--text-soft);text-decoration-color:currentColor}
+
+/* ── Coins ("◎") ─────────────────────────────────────────────────────────────
+   A light reading-engagement counter next to the reader button. Reading a page
+   you haven't seen today earns a coin (assets/js/coins.js). Subtle, but a small
+   pop + glow marks each earn. Gold reads as "coin" independent of the accent. */
+.ff-coin-btn{display:inline-flex;align-items:center;justify-content:center;gap:.34rem;
+  margin-left:.5rem;flex:none;height:40px;min-width:46px;padding:0 .72rem;cursor:pointer;border-radius:999px;
+  font-family:var(--display);font-weight:700;line-height:1;color:var(--text);background:var(--panel-2);
+  border:1px solid var(--line-2);
+  transition:transform .16s var(--ease),background .16s var(--ease),color .16s var(--ease),box-shadow .16s var(--ease)}
+.ff-coin-btn .ff-coin-ic{display:inline-flex;width:19px;height:19px;color:var(--text-soft);flex:none}
+.ff-coin-btn .ff-coin-ic svg{width:19px;height:19px}
+.ff-coin-btn .ff-coin-n{font-size:.95rem;min-width:.7ch;text-align:left;font-variant-numeric:tabular-nums}
+.ff-coin-btn:hover{color:var(--text);background:color-mix(in srgb,var(--accent) 16%,var(--panel-2))}
+.ff-coin-btn:hover .ff-coin-ic{color:var(--text)}
+.ff-coin-btn[aria-expanded="true"]{background:color-mix(in srgb,var(--accent) 18%,var(--panel-2))}
+.ff-coin-btn.is-earned{animation:ff-coin-bounce .44s var(--ease)}
+@keyframes ff-coin-bounce{0%{transform:scale(1)}30%{transform:scale(1.16)}60%{transform:scale(.96)}100%{transform:scale(1)}}
+
+/* Floating "+1" chip spawned at the button on an earn. */
+.ff-coin-pop{position:fixed;z-index:1400;transform:translate(-50%,0);pointer-events:none;
+  font-family:var(--display);font-weight:800;font-size:.9rem;color:var(--accent-ink);
+  padding:.12rem .44rem;border-radius:999px;white-space:nowrap;
+  background:color-mix(in srgb,var(--accent) 20%,var(--panel));box-shadow:0 4px 16px var(--glow);
+  animation:ff-coin-float 1.05s var(--ease) forwards}
+.ff-coin-pop.is-lucky{color:var(--accent-ink);background:color-mix(in srgb,var(--accent) 34%,var(--panel));
+  box-shadow:0 6px 22px color-mix(in srgb,var(--accent) 55%,transparent)}
+@keyframes ff-coin-float{0%{opacity:0;transform:translate(-50%,2px) scale(.7)}
+  18%{opacity:1;transform:translate(-50%,-6px) scale(1.08)}
+  40%{transform:translate(-50%,-12px) scale(1)}
+  100%{opacity:0;transform:translate(-50%,-34px) scale(.96)}}
+
+/* Coin panel — reuses .ff-reader-panel positioning/chrome; only one popover open
+   at a time (coins.js closes the reader panel when this opens, and vice versa). */
+.ff-coin-panel{width:min(19rem,calc(100vw - 1.4rem))}
+.ff-coin-balance{display:flex;align-items:center;gap:.5rem;padding:1.05rem 1rem .6rem}
+.ff-coin-balance .ff-coin-glyph{display:inline-flex;width:26px;height:26px;color:var(--text-soft);flex:none}
+.ff-coin-balance .ff-coin-glyph svg{width:26px;height:26px}
+.ff-coin-big{font-family:var(--display);font-weight:800;font-size:2rem;line-height:1;font-variant-numeric:tabular-nums}
+.ff-coin-unit{align-self:flex-end;margin-bottom:.18rem;font-size:.78rem;font-weight:600;color:var(--text-faint)}
+.ff-coin-stats{display:flex;gap:.6rem;padding:.2rem 1rem .9rem}
+.ff-coin-stat{flex:1;display:flex;flex-direction:column;gap:.15rem;padding:.55rem .7rem;border-radius:11px;
+  background:var(--panel-2);border:1px solid var(--line)}
+.ff-coin-stat .ff-coin-k{font-size:.64rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text-faint)}
+.ff-coin-stat .ff-coin-v{font-family:var(--display);font-weight:700;font-size:1.15rem;line-height:1;font-variant-numeric:tabular-nums}
+.ff-coin-how{margin:0;font-size:.82rem;line-height:1.5;color:var(--text-soft)}
+.ff-coin-more{display:inline-block;margin-top:.5rem;font-size:.8rem;font-weight:650;color:var(--accent-ink);text-decoration:none}
+.ff-coin-more:hover{text-decoration:underline}
+
+/* Reading pages — the estimated read-time chip + the very-subtle hidden-coin word. */
+.ff-readtime{margin:0 0 1.1rem;font-size:.72rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--text-faint);display:inline-flex;align-items:center;gap:.4rem}
+.ff-hidden-coin{cursor:pointer;border-radius:3px;
+  border-bottom:1px dotted color-mix(in srgb,var(--accent) 45%,transparent);
+  transition:color .15s var(--ease),background .15s var(--ease),border-color .15s var(--ease)}
+.ff-hidden-coin:hover,.ff-hidden-coin:focus-visible{color:var(--accent-ink);
+  border-bottom-color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent);outline:none}
+.ff-hidden-claimed{color:var(--accent-ink);transition:color .5s var(--ease)}
+
+@media (prefers-reduced-motion:reduce){
+  .ff-coin-btn.is-earned{animation:none}
+  .ff-coin-pop{animation:ff-coin-fade 1.05s linear forwards}
+  @keyframes ff-coin-fade{0%{opacity:0}18%{opacity:1;transform:translate(-50%,-8px)}100%{opacity:0;transform:translate(-50%,-8px)}}
+}
