@@ -442,7 +442,7 @@ jobs:
             echo
             echo "## Links"
             echo
-            echo "- 📖 **Docs & screenshots:** https://junebug12851.github.io/pokered-save-editor-2/"
+            echo "- 📖 **Docs & screenshots:** https://1fairyfox.github.io/pokered-save-editor-2/"
             echo "- 📝 **Full changelog (every commit):** ${repo}/tree/main/notes/version"
             echo "- 🐛 **Issues / feedback:** ${repo}/issues"
             echo

@@ -8,7 +8,7 @@
 // full keyboard (FullKeyboard.qml). Emits committed(val) once per edit session
 // (atomic), so expensive/byte-touching writes (player-name OT cascade, rival)
 // persist on commit rather than per keystroke. Many subtle invariants are
-// documented inline by Twilight -- the example demo being LOCAL to the editor (so
+// documented inline by project leadership -- the example demo being LOCAL to the editor (so
 // the row only ever shows the name), the single-commit suppression when handing
 // off to the keyboard, and seeding the field on open because a text: binding
 // breaks after first keystroke. Leave those comments; they encode hard-won
@@ -441,7 +441,7 @@ Image {
         onToggleFullKeyboard: { suppressNextCommit = true; editorVisible = false; openFullKeyboard(); }
       }
 
-      // ---- Byte-count feedback / warnings (Twilight's original messages) ----
+      // ---- Byte-count feedback / warnings (project leadership's original messages) ----
       Label {
         Layout.fillWidth: true
         visible: enableFeedback &&

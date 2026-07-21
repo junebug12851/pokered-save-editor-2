@@ -1,5 +1,5 @@
 /*
-  * Copyright 2026 Twilight
+  * Copyright 2026 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -474,7 +474,7 @@ void TestWarps::warpStateFields_nameEveryByteInEnglish()
 /**
  * @brief The four that do nothing are ABSENT, not greyed, until the switch is flipped.
  *
- * Exactly what Twilight asked for: *"little exclamation points grouped below and hidden behind a
+ * Exactly what project leadership asked for: *"little exclamation points grouped below and hidden behind a
  * switch."* Filtered in the MODEL, so no view can leak one -- and so this test can prove it.
  */
 void TestWarps::deadAndWipedFields_areAbsentUntilYouAskForThem()

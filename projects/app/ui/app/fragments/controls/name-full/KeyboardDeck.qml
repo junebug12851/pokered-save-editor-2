@@ -7,7 +7,7 @@
 // 255 tiles / 36 keys = 8 pages, and Shift/Ctrl/Alt give exactly 8 combinations --
 // one page per chord, no leftovers.
 //
-// TWO WAYS IN, AND THEY BEHAVE DIFFERENTLY ON PURPOSE (Twilight's call):
+// TWO WAYS IN, AND THEY BEHAVE DIFFERENTLY ON PURPOSE (project leadership's call):
 //   * The PHYSICAL modifier keys are MOMENTARY. Hold Ctrl -> the deck flips to that
 //     page; let go -> it drops straight back. Nothing latches, exactly like the shift
 //     layer on the keyboard under your hands.
@@ -82,7 +82,7 @@ Item {
     latchAlt   = (p & 4) !== 0;
   }
 
-  /// TOUCHING A REAL MODIFIER KEY DROPS THE LATCHED PAGE. (Twilight, and she's right.)
+  /// TOUCHING A REAL MODIFIER KEY DROPS THE LATCHED PAGE. (project leadership, and she's right.)
   ///
   /// Latched and held used to be OR'd, which meant: click "Uppercase" in the strip to
   /// poke around, then start typing -- and Shift does NOTHING, because the page was

@@ -460,7 +460,7 @@ GridView {
 
       // Delete button: a real round chip at the bottom-right, shown on hover OR
       // when checked (mirrors the top-left checkbox via the same HoverHandler).
-      // At rest it's a faint outlined circle with a red "times" glyph (Twilight's
+      // At rest it's a faint outlined circle with a red "times" glyph (project leadership's
       // release icon, not a trash can); on hover the circle fills red and the
       // glyph goes white; on press it darkens -- so it clearly reads and feels
       // like a button. On a checked mon it deletes the whole checked set (the

@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 Twilight
+  * Copyright 2020 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -138,7 +138,7 @@ QString Settings::previewTilesetTypeName() const
 
 QString Settings::previewTilesetTypeDoes() const
 {
-  // Say what the setting DOES, not just what it's called -- the name is Twilight's friendly
+  // Say what the setting DOES, not just what it's called -- the name is project leadership's friendly
   // rename of the cartridge's animation byte, and both halves are true and worth showing.
   switch(previewTilesetType) {
     case 1:  return tr("Water animates. Flowers don't.");

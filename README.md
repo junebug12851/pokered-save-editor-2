@@ -270,7 +270,7 @@ The 2026 revival has been done with the help of development tooling.
 
 ## License & disclaimer
 
-Copyright © Twilight. The project's **source code** is licensed under the **Apache License,
+Copyright © Fairy Fox. The project's **source code** is licensed under the **Apache License,
 Version 2.0** — see [`LICENSE`](LICENSE) for the full text, or
 <http://www.apache.org/licenses/LICENSE-2.0>.
 

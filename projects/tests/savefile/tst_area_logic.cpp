@@ -1,5 +1,5 @@
 /*
-  * Copyright 2026 Twilight
+  * Copyright 2026 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@
  * Map-DB links are resolved with MapsDB::deepLink() in initTestCase (the
  * tst_map_fragments / tst_sprite_data precedent), so the map-load paths are safe.
  *
- * Regression guards for three fixes (2026-06-08, Twilight-approved):
+ * Regression guards for three fixes (2026-06-08, project leadership-approved):
  *  - AreaTileset::loadFromData inverted ternary (crashed on null map, ignored the
  *    tileset on a real map);
  *  - PokemonBox Random_Pokedex off-by-one is covered in tst_pokemonbox, but the

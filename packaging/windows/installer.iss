@@ -12,8 +12,8 @@
 
 #define MyAppName "Pokered Save Editor"
 #define MyAppExeName "PokeredSaveEditor.exe"
-#define MyAppPublisher "Twilight"
-#define MyAppURL "https://github.com/junebug12851/pokered-save-editor-2"
+#define MyAppPublisher "Fairy Fox"
+#define MyAppURL "https://github.com/1fairyfox/pokered-save-editor-2"
 
 #ifndef MyAppVersion
   #define MyAppVersion "0.0.0-dev"

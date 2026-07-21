@@ -130,7 +130,7 @@ Page {
         flat: true
         model: brg.starterModel
 
-        // Borderless: clean look, no frame around the combo (Twilight's call s13n).
+        // Borderless: clean look, no frame around the combo (project leadership's call s13n).
         background: Rectangle { color: "transparent"; border.width: 0 }
 
         onActivated: {

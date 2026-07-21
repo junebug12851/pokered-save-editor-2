@@ -1,5 +1,5 @@
 /*
-  * Copyright 2026 Twilight
+  * Copyright 2026 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -294,7 +294,7 @@ Item {
 
       // The SOLID box -- something in this cell can be picked up.
       //
-      // ⚠️ NO FILL. Anywhere. Twilight's settled call, 2026-07-17: *"Yea i guess dont fill in the
+      // ⚠️ NO FILL. Anywhere. Project leadership's settled call, 2026-07-17: *"Yea i guess dont fill in the
       // boxes but youll have to do that for all boxes on the map keep and maintain standardization.
       // I still want dashed and solid lines for visual language since we're only using borders
       // youll have to make them a teensy bit thicker."*

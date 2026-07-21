@@ -1,5 +1,5 @@
 /*
-  * Copyright 2026 Twilight
+  * Copyright 2026 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@
  * a FRESH New File (so they embed no real progressed/personal data) using the app's
  * own save engine, so they are byte-accurate and reproducible. Run it once and commit
  * the output; it stays in the tree as the reproducible source-of-truth (the dirty/
- * fixtures README points here for synthetic ones). Real saves remain Twilight's to
+ * fixtures README points here for synthetic ones). Real saves remain project leadership's to
  * commit; only these clearly-synthetic, engine-generated files live in assets/saves/synthetic-clean/.
  *
  * Build target `gen_synthetic_fixtures` (not a CTest test). Run with no args; it writes

@@ -5,7 +5,7 @@
 // fullSetPlayerName -- a full storage rescan that updates every owned mon's OT;
 // doing that per keystroke hung the editor and risked corrupting a traded mon's
 // OT. The basics() guard avoids dereferencing the model chain while it's null
-// during load/reset. Twilight's inline notes explain both -- leave them.
+// during load/reset. Project leadership's inline notes explain both -- leave them.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

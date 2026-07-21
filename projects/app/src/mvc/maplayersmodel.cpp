@@ -1,5 +1,5 @@
 /*
-  * Copyright 2026 Twilight
+  * Copyright 2026 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ namespace {
 
 /// The three groups, in the order they read.
 ///
-/// ⚠️ **GAME VIEW IS FIRST** (Twilight, 2026-07-13). It is the group you actually use -- the player,
+/// ⚠️ **GAME VIEW IS FIRST** (project leadership, 2026-07-13). It is the group you actually use -- the player,
 /// everybody else, and the box showing what the Game Boy can see. The lines that help you read the
 /// map's shape come next, and the semantic overlays -- which you switch on to answer a question and
 /// then switch off again -- come last.
@@ -34,7 +34,7 @@ const char* groupKey(int g)
   case GuidesGroup:   return "guides";
   // ⚠️ The KEY stays "meaning" -- it is a stable id the tests and the DEBUG harness address the
   // group by. Only the NAME changed ("Meaning" -> "Components" 2026-07-13 -> "Tiles" 2026-07-15,
-  // Twilight): the group is the tileset's own tile meanings, so "Tiles" is what it is.
+  // project leadership): the group is the tileset's own tile meanings, so "Tiles" is what it is.
   case ComponentsGroup: return "meaning";
   case GameViewGroup: return "gameview";
   default:            break;
@@ -80,12 +80,12 @@ MapLayersModel::MapLayersModel(MapModel* map, QObject* parent)
   buildAll();
   rebuild();
 
-  // ⭐ The SAVE-DATA RULE decides the Tiles group too (Twilight, 2026-07-17): *"even the rom-only
+  // ⭐ The SAVE-DATA RULE decides the Tiles group too (project leadership, 2026-07-17): *"even the rom-only
   // tiles like grass and water need to be turned on by default because you can change the pokemon in
   // them and also change whats grass in the map state ... anything that relates to the save file
   // needs to be on by default"*.
   //
-  // ⚠️ SUPERSEDES "all of Tiles layer disabled by default" (Twilight, 2026-07-15). This line used to
+  // ⚠️ SUPERSEDES "all of Tiles layer disabled by default" (project leadership, 2026-07-15). This line used to
   // force `setLayers(0)` and it was the REAL home of that decision -- MapModel's own default never
   // survived it. Which is why the default now lives in ONE place (MapModel::shownLayers) and this
   // constructor no longer overrides it: two defaults for one setting is how they drift apart.
@@ -140,7 +140,7 @@ void MapLayersModel::buildAll()
     allRows.append(r);
   };
 
-  // ⚠️ The BUILD order is the DISPLAY order. Game View goes first (Twilight, 2026-07-13) -- it is
+  // ⚠️ The BUILD order is the DISPLAY order. Game View goes first (project leadership, 2026-07-13) -- it is
   // the group you actually use.
 
   // ── Game View ───────────────────────────────────────────────────────────────
@@ -230,7 +230,7 @@ void MapLayersModel::buildAll()
   // mouths, warp pads). A real tileset fact (data/tilesets/warp_tile_ids.asm): IsWarpTileInFrontOfPlayer
   // checks the tile you walk into against the tileset's warp-tile list to decide whether a warp fires.
   // It is NOT the save's warp LIST (coords/destinations) — those are the draggable objects in Game
-  // View. Two different things, so this one is labelled "Warp tiles" (Twilight, 2026-07-15: bring it
+  // View. Two different things, so this one is labelled "Warp tiles" (project leadership, 2026-07-15: bring it
   // back — it was fine, it just needed telling apart from the object layer). A DOOR is likewise a
   // passable tile TYPE you cross to reach a warp, so it stays too.
   overlay(ComponentsGroup, MapEngine::LayerWarps);

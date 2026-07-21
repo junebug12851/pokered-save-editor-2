@@ -1,5 +1,5 @@
 /*
-  * Copyright 2026 Twilight
+  * Copyright 2026 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 /**
  * The **?** — "what is this panel, and what is the one thing worth knowing about it?"
  *
- * ⚠️ **The one sanctioned exception to the tooltip-toggle rule**, and the rule for it is Twilight's,
+ * ⚠️ **The one sanctioned exception to the tooltip-toggle rule**, and the rule for it is project leadership's,
  * verbatim (2026-07-13):
  *
  *   > *"a question mark on title for info non notice stuff that can be moused over for tooltips. I
@@ -89,7 +89,7 @@ Rectangle {
     y: info.height + 4
 
     // OPAQUE, light-on-dark. The stock tooltip is dark text on a translucent panel, which over a
-    // pale panel is genuinely hard to read (Twilight, 2026-07-13).
+    // pale panel is genuinely hard to read (project leadership, 2026-07-13).
     background: Rectangle {
       color: "#212121"
       radius: 4

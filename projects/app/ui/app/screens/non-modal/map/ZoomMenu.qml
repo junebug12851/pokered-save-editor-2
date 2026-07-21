@@ -1,5 +1,5 @@
 /*
-  * Copyright 2026 Twilight
+  * Copyright 2026 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 */
 
 /**
- * ZOOM -- and it lives in exactly ONE place (Twilight, 2026-07-13: *"I just don't want multiple
+ * ZOOM -- and it lives in exactly ONE place (project leadership, 2026-07-13: *"I just don't want multiple
  * places where zoom is."*).
  *
  * A little **▾** on the zoom tool. Click it and a panel slides down with:

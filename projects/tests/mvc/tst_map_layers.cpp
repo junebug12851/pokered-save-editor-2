@@ -1,5 +1,5 @@
 /*
-  * Copyright 2026 Twilight
+  * Copyright 2026 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -183,7 +183,7 @@ void TestMapLayers::gameViewLayers_existAndToggle()
     QCOMPARE(visible(r->layers, row), was);
   }
 
-  // The DEFAULTS (Twilight, 2026-07-15, amended 2026-07-17): the player, the people, the WARPS and
+  // The DEFAULTS (project leadership, 2026-07-15, amended 2026-07-17): the player, the people, the WARPS and
   // the signs are on; the screen box and the draw area are off.
   //
   // ⚠️ The SCREEN BOX is OFF as of 2026-07-17 ("disable camera view box by default ... the outline
@@ -191,10 +191,10 @@ void TestMapLayers::gameViewLayers_existAndToggle()
   // line used to assert exactly that -- so if you are reading this because the assert flipped, it
   // flipped ON PURPOSE.
   //
-  // The DRAW AREA is a separate, older decision (Twilight, 3a22f84) and is unrelated to the above --
+  // The DRAW AREA is a separate, older decision (project leadership, 3a22f84) and is unrelated to the above --
   // it has been off since it existed. Two boxes are off; only one of them was ever turned off.
   //
-  // ⭐ And the RULE behind the whole mask (Twilight, 2026-07-17): *"anything related to the save
+  // ⭐ And the RULE behind the whole mask (project leadership, 2026-07-17): *"anything related to the save
   // file is on by default, persistent storage like flags and stuff are related to persistent
   // storage meaning the save file meaning on by default"*. Player, people, warps, signs and the
   // FLAG BOXES are all things the save holds -> on. The screen box and draw area are the console's
@@ -209,7 +209,7 @@ void TestMapLayers::gameViewLayers_existAndToggle()
   QVERIFY2(!r->layers->showScreenBox(), "the screen box should be OFF by default");
   QVERIFY2(!r->layers->showDrawArea(), "the draw area should be OFF by default");
 
-  // The Tiles group, by the SAME save-data rule (Twilight, 2026-07-17): *"even the rom-only tiles
+  // The Tiles group, by the SAME save-data rule (project leadership, 2026-07-17): *"even the rom-only tiles
   // like grass and water need to be turned on by default because you can change the pokemon in them
   // and also change whats grass in the map state"*.
   //
@@ -246,7 +246,7 @@ void TestMapLayers::connectionsAreALayer()
                                        MapLayersModel::AppliesRole).toBool();
   QVERIFY2(applies, "Pallet Town has two connections -- the layer should apply");
 
-  // ON by default (Twilight, 2026-07-15): you want to see how the map joins the world -- the
+  // ON by default (project leadership, 2026-07-15): you want to see how the map joins the world -- the
   // connections (and the connecting maps that render off the edges) are the point, not clutter.
   QVERIFY2(visible(r->layers, row), "the connections should be ON by default");
   QVERIFY(r->layers->showConnections());
@@ -297,7 +297,7 @@ void TestMapLayers::solo_isALookNotAnEdit()
   // A deliberately lopsided setup, so "restore" has something real to restore. ARRANGE it, don't
   // inherit it: this test is about solo/un-solo, and what the defaults happen to be is
   // gameViewLayers_defaultToTheOnesYouWant's business, not ours. (It used to just assert the screen
-  // box was on -- true until Twilight turned it off by default on 2026-07-17, at which point this
+  // box was on -- true until project leadership turned it off by default on 2026-07-17, at which point this
   // failed for a reason that had nothing to do with solo. A test that leans on a default it doesn't
   // own breaks when someone changes their mind about the UI, which they are entitled to do.)
   if (visible(r->layers, draw))

@@ -1,5 +1,5 @@
 /*
-  * Copyright 2019 Twilight
+  * Copyright 2019 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -92,9 +92,9 @@ static void preBootAttributes()
   preBootAttributes();
 
   QApplication::setApplicationName("Pokered Save Editor");
-  QApplication::setOrganizationName("Twilight");
+  QApplication::setOrganizationName("Fairy Fox");
   QApplication::setApplicationVersion(QStringLiteral(PSE_VERSION_FULL));
-  QApplication::setOrganizationDomain("pokeredsaveeditor.twilight.app");
+  QApplication::setOrganizationDomain("pokeredsaveeditor.fairyfox.app");
 
   // Note: Do NOT set a custom QSurfaceFormat with MSAA here.
   // QQuickWidget renders into an offscreen FBO; requesting MSAA via

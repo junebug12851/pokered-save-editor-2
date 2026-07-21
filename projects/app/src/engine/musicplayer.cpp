@@ -1,5 +1,5 @@
 /*
-  * Copyright 2026 Twilight
+  * Copyright 2026 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -179,7 +179,7 @@ void MusicPlayer::ensureLoaded()
   // We ship `pret/pokered`'s **`.asm`** -- their files, their macros, their words -- and assemble it
   // here. We used to ship three `.bin` blobs in a container **we invented**, built by a script from
   // a clone that wasn't even in the repository. You could not read them, you could not review them,
-  // and you could not regenerate them. (The standing rule, and Twilight's, 2026-07-13: *"where
+  // and you could not regenerate them. (The standing rule, and project leadership's, 2026-07-13: *"where
   // pret/pokered has a format, WE USE THAT FORMAT."*)
   //
   // ⚠️ It still comes out as BYTES, and that is not laziness -- **the byte layout IS the feature.**
@@ -277,7 +277,7 @@ void MusicPlayer::buildTrackList()
   // ── SILENCE, FIRST ────────────────────────────────────────────────────────────────────────
   //
   // "No music" is a real value a map can hold and it is the one you reach for most often -- so it
-  // goes at the TOP, not buried at the bottom of "Special" where it was (Twilight, 2026-07-13). It
+  // goes at the TOP, not buried at the bottom of "Special" where it was (project leadership, 2026-07-13). It
   // has no group heading: it is not part of a group, it is the absence of one.
   for (int i = 0; i < db->getStoreSize(); ++i) {
     MusicDBEntry* e = db->getStoreAt(i);

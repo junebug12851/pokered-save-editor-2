@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 Twilight
+  * Copyright 2020 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -68,7 +68,7 @@ PokemonMove::PokemonMove(PokemonBox* parentMon, var8 move, var8 pp, var8 ppUp)
     // original code wrote `ppUp = 0`, which assigned the constructor PARAMETER
     // (shadowing the member) -- a no-op, so new moves silently kept a random ppUp.
     // Now writes the member. (clang-analyzer-deadcode.DeadStores; confirmed intended
-    // with Twilight 2026-06-22.) Set directly (no ppUpChanged()) -- we're in the
+    // with project leadership 2026-06-22.) Set directly (no ppUpChanged()) -- we're in the
     // ctor, matching the plain member writes above; nothing is connected yet.
     this->ppUp = 0;
   }
@@ -1290,7 +1290,7 @@ bool PokemonBox::isMinEvs()
   // "Minimum EVs" means ALL five stat-exp are zero (symmetric with isMaxEVs()'s
   // all-0xFFFF). Was `||` (true if ANY one was 0), which wrongly disabled the
   // "Reset EVs" UI action whenever a single stat-exp happened to be 0. (Fixed
-  // 2026-06-08, Twilight-confirmed.)
+  // 2026-06-08, project leadership-confirmed.)
   return atkExp == 0 &&
       defExp == 0 &&
       spdExp == 0 &&

@@ -1,7 +1,7 @@
 # Gen 1 Save File Structure {#savestructure}
 
 Human-readable companion to `structure.bt` (the 010 Editor binary template authored by
-Twilight). The `.bt` file is the **byte-exact oracle** — when the two ever disagree, the
+Project leadership). The `.bt` file is the **byte-exact oracle** — when the two ever disagree, the
 `.bt` wins and this document is wrong. This page exists so the layout can be read, reviewed,
 and cross-referenced (it is the offset oracle the test suite is written against) without
 opening 010 Editor.

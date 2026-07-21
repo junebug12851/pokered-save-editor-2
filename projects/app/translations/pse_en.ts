@@ -12,7 +12,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>© 2017–2026 Twilight  •  Licensed under the Apache License 2.0</source>
+        <source>© 2017–2026 Fairy Fox  •  Licensed under the Apache License 2.0</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

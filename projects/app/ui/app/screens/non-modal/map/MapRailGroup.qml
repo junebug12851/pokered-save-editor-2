@@ -1,5 +1,5 @@
 /*
-  * Copyright 2026 Twilight
+  * Copyright 2026 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 /*
   MapRailGroup.qml -- a GROUP of rail buttons, collapsed to ONE.
 
-  Twilight, 2026-07-14: *"collapse the left toolbar button groups into a single button each — I count
+  Project leadership, 2026-07-14: *"collapse the left toolbar button groups into a single button each — I count
   three-or-more groups, so reduce it down to three buttons."*
 
   So the left rail is three groups: the tools (select / pan / zoom), the makers (place a door / place a

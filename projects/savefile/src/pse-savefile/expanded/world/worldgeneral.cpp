@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 Twilight
+  * Copyright 2020 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -120,7 +120,7 @@ void WorldGeneral::randomize()
   // pick random maps via MapsDB search, but the type/city searches can come back
   // empty (e.g. isType("Outdoor") matches 0 maps), so pickRandom() returns null and
   // getInd() crashes. Left at the reset() default (0) so the rest of the world
-  // randomizes cleanly. Re-enable alongside the map randomizer. (Twilight-authorised,
+  // randomizes cleanly. Re-enable alongside the map randomizer. (project leadership-authorised,
   // 2026-06-07.)
   // lastBlackoutMap = MapsDB::inst()->search()->isGood()->isCity()->pickRandom()->getInd();
   // lastBlackoutMapChanged();
@@ -131,7 +131,7 @@ void WorldGeneral::randomize()
   // last/blackout maps above are part of the Options and Maps screens, which aren't
   // set up yet, so we don't randomize them until those screens exist. After reset()
   // they're left at defaults. Re-enable with the Options/Maps screens.
-  // (Twilight-authorised, 2026-06-07.)
+  // (project leadership-authorised, 2026-06-07.)
   // options->textSlowness = Random::inst()->rangeInclusive(0, 15);
   // options->textSlownessChanged();
   // options->battleStyleSet = Random::inst()->chanceSuccess(20);

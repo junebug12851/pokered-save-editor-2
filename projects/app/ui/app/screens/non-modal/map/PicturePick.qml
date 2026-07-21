@@ -1,5 +1,5 @@
 /*
-  * Copyright 2026 Twilight
+  * Copyright 2026 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 /**
  * Pick a character **by looking at them**.
  *
- * Twilight, 2026-07-13: *"If you need to select a picture, have a menu to select from pictures."*
+ * Project leadership, 2026-07-13: *"If you need to select a picture, have a menu to select from pictures."*
  * A combo box of 72 names is a lookup table you have to already know the answer to; a grid of the
  * actual artwork is a thing you can just *see*. It is the same shape as the Blocks and Tiles pickers
  * already on this screen (BlockPick / TilePick), so it needs no learning.
@@ -140,7 +140,7 @@ Item {
     // On this screen that means: open the picker, and the press that dismisses it is delivered to
     // whatever is underneath -- which is the MAP, whose ground tap CLEARS THE SPRITE SELECTION. So
     // opening the picture picker dropped you straight back to the map's details, which is exactly
-    // what Twilight saw ("clicking the combo box in details, the picture one, it immediately goes
+    // what project leadership saw ("clicking the combo box in details, the picture one, it immediately goes
     // back to map details").
     //
     // It does not need to be modal. It needs to close when you press outside it or hit Escape, and

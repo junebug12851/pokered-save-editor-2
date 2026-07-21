@@ -1,5 +1,5 @@
 /*
-  * Copyright 2026 Twilight
+  * Copyright 2026 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 /*
   MapSimButton.qml -- one control in the top bar's SIMULATION group: a play/pause SPLIT BUTTON.
 
-  Twilight, 2026-07-14: *"have the dropdown arrow INSIDE the button, like a normal dropdown tool
+  Project leadership, 2026-07-14: *"have the dropdown arrow INSIDE the button, like a normal dropdown tool
   button"* (the ▾ used to be a separate square to the right, which sprawled the group out).
 
   So it is one rounded frame with two zones:

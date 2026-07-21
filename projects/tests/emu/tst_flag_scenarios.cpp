@@ -1,5 +1,5 @@
 /*
- * Copyright 2026 Twilight  --  Apache-2.0 (see LICENSE).
+ * Copyright 2026 Fairy Fox  --  Apache-2.0 (see LICENSE).
  *
  * @file tst_flag_scenarios.cpp
  * @brief Event-flag scenarios, judged against the actual Game Boy.

@@ -1,5 +1,5 @@
 /*
-  * Copyright 2026 Twilight
+  * Copyright 2026 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -90,7 +90,7 @@ Item {
 
   // ── The outline ──────────────────────────────────────────────────────────────────────────
   //
-  // No fill (Twilight, 2026-07-13): an outline shows you the strip, a wash hides the map under it. The
+  // No fill (project leadership, 2026-07-13): an outline shows you the strip, a wash hides the map under it. The
   // ring's own vermillion (#d55e00, Okabe-Ito) when idle; the selection purple when picked.
   Rectangle {
     anchors.fill: parent

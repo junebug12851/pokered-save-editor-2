@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 Twilight
+  * Copyright 2020 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -438,7 +438,7 @@ void ItemStorageModel::dragTransfer(int fromIndex, int toIndex, bool group)
 
     // Auto-stack: if the destination already holds this item, merge the moved
     // amount onto the existing stack instead of creating a duplicate row. We
-    // stack onto the LAST matching row (Twilight's rule -- if there are e.g. four
+    // stack onto the LAST matching row (project leadership's rule -- if there are e.g. four
     // Antidotes, the bottom one is the stack target). Pre-existing duplicates are
     // left untouched; only the moved item folds in.
     Item* stackTarget = nullptr;

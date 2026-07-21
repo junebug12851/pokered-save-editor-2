@@ -1,5 +1,5 @@
 /*
-  * Copyright 2026 Twilight
+  * Copyright 2026 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
 
   ⚠️ **IT ONLY SHOWS WHEN THE HEADER'S "?" IS ON** (`brg.settings.infoBtnPressed`).
 
-  This file used to say the opposite, in as many words, and it was WRONG (Twilight, 2026-07-13):
+  This file used to say the opposite, in as many words, and it was WRONG (project leadership, 2026-07-13):
   tooltips popping up on every hover, everywhere, is exactly the interrupting clutter this app is
   built to avoid. The "?" toggle is the user's switch and it is not ours to override. If you want
   tooltips, turn them on.
@@ -32,7 +32,7 @@
   Ever.
 
   The stock tooltip is **dark text on a translucent background**, and over this app's pale panels it
-  is genuinely, repeatedly, hard to read. Twilight has told me so on three separate passes -- *"the
+  is genuinely, repeatedly, hard to read. Project leadership has told me so on three separate passes -- *"the
   tooltip text is constantly too dark to read, I keep saying it"* -- and each time I fixed the one she
   pointed at and left the others. So the rule is now absolute and it is written here, at the thing
   that fixes it: **if you are typing `ToolTip`, you want `MapToolTip`.**

@@ -1,5 +1,5 @@
 /*
-  * Copyright 2026 Twilight
+  * Copyright 2026 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -31,11 +31,11 @@ class MapModel;
  *  - **Guides**     -- the block grid, the tile grid, the map bounds, the border ring.
  *  - **Components** -- walls, grass, water, warps, doors, ledges, counters, cut trees, elevation
  *                     edges: the nine semantic overlays MapEngine renders. (Was "Meaning"; renamed
- *                     by Twilight, 2026-07-13. The KEY is still `meaning` -- tests address it.)
+ *                     by project leadership, 2026-07-13. The KEY is still `meaning` -- tests address it.)
  *  - **Game View** -- the player, the **red screen box** (the 20x18 tiles the Game Boy is actually
  *                     showing) and the **accent draw area** (the 6x5 blocks LoadCurrentMapView
  *                     redraws). These three were hard-coded rectangles you could not switch off.
- *                     They are layers now, exactly as Twilight asked.
+ *                     They are layers now, exactly as project leadership asked.
  *
  * It is a **tree flattened into a list** (`isGroup` + `depth` roles). A QML `TreeView` is not worth
  * its weight for a fixed three-group tree, and a flat model is far easier to test.
@@ -187,7 +187,7 @@ public:
   Q_INVOKABLE void clearAll();
 
   /// Everything in ONE group off. @p row is any row of that group -- in practice its header, which
-  /// carries a Clear of its own (Twilight, 2026-07-13: a Clear per category, not just one at the top).
+  /// carries a Clear of its own (project leadership, 2026-07-13: a Clear per category, not just one at the top).
   ///
   /// This is NOT the group's tri-state eye. The eye is a toggle -- click it with none on and it turns
   /// the whole group ON -- so it cannot be the thing you reach for when you mean "off". A Clear that
@@ -246,7 +246,7 @@ private:
   int savedView = 0;
   int savedOverlay = 0;
 
-  // ⚠️ WHAT IS ON WHEN THE SCREEN OPENS -- and it is a list Twilight gave, verbatim (2026-07-13):
+  // ⚠️ WHAT IS ON WHEN THE SCREEN OPENS -- and it is a list project leadership gave, verbatim (2026-07-13):
   //
   //     "Have block grid layer, map bounds layer, door layer, warp layer, player,
   //      people and objects, screen box on by default only for layers."
@@ -261,20 +261,20 @@ private:
   // `MapModel::layers`, and the whole Tiles group is OFF by default. Do not add it to this mask.
   // Warps, by contrast, ARE a view/object layer here (`ViewWarps`) -- a warp is map state, not a tile.
   //
-  // Defaults (Twilight, 2026-07-15): **every Game View layer ON except Draw area** (Player, People &
+  // Defaults (project leadership, 2026-07-15): **every Game View layer ON except Draw area** (Player, People &
   // objects, Warps, Signs, Screen box), and **every Tiles-group overlay OFF**. Guides keep the block
   // grid, map bounds and connections on. So: add ViewWarps; Draw area and the tile grid stay off.
   //
-  // UPDATED (Twilight, 2026-07-17): **the Screen box is OFF by default** -- "disable camera view box
+  // UPDATED (project leadership, 2026-07-17): **the Screen box is OFF by default** -- "disable camera view box
   // by default", clarified as "the outline around the player that would be exactly the gameboy screen
   // view". So the map opens on the map and its cast, without an outline trailing the player. Still one
   // click away in the Layers panel when you want to see what the console is actually displaying.
   //
   // ⚠️ ONE bit changed here: ViewScreenBox. The **Draw area was already off** and was NOT touched --
-  // it has never been in this mask (Twilight turned it off in 3a22f84, "draw area off by default").
+  // it has never been in this mask (project leadership turned it off in 3a22f84, "draw area off by default").
   // Saying "both boxes are now off" would be true about the STATE and a lie about the CHANGE; that
   // wording shipped in the first cut of this comment and had to be corrected. State != action.
-  // UPDATED (Twilight, 2026-07-17): **Flag boxes are ON by default** -- *"anything related to the
+  // UPDATED (project leadership, 2026-07-17): **Flag boxes are ON by default** -- *"anything related to the
   // save file is on by default, persistent storage like flags and stuff are related to persistent
   // storage meaning the save file meaning on by default"*.
   //

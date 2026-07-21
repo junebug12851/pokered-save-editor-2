@@ -1,5 +1,5 @@
 /*
-  * Copyright 2026 Twilight
+  * Copyright 2026 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@
  *
  * Indexed by picture id (1-based); index 0 is a placeholder so the ids read straight.
  *
- * ⚠️ ONE LOOSE FILE PER SPRITE, deliberately -- NOT an atlas (Twilight). Loose files are
+ * ⚠️ ONE LOOSE FILE PER SPRITE, deliberately -- NOT an atlas (project leadership). Loose files are
  * far easier to work with, and 72 tiny PNGs in a Qt resource cost nothing to load.
  *
  * See notes/reference/sprites.md.

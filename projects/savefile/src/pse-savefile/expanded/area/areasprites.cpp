@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 Twilight
+  * Copyright 2020 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -81,7 +81,7 @@ void AreaSprites::spriteRemove(int ind)
     return;
 
   // The 16 slots are an ordered array and the game packs them, so removing one SLIDES THE
-  // REST UP. That is what the console does and what Twilight asked for.
+  // REST UP. That is what the console does and what project leadership asked for.
   sprites.at(ind)->deleteLater();
   sprites.removeAt(ind);
   spritesChanged();

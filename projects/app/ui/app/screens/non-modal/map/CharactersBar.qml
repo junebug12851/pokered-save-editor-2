@@ -1,5 +1,5 @@
 /*
-  * Copyright 2026 Twilight
+  * Copyright 2026 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -115,7 +115,7 @@ Item {
     }
 
     // A SLIM filter. The stock TextField is 40+px tall with a big margin, which is a lot of nothing
-    // at the top of a narrow panel (Twilight, 2026-07-13).
+    // at the top of a narrow panel (project leadership, 2026-07-13).
     TextField {
       id: filterField
       Layout.fillWidth: true
@@ -149,7 +149,7 @@ Item {
       // ⚠️ RESERVE THE SCROLLBAR'S LANE. 16px, always. The bar is an OVERLAY -- it is drawn on top of
       // whatever is under it -- so content that runs to the full width ends up UNDERNEATH it. On this
       // panel that meant the yellow "!" badges (anchored to each cell's right edge) sat behind the
-      // scrollbar and the names were clipped. Twilight has now reported this twice, and it is written
+      // scrollbar and the names were clipped. Project leadership has now reported this twice, and it is written
       // down in ui-patterns.md as a recurring gotcha, which is exactly what it is.
       ColumnLayout {
         width: scroller.availableWidth - 22

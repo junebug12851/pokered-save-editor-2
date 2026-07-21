@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 Twilight
+  * Copyright 2020 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ class MapsDB;
  * text, missable link, and the resolved @ref toSprite). The @ref SpriteType
  * distinguishes NPC / ITEM / POKEMON / TRAINER; the four subclasses
  * (MapDBEntrySpriteNpc/Item/Pokemon/Trainer) override type() and add their extra
- * data. The base comment above is Twilight's note on why this is messy. See db.md.
+ * data. The base comment above is project leadership's note on why this is messy. See db.md.
  *
  * @see MapDBEntry (parent), SpriteData (the save-side sprite), the four subclasses.
  */

@@ -1,5 +1,5 @@
 /*
-  * Copyright 2026 Twilight
+  * Copyright 2026 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
  * The yellow **!** — a NOTICE. Not an error, not a refusal: a fact about these bytes that you would
  * otherwise have to already know.
  *
- * It has exactly one job on this screen, and it is Twilight's (2026-07-13): mark the fields the game
+ * It has exactly one job on this screen, and it is project leadership's (2026-07-13): mark the fields the game
  * **overwrites when it loads the save**. The sprite-set cache, the animation scratch, the derived
  * pointers. Those bytes are real, they are yours, and you may edit every one of them — the console
  * simply recomputes them before it ever reads them, and an editor that lets you carefully set a value
@@ -48,7 +48,7 @@ Rectangle {
   /// have no bounds check, so an illegal value makes a real Game Boy read arbitrary cartridge bytes
   /// as warp data. That is not a notice, it is a hazard, and red is what red is for.
   ///
-  /// ⚠️ Use it sparingly. Twilight, 2026-07-13: *"you have red text everywhere, even to indicate
+  /// ⚠️ Use it sparingly. Project leadership, 2026-07-13: *"you have red text everywhere, even to indicate
   /// information, which is bad."* She is right — red means *something is broken*. Here, something is.
   property bool warn: false
 
@@ -62,7 +62,7 @@ Rectangle {
   border.color: warn.warn ? "#7a3600" : "#8a6d00"
 
   // ⚠️ Fill + align, never `anchors.centerIn` -- a "!" has no descender, so centring the Text's BOX
-  // pushes the glyph into the bottom-left of the circle. (It shipped that way once; Twilight saw it.)
+  // pushes the glyph into the bottom-left of the circle. (It shipped that way once; project leadership saw it.)
   Text {
     anchors.fill: parent
     text: "!"

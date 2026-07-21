@@ -1,5 +1,5 @@
 /*
-  * Copyright 2026 Twilight
+  * Copyright 2026 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -321,7 +321,7 @@ QVector<MapEngine::Strip> MapEngine::connectionStrips(int mapInd)
 {
   // The same walk applyConnections() does, recording WHERE each strip lands instead of copying it.
   // One source of truth for the arithmetic (connectionOf), two consumers: the renderer, and the
-  // Connections layer that lets you SEE the thing. (2026-07-13, Twilight: "connector maps need
+  // Connections layer that lets you SEE the thing. (2026-07-13, project leadership: "connector maps need
   // outlines too -- they have a lot of calculations.")
   QVector<Strip> out;
 
@@ -1062,7 +1062,7 @@ QString MapEngine::layerName(Layer layer)
 
 QString MapEngine::layerDescription(Layer layer)
 {
-  // Say what the thing IS. Half of these are words Twilight said she didn't know the meaning
+  // Say what the thing IS. Half of these are words project leadership said she didn't know the meaning
   // of -- so the app is where that gets answered, not a wiki.
   switch (layer) {
     case LayerWalls:
@@ -1470,7 +1470,7 @@ QImage MapEngine::npcSprite(int pictureID, int facing, int contrast, int animFra
   if (frames <= 0)
     return QImage();
 
-  // ⚠️ ONE LOOSE FILE PER SPRITE, not an atlas (Twilight). Cached on first use, so 72 tiny PNGs
+  // ⚠️ ONE LOOSE FILE PER SPRITE, not an atlas (project leadership). Cached on first use, so 72 tiny PNGs
   // cost one decode each for the life of the process -- which is nothing, and the files stay
   // something a person can open and look at.
   static QHash<int, QImage> cache;

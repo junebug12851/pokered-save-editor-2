@@ -1,5 +1,5 @@
 /*
-  * Copyright 2026 Twilight
+  * Copyright 2026 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -299,7 +299,7 @@ public:
   // ⚠️ **THIS IS A VIEW SETTING. IT TOUCHES NO SAVE BYTE.** It is orthogonal to the save's `contrast`
   // (`wMapPalOffset`), which is a real value and stays exactly as it is: contrast decides *which of
   // the four shades* each pixel becomes, and this decides *what colour each of those four shades is
-  // painted*. The map's four greys go in; four chosen colours come out. (Twilight, 2026-07-13.)
+  // painted*. The map's four greys go in; four chosen colours come out. (project leadership, 2026-07-13.)
   //
   // The art is captured under the identity palette, so a pixel's grey is its colour index; contrast's
   // `rBGP` maps index -> shade; and THIS maps shade -> a real colour. @see render.
@@ -424,7 +424,7 @@ public:
   /**
    * @brief ANY overworld sprite's 16x16 picture -- @p pictureID 1..72, facing @p facing.
    *
-   * ⚠️ The artwork is **72 LOOSE PNGs, one per sprite** -- deliberately, and NOT an atlas (Twilight:
+   * ⚠️ The artwork is **72 LOOSE PNGs, one per sprite** -- deliberately, and NOT an atlas (project leadership:
    * *"I hate atlases... I like loose files, they're way better to work with"*). They are imported
    * from `pret/pokered` by `scripts/import_sprites.py`, and the generated `spriteart.h` maps each
    * picture id to its file and its frame count. Each file is a vertical strip of 16x16 quads:

@@ -1,5 +1,5 @@
 /*
-  * Copyright 2026 Twilight
+  * Copyright 2026 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -296,7 +296,7 @@ QJsonObject execute(const QJsonObject& c)
     const QString p = c.value(QStringLiteral("arg")).toString();
     if(p.isEmpty()) return err(QStringLiteral("shot needs 'arg' path"));
     // Optional `obj` (name or path): crop the shot to that component's bounds -- grab one panel with
-    // no manual cropping (Twilight, 2026-07-15).
+    // no manual cropping (project leadership, 2026-07-15).
     QObject* item = nullptr;
     if(c.contains(QStringLiteral("obj"))) {
       item = findItem(c.value(QStringLiteral("obj")).toString());
@@ -333,7 +333,7 @@ QJsonObject execute(const QJsonObject& c)
     return okClick ? ok(true) : err(QStringLiteral("no clicked() signal"));
   }
 
-  // ── invoke: trigger ANY signal / slot / Q_INVOKABLE by name (Twilight, 2026-07-15: "trigger
+  // ── invoke: trigger ANY signal / slot / Q_INVOKABLE by name (project leadership, 2026-07-15: "trigger
   // anything and any event/signal"). Emits a signal or calls a method on the target, with up to a
   // few string/number/bool args. `click` is the special case of this for `clicked()`.
   //   {"cmd":"invoke","obj":"someItem","method":"toggle"}
@@ -364,7 +364,7 @@ QJsonObject execute(const QJsonObject& c)
   // skips all of that.
   //
   // That is exactly the bug that sent me out of our own tooling and into clicking the screen by hand
-  // (2026-07-13, and Twilight rightly asked why). The answer is: the harness could not do it. Now it
+  // (2026-07-13, and project leadership rightly asked why). The answer is: the harness could not do it. Now it
   // can. `tap` posts a genuine QMouseEvent to the window at a scene coordinate, through Qt's real
   // delivery path -- grabs, handlers, propagation and all.
   //

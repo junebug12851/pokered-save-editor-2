@@ -1,5 +1,5 @@
 /*
-  * Copyright 2026 Twilight
+  * Copyright 2026 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
  *
  * ⚠️ It used to be a lone `⊘` on the rail-button chassis, which is the same chassis every *tool* on
  * this screen uses -- so it read as one more mode you could switch into, and told you nothing about
- * what it would do. Twilight: *"the clear button ... should actually look like a clear button."*
+ * what it would do. Project leadership: *"the clear button ... should actually look like a clear button."*
  *
  * So: a flat pill with the word in it. It is disabled -- not hidden -- when there is nothing to
  * clear, because a control that vanishes when it is not needed is a control you cannot find when it

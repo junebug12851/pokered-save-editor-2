@@ -1,5 +1,5 @@
 /*
-  * Copyright 2026 Twilight
+  * Copyright 2026 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -193,7 +193,7 @@ void TestItemExchange::priceData_isWhatTheseTestsAssume()
   QCOMPARE(buyOf(QStringLiteral("FULL RESTORE")), 3000);
 }
 
-// THE headline rule (Twilight's own example): 3 Fresh Water is ₽600, which is exactly
+// THE headline rule (project leadership's own example): 3 Fresh Water is ₽600, which is exactly
 // 2 Potions -- so 2 Potions are spent and NO money is refunded. Per-step pricing would
 // have wrongly taken 3 Potions and refunded ₽300.
 void TestItemExchange::evenTrade_costsExactWholeItems_andRefundsNothing()

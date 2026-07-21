@@ -1,5 +1,5 @@
 /*
-  * Copyright 2026 Twilight
+  * Copyright 2026 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
   MapStatusBar.qml -- the DETAILS. Where the cursor is, what is under it, how big the map is, what
   the animation is doing, how far in you are zoomed.
 
-  Twilight, 2026-07-13: "details like the map size and many other details need to be in a status bar
+  Project leadership, 2026-07-13: "details like the map size and many other details need to be in a status bar
   below, not in the toolbar at top". Right -- the toolbar is for things you DO; the status bar is for
   things that are TRUE. So the size chip and the unfinished-copy note came down here, and the
   "Click a block to inspect it" bar above the map went away entirely.
@@ -149,7 +149,7 @@ Rectangle {
     Sep {}
 
     // ⚠️ The zoom READOUT, and nothing else. The −/+/fit buttons that used to live here are GONE:
-    // zoom now has exactly ONE home, the ▾ on the toolbar's zoom tool (Twilight, 2026-07-13: "I just
+    // zoom now has exactly ONE home, the ▾ on the toolbar's zoom tool (project leadership, 2026-07-13: "I just
     // don't want multiple places where zoom is").
     //
     // A number is a FACT, and facts are what this bar is for. A button is a THING YOU DO, and those

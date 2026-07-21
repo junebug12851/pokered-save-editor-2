@@ -1,5 +1,5 @@
 /*
-  * Copyright 2026 Twilight
+  * Copyright 2026 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@
  *     note C_, 4
  * ```
  *
- * ⚠️ **THIS IS A LINE PARSER, NOT AN ASSEMBLER.** Twilight's insight, and it is the whole reason this
+ * ⚠️ **THIS IS A LINE PARSER, NOT AN ASSEMBLER.** project leadership's insight, and it is the whole reason this
  * is a tractable amount of code: the sound engine's data is *line-based assembly*, and **their macro
  * names ARE the command names**. `note C_, 8` is one line and one byte. There is no expression
  * evaluator, no arithmetic, no sections, no linker script. There is a table of macros, a scope for

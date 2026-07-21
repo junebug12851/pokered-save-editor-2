@@ -1,5 +1,5 @@
 /*
-  * Copyright 2026 Twilight
+  * Copyright 2026 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -88,7 +88,7 @@ Item {
 
   // Dragging the PLAYER moves the screen box and the draw area with him -- both are computed FROM
   // his position, and watching them snap into place only on release was the tell that they weren't
-  // really his. (Twilight, 2026-07-13.) -1 hands them back to where he actually is.
+  // really his. (project leadership, 2026-07-13.) -1 hands them back to where he actually is.
   onLiveXChanged: if (sprite.isPlayer) sprite.canvas.livePlayerX = sprite.dragging ? sprite.liveX : -1
   onLiveYChanged: if (sprite.isPlayer) sprite.canvas.livePlayerY = sprite.dragging ? sprite.liveY : -1
 
@@ -374,7 +374,7 @@ Item {
       //
       // The old version rounded (cursor − press) into tile steps, which drifts: the sprite's own
       // coordinate moves under you while `press` stays put, so the two disagree by a tile and the
-      // thing skitters. (Twilight: "moving main character around is very glitchy.") Ask where the
+      // thing skitters. (project leadership: "moving main character around is very glitchy.") Ask where the
       // cursor IS, in map tiles, and put the sprite there. There is nothing to drift.
       const p = sprite.canvas.tileAtGlobal(g.x, g.y);
 
@@ -385,7 +385,7 @@ Item {
     onReleased: (m) => {
       if (!sprite.dragging && !area.moved) {
         // A plain CLICK opens the Details panel on this sprite (the player included); a drag does
-        // not. (Twilight: "details should only open on a click not click and drag".)
+        // not. (project leadership: "details should only open on a click not click and drag".)
         sprite.editRequested();
         return;
       }

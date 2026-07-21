@@ -1,5 +1,5 @@
 /*
-  * Copyright 2026 Twilight
+  * Copyright 2026 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -199,7 +199,7 @@ void TestMap::blocks_everyRealMapHasBlockData()
  * console draws whatever it holds.
  *
  * Until 2026-07-13 `buildOverworldMap` always used the *map's* border, so editing that byte in the
- * editor changed nothing on screen -- the control did nothing and said nothing. Found by Twilight,
+ * editor changed nothing on screen -- the control did nothing and said nothing. Found by project leadership,
  * by changing it and watching the map not change.
  */
 void TestMap::borderBlock_comesFromTheSave()
@@ -605,7 +605,7 @@ void TestMap::palettes_matchTheConsoleForEveryContrastValue()
     QVERIFY(!MapEngine::contrastName(c.contrast).isEmpty());
   }
 
-  // Exactly four levels and exactly six glitch palettes -- which is what Twilight said,
+  // Exactly four levels and exactly six glitch palettes -- which is what project leadership said,
   // before any of this was looked at.
   int levels = 0, glitches = 0;
   for (int i = 0; i <= MapEngine::contrastMax; i++)

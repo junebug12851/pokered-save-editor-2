@@ -1,5 +1,5 @@
 /*
-  * Copyright 2026 Twilight
+  * Copyright 2026 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@
  *
  * It belongs to the MAP, not to any one door -- which is why it is a **right-dock panel**, with the
  * other things you edit about the map itself, and not a section of the Details panel.
- * (Twilight, 2026-07-14: *"I will place them in the right panel as warp state or something better
+ * (project leadership, 2026-07-14: *"I will place them in the right panel as warp state or something better
  * named."* The first cut appended it to the bottom of the map's own details, where it sat below the
  * fold behind a scroll past six rows of map facts. She was right.)
  *
@@ -155,7 +155,7 @@ Item {
             // ⚠️ THE "DOES NOTHING" GROUP IS A DIFFERENT KIND OF GROUP, so it says so rather than
             // being a heading like the other two.
             //
-            // Twilight, 2026-07-14: *"it would also be wonderful to know which ones were regenerated
+            // project leadership, 2026-07-14: *"it would also be wonderful to know which ones were regenerated
             // or rewritten on save load with little exclamation points grouped below and hidden
             // behind a switch."* That is exactly this. The MODEL filters them out unless the
             // toolbar's "Useless edits" toggle is on -- so no view can leak one, and a test proves

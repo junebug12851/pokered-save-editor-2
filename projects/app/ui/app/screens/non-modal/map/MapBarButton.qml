@@ -1,5 +1,5 @@
 /*
-  * Copyright 2026 Twilight
+  * Copyright 2026 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 /*
   MapBarButton.qml -- one compact ICON tool-button on the top bar, with a ▾ that says "I drop a menu".
 
-  Twilight, 2026-07-14: *"'Pallet Town' is littered all over the top bar and we're cramped. Have tool
+  Project leadership, 2026-07-14: *"'Pallet Town' is littered all over the top bar and we're cramped. Have tool
   buttons for Map, Warp, Contrast and Music — icon buttons, and prefer a dynamic reactive icon over a
   plain always-same one (a contrast icon showing the active contrast, not a generic one). Down arrows
   next to the buttons to indicate the dropdown."*
@@ -111,7 +111,7 @@ Item {
         implicitHeight: 16
       }
 
-      // The ▾ — this is the whole "it drops a menu" affordance Twilight asked for.
+      // The ▾ — this is the whole "it drops a menu" affordance project leadership asked for.
       Text {
         text: "⌄"
         font.pixelSize: 10

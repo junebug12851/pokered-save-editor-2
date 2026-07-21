@@ -1,5 +1,5 @@
 /*
-  * Copyright 2026 Twilight
+  * Copyright 2026 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 /**
  * A ghostly white "add a connecting route here" arrow on ONE edge of the map.
  *
- * Shown only where that edge has NO connection (an invitation, never chrome -- Twilight: *"lightweight
+ * Shown only where that edge has NO connection (an invitation, never chrome -- project leadership: *"lightweight
  * and simple… it needs to look kind of ghostly"*). Clicking it opens a small map picker; choosing a
  * neighbour calls `brg.map.addConnection(dir, ind)`, and the arrow vanishes as the connection appears.
  * That is the click-to-add half of "both add-gestures"; the drag-a-map-onto-it half rides the same

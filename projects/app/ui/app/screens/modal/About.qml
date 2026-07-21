@@ -287,7 +287,7 @@ Page {
         Text {
           width: parent.width
           horizontalAlignment: Text.AlignHCenter
-          text: qsTr("© 2017–2026 Twilight  •  Licensed under the Apache License 2.0")
+          text: qsTr("© 2017–2026 Fairy Fox  •  Licensed under the Apache License 2.0")
           font.pixelSize: 12
           color: brg.settings.textColorMid
         }
@@ -297,7 +297,7 @@ Page {
         // The wallpaper's mandated attribution (CC-BY-NC-ND requires it visible).
         //
         // It lives HERE, at the end of the scroll, and NOT pinned to the page as a
-        // floating CreditWork like every other modal (Twilight, 2026-07-17: "just have
+        // floating CreditWork like every other modal (project leadership, 2026-07-17: "just have
         // the credits at the bottom of the page, not underneath it ... only on the
         // bottom of the scroll past the page so it can be seen"). Pinned to the Page it
         // was declared after the ListView, so the cards scrolled UNDERNEATH it and their

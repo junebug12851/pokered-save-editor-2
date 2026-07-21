@@ -1,5 +1,5 @@
 /*
-  * Copyright 2026 Twilight
+  * Copyright 2026 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -83,7 +83,7 @@ Item {
     // ── The marks ────────────────────────────────────────────────────────────────────────────
     //
     // A dot said "something", which is not information. An exclamation mark says "careful"
-    // (Twilight, 2026-07-13). They are the ONLY tooltips in the panel, and each sits ON its own
+    // (project leadership, 2026-07-13). They are the ONLY tooltips in the panel, and each sits ON its own
     // mark -- not on the cell (which would fire every time you swept the grid) and not across the
     // screen from it.
     //
@@ -94,7 +94,7 @@ Item {
     //
     // The Player has a **?**, and that is the whole point of the distinction. He used to carry a
     // **!** -- because he is not in any sprite SET -- which made the panel say "this map hasn't
-    // loaded the player's picture", and Twilight (rightly) called that weird: the player's picture
+    // loaded the player's picture", and project leadership (rightly) called that weird: the player's picture
     // is loaded on every map in the game. It is loaded, it draws perfectly, and dropping one out
     // gives you a second Red. That is a **?**, not a **!**.
     // ⚠️ The REASON comes from the model, because the reason DEPENDS ON THE MAP: outdoors it is "not

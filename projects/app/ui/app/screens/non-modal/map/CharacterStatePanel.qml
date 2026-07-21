@@ -1,5 +1,5 @@
 /*
-  * Copyright 2026 Twilight
+  * Copyright 2026 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@
  * v1 shipped them as its "NPC" page with three wrong labels; every field here carries the name of what
  * it actually does and a sentence saying what that means.
  *
- * ## Useless edits hide behind the toolbar "!" (Twilight, 2026-07-18 -- supersedes 2026-07-15)
+ * ## Useless edits hide behind the toolbar "!" (project leadership, 2026-07-18 -- supersedes 2026-07-15)
  *
  * The four flags the game rewrites on load are USELESS EDITS (*"character state is still littered
  * with useless fields"*): they hide unless the toolbar's "!" gate is on, and when shown they wear

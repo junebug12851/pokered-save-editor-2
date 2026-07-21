@@ -1,5 +1,5 @@
 /*
-  * Copyright 2026 Twilight
+  * Copyright 2026 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 /**
  * MUSIC, in the top bar's SIMULATION group -- a play/pause button with a ♪ and a ▾ that drops the
- * track / volume / flags (Twilight, 2026-07-14). It sits with the tile-animation and walk buttons,
+ * track / volume / flags (project leadership, 2026-07-14). It sits with the tile-animation and walk buttons,
  * because all three are things you PLAY.
  *
  * ⚠️ **HOVER NEVER AUDITIONS.** Selecting a track plays it (if the player is running) *and* writes the

@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 Twilight
+  * Copyright 2020 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -60,7 +60,7 @@ void PokemonStorageModel::switchBox(int newBox, bool force)
     return;
 
   // Clear the OUTGOING box's checks: changing boxes should NOT keep the selection
-  // (Twilight's UX rule -- checks only persist across the Pokemon-detail editor
+  // (project leadership's UX rule -- checks only persist across the Pokemon-detail editor
   // round-trip, handled by Pokemon.qml's Component.onDestruction, not here).
   if(checkedStateDirty)
     clearCheckedState();
@@ -483,7 +483,7 @@ void PokemonStorageModel::pageClosing()
   // returning to the storage screen) and on goHome -- clearing here wiped every
   // checkbox the moment the user opened a mon and came back, which read as
   // "checkboxes lose their selection". Checked state is per-mon and now persists
-  // for the file's lifetime (Twilight's call); transfers/deletes still clear the
+  // for the file's lifetime (project leadership's call); transfers/deletes still clear the
   // specific mons they touch. Kept as a hook in case a future close action needs it.
 }
 

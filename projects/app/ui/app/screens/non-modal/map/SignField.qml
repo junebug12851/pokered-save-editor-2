@@ -1,5 +1,5 @@
 /*
-  * Copyright 2026 Twilight
+  * Copyright 2026 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@
  *  | `enum`   | the map's TEXT, grouped (Signs / People / Other), showing the real words. A raw id box |
  *  |          | appears when the value is one no entry names — the hack ids past the map's table. |
  *
- * The grouped combo is the "select from the text on the map" Twilight asked for: every text id a
+ * The grouped combo is the "select from the text on the map" project leadership asked for: every text id a
  * sign can reference, grouped by what it is meant for, each row its real words. Selection commits;
  * nothing happens on hover. @see MapModel::signTextList, notes/reference/signs.md.
  */

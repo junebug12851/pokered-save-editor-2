@@ -1,5 +1,5 @@
 /*
-  * Copyright 2026 Twilight
+  * Copyright 2026 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -79,7 +79,7 @@ Rectangle {
 
   /// A titled group. A title, a MapWarnIcon if the game overwrites these bytes, and a SHORT hint.
   ///
-  /// ⚠️ The multi-line `blurb` under every heading is gone (Twilight, 2026-07-13: the Strength group
+  /// ⚠️ The multi-line `blurb` under every heading is gone (project leadership, 2026-07-13: the Strength group
   /// "has blocks of text again"). Prose goes in `panelInfo`, behind the "?" — not in the panel.
   component Group: Rectangle {
     id: grp
@@ -156,7 +156,7 @@ Rectangle {
       // ── The edge of the world ───────────────────────────────────────────────
       //
       // `wMapBackgroundTile` (save 0x2659): the block that fills the 3-block ring around every map.
-      // It moved here when the Blocks panel was deleted (Twilight, 2026-07-13) -- it is a property of
+      // It moved here when the Blocks panel was deleted (project leadership, 2026-07-13) -- it is a property of
       // the map's tiles, and it was the one thing in that panel worth keeping.
       Group {
         title: qsTr("Edge of the world")
@@ -226,7 +226,7 @@ Rectangle {
 
       // ── Strength ────────────────────────────────────────────────────────────
       //
-      // ⚠️ BEHIND THE "SHOW CLEARED" SWITCH (Twilight, 2026-07-13: *"Last Strength push is still
+      // ⚠️ BEHIND THE "SHOW CLEARED" SWITCH (project leadership, 2026-07-13: *"Last Strength push is still
       // there, should be behind reloaded values"*). These two bytes are scratch the game left behind
       // the last time somebody shoved a rock, and it overwrites them the next time. They are real,
       // they are hers, and she can edit them -- but they configure nothing, and having them sitting
@@ -240,7 +240,7 @@ Rectangle {
                           + "here they are.")
 
         // ⚠️ The label goes ABOVE the control, not beside it. Beside it, a 70px label left ~90px for
-        // the combo in a 170px panel, and its text was unreadable (Twilight, 2026-07-13). In a narrow
+        // the combo in a 170px panel, and its text was unreadable (project leadership, 2026-07-13). In a narrow
         // panel a control gets the FULL width and the label gets its own line. Cheap, and it reads.
         ColumnLayout {
           Layout.fillWidth: true
@@ -339,7 +339,7 @@ Rectangle {
   }
 
   // ("Where the tileset lives" -- the bank and the three raw pointers -- was removed on 2026-07-13
-  // at Twilight's call. The tileset and blockset PICKERS in the top bar already reach every real
+  // at project leadership's call. The tileset and blockset PICKERS in the top bar already reach every real
   // combination of them, and `MapModel::setTilesetInd` / `setBlocksetInd` write them properly. A
   // panel of hex addresses you cannot type into was a wall of numbers pretending to be a control.
   // MapModel::canonicalTileset() / restoreTilesetPointers() still exist for when the Inspector wants

@@ -1,5 +1,5 @@
 /*
-  * Copyright 2026 Twilight
+  * Copyright 2026 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -69,7 +69,7 @@ const char* const kKeys[FontKeyboard::keyTotal] = {
 // nothing to learn.
 //
 // (This was uppercase-unshifted at first, on the reasoning that Gen 1 names are all
-// caps. Twilight rejected it, and she's right: it's the one place the deck would have
+// caps. Project leadership rejected it, and she's right: it's the one place the deck would have
 // contradicted every keyboard the user has ever touched. Caps Lock is how you type a
 // name in caps -- see effectivePage().)
 const int kPageLetters[FontKeyboard::keyTotal] = {
@@ -130,7 +130,7 @@ const int kPageCodes[FontKeyboard::keyTotal] = {
 //        A  S  D    -->   ║     ║      (S is the box's hollow middle, so it's empty)
 //        Z  X  C          ╚  ═  ╝
 //
-// so a border is literally "Q W W W E" then "Z X X X C". Twilight's idea, and it's a
+// so a border is literally "Q W W W E" then "Z X X X C". Project leadership's idea, and it's a
 // better one than parking them in reading order: the keys ARE the picture.
 //
 // This is why the horizontal (122) and vertical (124) edges appear TWICE on this page --
@@ -339,7 +339,7 @@ QString FontKeyboard::pageBadge(int page)
 int FontKeyboard::effectivePage(bool shift, bool ctrl, bool alt, bool caps)
 {
   // CAPS LOCK LOCKS THE SHIFT PAGE. It is a page selector like every other modifier
-  // here -- not a per-key letter-case rule (2026-07-11, Twilight).
+  // here -- not a per-key letter-case rule (2026-07-11, project leadership).
   //
   // The first cut gave caps its real-keyboard behaviour: letters only, leaving the
   // number row typing digits. That is what a physical keyboard does, but it produces a

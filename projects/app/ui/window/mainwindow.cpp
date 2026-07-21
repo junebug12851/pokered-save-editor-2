@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 Twilight
+  * Copyright 2020 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -187,7 +187,7 @@ bool MainWindow::saveShot(const QString& path, QObject* item)
   // Crop to a component's bounds, if one was named. The item's rect maps to SCENE coords, which are
   // the QQuickWidget's LOGICAL coords; the grabbed framebuffer is PHYSICAL pixels, so scale by the
   // framebuffer/widget ratio (the device pixel ratio) before cropping. This is the "screenshot from
-  // any component down" -- grab one panel with no manual cropping (Twilight, 2026-07-15).
+  // any component down" -- grab one panel with no manual cropping (project leadership, 2026-07-15).
   if(auto* qi = qobject_cast<QQuickItem*>(item)) {
     const QRectF scene = qi->mapRectToScene(QRectF(0, 0, qi->width(), qi->height()));
     const qreal sx = ui.app->width()  > 0 ? qreal(img.width())  / ui.app->width()  : 1.0;
@@ -210,7 +210,7 @@ bool MainWindow::saveShot(const QString& path, QObject* item)
 // the signal skips every bit of that machinery, which is exactly the machinery that breaks.
 //
 // So the harness could not reproduce "opening the picture picker drops the selection", and I went
-// and clicked the screen by hand instead of fixing the tool. Twilight asked why, and she was right
+// and clicked the screen by hand instead of fixing the tool. Project leadership asked why, and she was right
 // to. This is the fix: a genuine QMouseEvent, posted at the QQuickWidget, through grabs, handlers,
 // propagation and all.
 bool MainWindow::debugTap(const QPointF& at, int clicks, Qt::MouseButton button)
@@ -276,7 +276,7 @@ bool MainWindow::debugHover(const QPointF& at)
   // what drives `MouseArea.containsMouse`, `HoverHandler.hovered` and every `onEntered` in the app.
   // There is nothing special about it and nothing missing from the toolkit.
   //
-  // 🐺 Worth recording WHY this exists, because the mistake is the expensive kind: I told Twilight
+  // 🐺 Worth recording WHY this exists, because the mistake is the expensive kind: I told project leadership
   // hover "can't be driven synthetically, only your cursor can confirm it" -- and she didn't buy it:
   // *"i find it hard to beleive theres no solution for testing hover you cannot tell me the
   // community has no solution for this."* She was right, and it is the SAME failure as the

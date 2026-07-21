@@ -1,5 +1,5 @@
 /*
-  * Copyright 2026 Twilight
+  * Copyright 2026 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -328,7 +328,7 @@ Item {
 
     onReleased: (m) => {
       if (!door.dragging && !area.moved) {
-        // A plain CLICK -- no drag -- opens the Details panel on this door (Twilight: "details
+        // A plain CLICK -- no drag -- opens the Details panel on this door (project leadership: "details
         // should only open on a click not click and drag"). The press already selected it.
         door.editRequested();
         return;

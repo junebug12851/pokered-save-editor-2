@@ -1,5 +1,5 @@
 /*
-  * Copyright 2026 Twilight
+  * Copyright 2026 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
  * control that kind deserves.
  *
  * ⚠️ **Rewritten 2026-07-13.** The old version drew every byte the same way — a number box, with the
- * combo (if any) squeezed in beside it and a paragraph underneath. Twilight:
+ * combo (if any) squeezed in beside it and a paragraph underneath. Project leadership:
  *
  *   > *"the fields are all just raw values, exactly what I said not to do... I don't know what most
  *   > of those numbers mean on sprite details, it's cryptic as crap... **Don't show boxes if it's
@@ -85,7 +85,7 @@ ColumnLayout {
   /// The user asked for the raw box.
   ///
   /// ⚠️ **STICKY. It stays open until they close it**, even if they happen to type a value the combo
-  /// has a name for. Twilight: *"it's bad UX for [the raw box] to close just because a legitimate
+  /// has a name for. Project leadership: *"it's bad UX for [the raw box] to close just because a legitimate
   /// value was entered."* -- and she is right: typing a number and having the box you were typing in
   /// disappear from under you is the control fighting you.
   property bool rawOpen: false
@@ -201,7 +201,7 @@ ColumnLayout {
   //
   // Full width, and the popup is WIDER THAN THE COMBO where it has to be -- a 190px dock cannot show
   // "Jr. Trainer♀ — never used in-game" in 190px, and shrinking the text to fit is shrinking the
-  // content to make room for the furniture. (Twilight, twice: "combo box text still cut off.")
+  // content to make room for the furniture. (project leadership, twice: "combo box text still cut off.")
   //
   // The options come SECTIONED: the ordinary values first, the flagged ones under their own heading.
   // A "!" on row 84 of a flat list of 140 items is a "!" nobody ever sees. (@see MapModel::sectioned)
@@ -237,7 +237,7 @@ ColumnLayout {
     // and it is a **binding loop**: the popup's height depends on its ListView's implicit height,
     // which depends on the popup's height. Qt breaks the loop by dropping bindings, and what you get
     // is a popup whose rows are **squashed too short to show their text** and **do not respond to
-    // clicks at all**. Twilight, and both symptoms in one sentence: *"combo box items render too
+    // clicks at all**. Project leadership, and both symptoms in one sentence: *"combo box items render too
     // short and I don't see text sometimes... none of the combo boxes' buttons work."*
     //
     // The popup sizes itself. MapPicker -- the one that works, with 248 grouped maps in it -- does
@@ -343,7 +343,7 @@ ColumnLayout {
 
   // ── frames: a DURATION, drawn as one ───────────────────────────────────────────────────────
   //
-  // ⚠️ Twilight: *"What is 'delay until next move'? What does that mean, how is it measured? Don't
+  // ⚠️ project leadership: *"What is 'delay until next move'? What does that mean, how is it measured? Don't
   // tell them with text — tell them with a beautiful, polished, clean UI/UX."*
   //
   // So: a bar you can drag, with the answer written on it in both of the units that matter — the
@@ -423,7 +423,7 @@ ColumnLayout {
   }
 
   // (A "No real game holds this value here." line lived down here, under every flagged field.
-  //  REMOVED 2026-07-13 -- Twilight: *"Don't have a 'no real game holds this value'; this is implied
+  //  REMOVED 2026-07-13 -- project leadership: *"Don't have a 'no real game holds this value'; this is implied
   //  when using Something else."* And it is: the combo already reads "Something else — $37", and the
   //  flagged options already sit under their own heading with a "!" on them. Saying it a third time
   //  in a full sentence, under every one of them, is the panel talking to itself.)

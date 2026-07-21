@@ -1,5 +1,5 @@
 /*
-  * Copyright 2026 Twilight
+  * Copyright 2026 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@
 
   ⚠️ **THE WALL OF TEXT IS GONE.** All of the above used to be printed *in the panel*, two paragraphs
   over the controls plus a blurb under every group heading, and you had to read past the lot every
-  time to reach a combo box. Twilight, 2026-07-13: *"Remove all the text below Sprite Set — it's way
+  time to reach a combo box. Project leadership, 2026-07-13: *"Remove all the text below Sprite Set — it's way
   too much to read; condense it somehow and put it somewhere like a tooltip or hint."*
 
   So the words moved to two marks:
@@ -167,7 +167,7 @@ Rectangle {
 
       // ── ONE NOTICE, AT THE TOP, FOR THE WHOLE PANEL ──────────────────────────────────────────
       //
-      // ⚠️ Twilight took this panel apart and she was right to:
+      // ⚠️ project leadership took this panel apart and she was right to:
       //
       //   > *"What is 'This map's set — Pallet and Viridian'? 'Load this map's set', greyed-out text
       //   > — is there any point to this at all? Is the set different from the eleven, are they
@@ -257,7 +257,7 @@ Rectangle {
 
       // ── What the CARTRIDGE would load here ───────────────────────────────────────────────────
       //
-      // ⚠️ HIDDEN INDOORS. Twilight: *"'Load this map's set', greyed-out text — is there any point to
+      // ⚠️ HIDDEN INDOORS. Project leadership: *"'Load this map's set', greyed-out text — is there any point to
       // this at all?"* Indoors: no, there is not. The map has no set, the button can never do
       // anything, and a permanently-disabled control that can never become enabled is furniture.
       // Outdoors it is the useful thing on this panel: it is what the console will put here anyway,
@@ -298,7 +298,7 @@ Rectangle {
 
       // ── The eleven slots ─────────────────────────────────────────────────────────────────────
       //
-      // "The eleven" -- which, as Twilight put it, "sounds dumb", and worse: it read as a *different
+      // "The eleven" -- which, as project leadership put it, "sounds dumb", and worse: it read as a *different
       // thing* from the set above it. It isn't. It IS the set: these are the eleven pictures that set
       // is made of, and picking a set up there fills them in down here.
       Group {

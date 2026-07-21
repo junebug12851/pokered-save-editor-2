@@ -1,5 +1,5 @@
 /*
-  * Copyright 2019 Twilight
+  * Copyright 2019 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -100,14 +100,14 @@ void SaveFileExpanded::randomize()
   // yet and currently crashes in the sprite path (SpriteData::load() on an
   // unresolved getToSprite() link). Skipping it leaves the area as-loaded, so the
   // player stays on their real current map -- valid and playable. Re-enable this
-  // once maps are set up. (Twilight-authorised, 2026-06-07.)
+  // once maps are set up. (project leadership-authorised, 2026-06-07.)
   // area->randomize();
 
   world->randomize();
   daycare->randomize(player->basics);
 
   // Hall of Fame isn't a set-up screen yet, so don't randomize it -- leave it as
-  // loaded. Re-enable when the HoF screen is implemented. (Twilight-authorised,
+  // loaded. Re-enable when the HoF screen is implemented. (project leadership-authorised,
   // 2026-06-07.)
   // hof->randomize();
 

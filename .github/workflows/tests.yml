@@ -7,7 +7,7 @@ name: tests
 #                   work properly on Linux, unlike the Windows llvm-mingw kit where
 #                   ASan crashes in interception_win) and runs ctest headless.
 #   * windows     - builds with the project's real kit (Qt 6 llvm-mingw) and runs
-#                   ctest, matching Twilight's local environment.
+#                   ctest, matching project leadership's local environment.
 #
 # NOTE (first-run shakeout): the exact Qt module/arch names below may need a small
 # tweak on the very first CI run. The CMake root is `projects/`. Tests don't need

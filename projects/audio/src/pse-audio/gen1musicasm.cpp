@@ -1,5 +1,5 @@
 /*
-  * Copyright 2026 Twilight
+  * Copyright 2026 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -207,7 +207,7 @@ bool Gen1MusicAsm::op(Stream& s, const QString& op, const QStringList& a, int ch
   Q_UNUSED(chan)
 
   // ⚠️ THE MACRO TABLE. This is the whole "compiler", and it is a table because **their macro names
-  // ARE the command names** (macros/scripts/audio.asm). That is Twilight's insight, and it is why
+  // ARE the command names** (macros/scripts/audio.asm). That is project leadership's insight, and it is why
   // this file is 200 lines instead of a rgbasm port.
   if (op == QLatin1String("note")) {
     const int n = noteIndex(a.value(0).trimmed());

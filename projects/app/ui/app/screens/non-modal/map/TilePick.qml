@@ -1,5 +1,5 @@
 /*
-  * Copyright 2026 Twilight
+  * Copyright 2026 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -168,7 +168,7 @@ Item {
     // ── Un-set it, right here ────────────────────────────────────────────────────────────────
     //
     // "None" ($FF) has always been a choice inside the picker, but you had to OPEN the picker to
-    // reach it -- which is a strange thing to have to do to remove something (Twilight, 2026-07-13:
+    // reach it -- which is a strange thing to have to do to remove something (project leadership, 2026-07-13:
     // "allow unselecting things ... like how counters has an empty value"). Now the row clears itself.
     //
     // It only appears when there IS something to clear, so it never sits there looking like an

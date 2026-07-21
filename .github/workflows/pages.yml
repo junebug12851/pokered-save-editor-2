@@ -8,7 +8,7 @@ name: pages
 #                    gallery. Animated GIFs are added manually, not generated here.
 #
 # Docs reference the screenshots with the absolute Pages URL
-# (https://junebug12851.github.io/pokered-save-editor-2/screenshots/<name>) -- which also
+# (https://1fairyfox.github.io/pokered-save-editor-2/screenshots/<name>) -- which also
 # works when the same Markdown is viewed on GitHub -- or relatively as ../screenshots/<name>
 # from a /docs/ page. Images live on the Pages CDN: NOT in the git repo, NOT a release.
 

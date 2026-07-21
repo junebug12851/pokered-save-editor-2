@@ -4,7 +4,7 @@
 // checkbox + a SelectItem combo + a 2-digit count field (0-99) + a hover/checked
 // delete chip; the trailing placeholder row shows a "+" add button while there's
 // room. The rowH/comboH/textH knobs pin the differing Material control heights so
-// the row aligns (see ui-patterns.md). Twilight's inline notes flag the custom
+// the row aligns (see ui-patterns.md). Project leadership's inline notes flag the custom
 // itemToListIndex lookup (far faster than Qt's indexOfValue) and the insert
 // "hack" -- leave them.
 //
@@ -309,7 +309,7 @@ ListView {
         }
 
         // Delete chip, just to the RIGHT of the count field, shown on hover OR
-        // when checked (Twilight's placement). Same chip as the Pokemon grid's
+        // when checked (project leadership's placement). Same chip as the Pokemon grid's
         // per-cell delete: an opaque accent circle with a white "times" glyph at
         // rest, fills red on hover, darkens on press. A checked item deletes the
         // whole checked set (deleteItem group -> checkedDelete); otherwise just
@@ -331,7 +331,7 @@ ListView {
           Behavior on opacity { NumberAnimation { duration: 90 } }
 
           // "Lit" = the filled red look. A CHECKED row shows it permanently
-          // (Twilight) -- same as the button's own hover -- so a checked-for-
+          // (project leadership) -- same as the button's own hover -- so a checked-for-
           // deletion item reads as armed; press still darkens it.
           property bool lit: deleteBtn.hovered || (itemChecked === true)
 
@@ -358,7 +358,7 @@ ListView {
 
           background: Rectangle {
             radius: width / 2
-            // No background at rest (Twilight) -- just the accent X. The chip
+            // No background at rest (project leadership) -- just the accent X. The chip
             // fills red when lit (hover OR checked) and darker red on press;
             // same mouseover effects, plus checked stays filled.
             color: deleteBtn.down

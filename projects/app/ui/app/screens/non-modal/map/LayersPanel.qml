@@ -1,5 +1,5 @@
 /*
-  * Copyright 2026 Twilight
+  * Copyright 2026 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@
 
     * THE GUIDES AND THE GAME-VIEW BOXES ARE LAYERS NOW. The block grid, the map bounds, the PLAYER,
       the RED screen box and the ACCENT draw area used to be hard-coded rectangles with no switch at
-      all -- you could not turn off the red box sitting over the map. Twilight asked for them as
+      all -- you could not turn off the red box sitting over the map. Project leadership asked for them as
       layers, and they are layers.
     * THE ROW IS THE LEGEND. Every row carries the exact ink the renderer paints in (it comes FROM
       the renderer -- MapEngine::layerColor), so a legend cannot drift out of sync with what is
@@ -71,7 +71,7 @@ Rectangle {
   // ── The Clear, in the dock's title bar ──────────────────────────────────────────────────────
   //
   // Not down in a footer -- it was, and it ate two rows out of a list that only fits eight. The dock
-  // instantiates this into the panel's own title, hard right (Twilight, 2026-07-13).
+  // instantiates this into the panel's own title, hard right (project leadership, 2026-07-13).
   property Component headerAction: Component {
     MapClearButton {
       enabled: panel.anythingOn
@@ -85,7 +85,7 @@ Rectangle {
     anchors.margins: 10
     spacing: 6
 
-    // (A caption sat here -- "None of this is in the save." Removed 2026-07-13, Twilight: it is
+    // (A caption sat here -- "None of this is in the save." Removed 2026-07-13, project leadership: it is
     // inaccurate and confusing. It was true of the *switches*, but the things they draw are very
     // much in the save -- the player's coordinates, the grass tile, the connections, the edge of the
     // world. A caption that needs a paragraph of qualification should not be there at all; the rows
@@ -137,7 +137,7 @@ Rectangle {
         //
         // First cut used 14 -- the child's eye landed LEFT of its parent's and the tree read upside
         // down. Second cut used 26 -- the eyes lined up exactly, which is not a hierarchy either.
-        // (Twilight caught both, by looking. "A manual screenshot would have detected this.")
+        // (project leadership caught both, by looking. "A manual screenshot would have detected this.")
         RowLayout {
           anchors.fill: parent
           anchors.leftMargin: row.layerIsGroup ? 0 : 40
@@ -220,7 +220,7 @@ Rectangle {
           }
 
           // (A "none here" tag sat here on any layer this map has none of. Removed 2026-07-13,
-          // Twilight: "extra clutter". The row is already dimmed and its hollow eye already says it,
+          // project leadership: "extra clutter". The row is already dimmed and its hollow eye already says it,
           // and the tooltip spells it out -- three ways of saying one thing was two too many.)
 
           // ── Clear, per category ───────────────────────────────────────────────────────────
@@ -254,7 +254,7 @@ Rectangle {
 
     // ── The footer: the one dial ─────────────────────────────────────────────────────────────
     //
-    // The Clear that used to sit down here has gone UP, into the dock's title bar (Twilight,
+    // The Clear that used to sit down here has gone UP, into the dock's title bar (project leadership,
     // 2026-07-13) -- which is also where a panel-wide action belongs. What is left is the dial:
     // how hard the overlay is painted. Stacked annotation over four shades of grey genuinely needs
     // it, and it is shared rather than repeated nine times.

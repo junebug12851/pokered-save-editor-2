@@ -1,5 +1,5 @@
 /*
-  * Copyright 2026 Twilight
+  * Copyright 2026 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -266,7 +266,7 @@ void TestMapSprites::npcFields_coverEveryByteAndAreGrouped()
 
   QVERIFY2(fields.size() >= 18, "a sprite has more bytes than the panel is showing");
 
-  // ⚠️ The 2026-07-13 rebuild. "Who / Where / When" is gone (Twilight: "really really dumb"), and
+  // ⚠️ The 2026-07-13 rebuild. "Who / Where / When" is gone (project leadership: "really really dumb"), and
   // the groups now say what is under them.
   const QStringList groups = { "Character", "Where", "Movement", "Talking to it",
                                "Right now", "The drawing" };
@@ -318,7 +318,7 @@ void TestMapSprites::npcFields_coverEveryByteAndAreGrouped()
 }
 
 /// The bytes the console recomputes on load are **ABSENT** until you ask for them -- not greyed, not
-/// collapsed: not there. (Twilight: "when it's off, the fields ... will not be present and add
+/// collapsed: not there. (project leadership: "when it's off, the fields ... will not be present and add
 /// clutter.") The filtering is in the MODEL, so no view can leak one, and this proves it.
 void TestMapSprites::scratchFieldsAreAbsentUntilYouAskForThem()
 {
@@ -435,7 +435,7 @@ void TestMapSprites::setNpcField_writesTheByteAndTakesHackValues()
 }
 
 /// The Details panel's pickers hold REAL data -- the map's own scripts, the game's items, the
-/// game's trainer classes. (Twilight: "Text id needs to reference whatever it's supposed to... it
+/// game's trainer classes. (project leadership: "Text id needs to reference whatever it's supposed to... it
 /// needs to show real data.")
 void TestMapSprites::detailLists_comeFromTheRealGameData()
 {
@@ -443,7 +443,7 @@ void TestMapSprites::detailLists_comeFromTheRealGameData()
 
   // ⚠️ ONLY the scripts this map REALLY has, plus "nothing to say". It used to offer all 64 ids,
   // with the ~50 unused ones listed as "this map has no script 37" -- fifty rows of nothing, burying
-  // the seven that mean something. Twilight: "empty sign script slots need to rely on Something
+  // the seven that mean something. Project leadership: "empty sign script slots need to rely on Something
   // else." They do: the raw box reaches all 64 and is one click away.
   const QVariantList texts = r->map->mapTextList();
 
@@ -467,7 +467,7 @@ void TestMapSprites::detailLists_comeFromTheRealGameData()
 }
 
 /// The flagged values get a SECTION of their own, under a heading -- a "!" on row 84 of a flat list
-/// of 140 is a "!" nobody ever sees. (Twilight: "there's so many of them they get lost.")
+/// of 140 is a "!" nobody ever sees. (project leadership: "there's so many of them they get lost.")
 void TestMapSprites::enumOptions_putTheFlaggedOnesInTheirOwnSection()
 {
   Rig* r = makeRig();

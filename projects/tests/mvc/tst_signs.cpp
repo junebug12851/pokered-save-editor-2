@@ -1,5 +1,5 @@
 /*
-  * Copyright 2026 Twilight
+  * Copyright 2026 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -332,7 +332,7 @@ void TestSigns::signText_resolvesToRealWords()
 }
 
 /// The picker is grouped -- Signs first, then People, then Other -- and each section carries a header,
-/// exactly the "select from the text on the map, grouped" Twilight asked for.
+/// exactly the "select from the text on the map, grouped" project leadership asked for.
 void TestSigns::signTextList_isGroupedByCategory()
 {
   Rig* r = makeRig();

@@ -5,7 +5,7 @@
 // runs fullSetPlayerId, which rescans storage and updates owned mons' OT IDs, so a
 // per-keystroke write would hang and could rewrite a traded mon's OT. Invalid/partial
 // input reverts to the stored value. The basics() guard avoids a null-chain crash
-// during load. Leave Twilight's inline note.
+// during load. Leave project leadership's inline note.
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls

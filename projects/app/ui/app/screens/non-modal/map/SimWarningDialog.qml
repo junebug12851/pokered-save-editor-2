@@ -1,5 +1,5 @@
 /*
-  * Copyright 2026 Twilight
+  * Copyright 2026 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
  * "Letting the people walk MOVES the real sprite data."
  *
  * ⚠️ It has to **look like an alert**. The first version was a plain title and two paragraphs and it
- * read like a blog post (Twilight, 2026-07-13) -- which is exactly how a destructive action gets
+ * read like a blog post (project leadership, 2026-07-13) -- which is exactly how a destructive action gets
  * clicked through without being read. So: a warning stripe, a big ⚠, a short bold line that says the
  * one thing that matters, and **dark, high-contrast text** rather than the polite grey the rest of
  * the app uses.

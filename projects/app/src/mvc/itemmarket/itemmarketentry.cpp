@@ -1,5 +1,5 @@
 /*
-  * Copyright 2020 Twilight
+  * Copyright 2020 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -112,7 +112,7 @@ QString ItemMarketEntry::whichType()
   // (clang-analyzer-cplusplus.PureVirtualCall) correctly flags the latent path.
   // A real fix means caching the type as a plain member set by the derived class
   // (the ctor can't call it either) -- a lifetime refactor of this UAF-historied
-  // area, deferred to Twilight rather than changed unilaterally. Suppressed here
+  // area, deferred to project leadership rather than changed unilaterally. Suppressed here
   // because the cached-by-then invariant holds in every real code path.
   if(!cache.contains(HashKeyWhichType))
     // NOLINTNEXTLINE(clang-analyzer-cplusplus.PureVirtualCall)

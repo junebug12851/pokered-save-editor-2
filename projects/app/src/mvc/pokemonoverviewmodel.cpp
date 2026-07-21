@@ -1,5 +1,5 @@
 /*
-  * Copyright 2026 Twilight
+  * Copyright 2026 Fairy Fox
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -168,7 +168,7 @@ PokemonOverviewModel::Cell PokemonOverviewModel::buildCell(PokemonStorageBox* bo
 
   // Line 2 (ownership): the caught/traded split. Shown ONLY when at least one mon
   // is traded -- if they're all caught (the common case) the split adds nothing, so
-  // it's omitted (Twilight). When shown, each side appears only if non-zero, so an
+  // it's omitted (project leadership). When shown, each side appears only if non-zero, so an
   // all-traded cell reads "×N traded".
   QString line2;
   if(traded > 0) {

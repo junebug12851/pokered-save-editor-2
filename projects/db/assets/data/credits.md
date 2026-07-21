@@ -6,7 +6,7 @@ Everyone and everything that helped build Pokered Save Editor 2 -- contributors,
 
 ## Project Leaders
 
-- **[Twilight](https://github.com/junebug12851)**
+- **[Fairy Fox](https://github.com/1fairyfox)**
 
 ## Data Sources
 
