@@ -94,7 +94,7 @@ static void preBootAttributes()
   QApplication::setApplicationName("Pokered Save Editor");
   QApplication::setOrganizationName("Fairy Fox");
   QApplication::setApplicationVersion(QStringLiteral(PSE_VERSION_FULL));
-  QApplication::setOrganizationDomain("pokeredsaveeditor.fairyfox.io");
+  QApplication::setOrganizationDomain("pokeredsaveeditor2.fairyfox.io");
 
   // Note: Do NOT set a custom QSurfaceFormat with MSAA here.
   // QQuickWidget renders into an offscreen FBO; requesting MSAA via
